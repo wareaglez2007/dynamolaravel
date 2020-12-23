@@ -51,7 +51,7 @@
 
                 var url = $(this).attr('href');
                 getPublished(url);
-                window.history.pushState("", "", url);
+              //  window.history.pushState("", "", url);
             });
 
             //pubcount
@@ -107,7 +107,7 @@
 
                 var url = $(this).attr('href');
                 getPublished(url);
-                window.history.pushState("", "", url);
+               // window.history.pushState("", "", url);
             });
 
             function getPublished(url) {

@@ -73,9 +73,34 @@
 
         </tbody>
     </table>
-<div id="draft_pagination">
-    {{$draftpages->withpath('/admin/pages/getdraftpages')}}
-</div>
+    <div id="draft_pagination">
+        {{ $draftpages->withpath('/admin/pages/getdraftpages') }}
+    </div>
+    <script>
+        $(function() {
+            $('#draft_pagination .pagination a').on('click', function(e) {
+                e.preventDefault();
 
+                //  $('#load a').css('color', '#dfecf6');
+                //$('#load').append('<img style="position: absolute; left: 0; top: 0; z-index: 100000;" src="/images/loading.gif" />');
+
+                var url = $(this).attr('href');
+                getPublished(url);
+                // window.history.pushState("", "", url);
+            });
+
+            function getPublished(url) {
+                $.ajax({
+                    url: url
+                }).done(function(data) {
+                    //  console.log(data);
+                    $('#some_ajax').html(data);
+                }).fail(function() {
+                    //Do some error
+                });
+            }
+        });
+
+    </script>
 
 </div>

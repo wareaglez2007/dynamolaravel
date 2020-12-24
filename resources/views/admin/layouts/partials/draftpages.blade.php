@@ -55,7 +55,7 @@
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                 <a class="dropdown-item" href="{{ route('admin.pages.edit', $page->id) }}">Edit</a>
                                 <!--Publish action -->
-                                <a href="" onclick="event.preventDefault();PublishPage({{ $page->id }})"
+                                <a href="" onclick="event.preventDefault();PublishPage({{ $page->id }}, {{$draftpages->currentPage()}},{{$draftpages->firstItem()}},{{$draftpages->lastItem()}} )"
                                     class="dropdown-item" id="publish_function{{ $page->id }}">Publish</a>
                                 <!--Delete action--->
                                 <a href=""
@@ -104,3 +104,4 @@
     </script>
 
 </div>
+

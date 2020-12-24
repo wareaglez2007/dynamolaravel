@@ -1,7 +1,8 @@
 //Draft FUNCTIONS Page  Pushlish Script-->
 
-function PublishPage(id) {
+function PublishPage(id, pagenum, first,last) {
     $.get('/admin/pages/draft/' + id + '/' + 0, function (draftpage) {
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $(
@@ -18,13 +19,39 @@ function PublishPage(id) {
                 change_status: 1
             },
             success: function (response) {
-                //Call another ajax??
-                $.get('/admin/pages/published/count', function (newcount) {
+
+
+                if(first == last){
+                    pagenum = pagenum-1;
+                }
+                var url = '/admin/pages/getdraftpages?page='+pagenum;
+
+                $('#pid' + draftpage.id).fadeOut(700, function () {
+                    $('#pid' + draftpage.id).remove();
+                    getPublished(url);
+                });
+
+
+                function getPublished(url) {
+                    $.ajax({
+                        url: url
+                    }).done(function(data) {
+                        //  console.log(data);
+                        $('#some_ajax').html(data);
+                    }).fail(function() {
+                        //Do some error
+                    });
+                }
+                   //Call another ajax??
+                   $.get('/admin/pages/published/count', function (newcount) {
                     $('#trashcount').text('Trashed (' + newcount.tashedcount + ')');
                     $('#draftcount').text('Draft (' + newcount.draftnewcount + ')');
                     $('#pubcount').text('Published (' + newcount.newcount + ')');
 
                 });
+                /**
+
+
 
 
                 $('#pid' + draftpage.id).fadeOut(700, function () {
@@ -84,7 +111,7 @@ function PublishPage(id) {
 
                     ); //END oj JQUERY FIND->APPEND FROM Unpublish to Publish */
 
-                });
+                /**});*/
 
             } //closing of success
         }) //closing of ajax

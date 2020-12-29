@@ -50,7 +50,7 @@ Route::get('/admin/home', 'HomeController@index')->name('admin.home');
 
 
 Route::get('/admin/pages', 'PagesController@index')->name('admin.pages'); //Request page
-Route::get('/admin/pages/getpublishedtpages', 'PagesController@AjaxPublishedPages')->name('admin.pages.published'); // show the draft pages
+Route::get('/admin/pages', 'PagesController@AjaxPublishedPages')->name('admin.pages'); // show the draft pages
 Route::get('/admin/pages/getdraftpages', 'PagesController@AjaxDraftPages')->name('admin.pages.draft'); // show the draft pages
 
 

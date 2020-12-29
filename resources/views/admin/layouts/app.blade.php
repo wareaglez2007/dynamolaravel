@@ -92,7 +92,7 @@
 
                                     <div class="collapse hide" id="collapseOne" class="" aria-labelledby="headingOne"
                                         data-parent="#accordionExample">
-                                        <a href="{{ route('admin.pages.published') }}" class="list-group-item nav-link">Edit
+                                        <a href="{{ route('admin.pages') }}" class="list-group-item nav-link">Edit
                                             Pages</a>
                                         <a href="{{ route('admin.pages.create') }}"
                                             class="list-group-item nav-link">Create New</a>

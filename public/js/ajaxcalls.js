@@ -44,9 +44,9 @@ function PublishPage(id, pagenum, first,last) {
                 }
                    //Call another ajax??
                    $.get('/admin/pages/published/count', function (newcount) {
-                    $('#trashcount').text('Trashed (' + newcount.tashedcount + ')');
-                    $('#draftcount').text('Draft (' + newcount.draftnewcount + ')');
-                    $('#pubcount').text('Published (' + newcount.newcount + ')');
+                    $('#tcount').text('(' + newcount.tashedcount + ')');
+                    $('#dcount').text('(' + newcount.draftnewcount + ')');
+                    $('#pcount').text('(' + newcount.newcount + ')');
 
                 });
                 /**

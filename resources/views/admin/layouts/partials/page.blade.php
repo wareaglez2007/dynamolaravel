@@ -13,7 +13,7 @@
                         {{ session()->get('message') }}
                     </div>
                 @endif
-                @if (request()->path() == 'admin/pages/getpublishedtpages')
+                @if (request()->path() == 'admin/pages')
                     @include('admin.layouts.partials.publishedpage')
                 @else
                     @if (request()->path() == 'admin/pages/getdraftpages')

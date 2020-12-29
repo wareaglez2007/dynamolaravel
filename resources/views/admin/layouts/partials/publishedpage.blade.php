@@ -99,7 +99,7 @@
     </table>
 
 
-    {{ $pageslist->withPath('/admin/pages/getpublishedtpages') }}
+    {{ $pageslist->withPath('/admin/pages') }}
 </div>
 
 <!---SCRIPT FOR UPDATE POSITION-->

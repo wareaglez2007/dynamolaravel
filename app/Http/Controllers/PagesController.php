@@ -52,16 +52,14 @@ class PagesController extends Controller
 
     public function AjaxPublishedPages(Request $request, pages $pages)
     {
-        $pageslist = $pages->with('slug')->where('pages.active', 1)->orderBy('position', 'ASC')->paginate(7);
-
-
+        $pageslist = $pages->with('slug')->where('pages.active', 1)->orderBy('position', 'ASC')->paginate(7); //Active pages
+        $draft_pages = $pages->with('slug')->where('active', 0)->orderBy('position', 'ASC')->paginate(7); //Draft pages
+        $deleted_pages =  $pages->with('slug')->onlyTrashed()->orderBy('position', 'ASC')->paginate(7); // Trashed pages
         $publish_page_count = $pages->where('active', 1)->count();
         $trashed_page_count = $pages->onlyTrashed()->count();
 
-        $deleted_pages = $pages->select('pages.*', 'slugs.slug')
-            ->leftJoin('slugs', 'pages.id', '=', 'slugs.pages_id')
-            ->onlyTrashed()->orderBy('position', 'ASC')->paginate(7);
-        $draft_pages = $pages->with('slug')->where('active', 0)->orderBy('position', 'ASC')->paginate(7);
+
+
         $draft_pages_count = $pages->where('pages.active', 0)->count();
         $all_pages_count = $pages->withTrashed()->count();
         if ($request->ajax()) {

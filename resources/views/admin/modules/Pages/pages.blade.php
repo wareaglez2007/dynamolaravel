@@ -13,7 +13,7 @@
                 <a class="nav-link text-muted active" href="#published" role="tab"
                     aria-controls="published" aria-selected="true" id="pubcount"><i class="bi bi-eye"></i>
                     Published
-                    ({{ $publishcount }}) </a>
+                   <span id="pcount"> ({{ $publishcount }}) </span></a>
 
 
             </li>
@@ -21,13 +21,13 @@
                 <a class="nav-link text-muted" href="#draft" role="tab" aria-controls="draft"
                     aria-selected="false" id="draftcount"><i class="bi bi-eye-slash"></i>
                     Draft
-                    ({{ $draftcount }})</a>
+                    <span id="dcount">({{ $draftcount }})</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-muted" href="#trashed" role="tab" aria-controls="trashed" aria-selected="false"
                     id="trashcount"><i class="bi bi-trash"></i>
                     Trashed
-                    ({{ $trashed }})</a>
+                   <span id="tcount"> ({{ $trashed }})</span></a>
             </li>
             <li class="nav-item">
                 <form action="{{ route('admin.pages.create') }}">

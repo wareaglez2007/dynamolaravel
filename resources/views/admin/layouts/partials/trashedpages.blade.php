@@ -15,7 +15,7 @@
 
 
                 @foreach ($deleted_pages as $k => $page)
-                    <tr id="tid{{ $page->id }}">
+                    <tr id="activeid{{ $page->id }}">
                         <th>{{ $page->id }}</th>
                         <td>{{ $page->title }}</td>
                         <td>{{ date_format($page->created_at, 'n/j/Y') }}</td>
@@ -23,20 +23,25 @@
                         <td style="text-align: center">
 
                             <div class="dropdown show">
-                                <a class="btn btn-sm dropdown-toggle" href="#" role="button"
-                                    id="dropdownMenuLink" data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">
+                                <a class="btn btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="bi bi-toggle-off"></i>
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                     <!--Restore action-->
-                                    <a href="javascript:void(0)"
-                                        onclick="RestorePage({{ $page->id }})"
-                                        class="dropdown-item" id="in_trash_restore{{$page->id}}">Restore</a>
+                                    <a href="javascript:void(0)" onclick="RestorePage({{ $page->id }}, {{$deleted_pages->currentPage()}},{{$deleted_pages->firstItem()}},{{$deleted_pages->lastItem()}})"
+                                        class="dropdown-item" id="in_trash_restore{{ $page->id }}">Restore</a>
                                     <!--Perm DELETE action-->
                                     <a href="javascript:void(0)"
-                                        onclick="PermDeletePage({{ $page->id }}, {{ $page->page_parent_id }})"
-                                        class="dropdown-item" id="in_trash_permdel{{$page->id}}">Permanent Delete</a>
+                                        onclick="PermDeletePage(
+                                            {{ $page->id }},
+                                        {{ $page->parent_id != NULL ? $page->parent_id : 0 }},
+                                        {{$deleted_pages->currentPage()}},
+                                        {{$deleted_pages->firstItem()}},
+                                        {{$deleted_pages->lastItem()}},
+                                        {{$page->position}}
+                                        )"
+                                        class="dropdown-item" id="in_trash_permdel{{ $page->id }}">Permanent Delete</a>
                                 </div>
 
                             </div>
@@ -46,12 +51,43 @@
 
                 @endforeach
             @else
-            <tr id="notrashpages">
-                <th class="text-muted">There is no item here yer.</th>
-            </tr>
+                <tr id="notrashpages">
+                    <th class="text-muted">There is no item here yer.</th>
+                </tr>
             @endif
         </tbody>
 
     </table>
+    <div id="trashed_pagination">
+        {{ $deleted_pages->withPath('/admin/pages/trashed') }}
+    </div>
+
+
+    <script>
+        $(function() {
+            $('#trashed_pagination .pagination a').on('click', function(e) {
+                e.preventDefault();
+
+                //  $('#load a').css('color', '#dfecf6');
+                //$('#load').append('<img style="position: absolute; left: 0; top: 0; z-index: 100000;" src="/images/loading.gif" />');
+
+                var url = $(this).attr('href');
+                getPublished(url);
+                // window.history.pushState("", "", url);
+            });
+
+            function getPublished(url) {
+                $.ajax({
+                    url: url
+                }).done(function(data) {
+                    //  console.log(data);
+                    $('#some_ajax').html(data);
+                }).fail(function() {
+                    //Do some error
+                });
+            }
+        });
+
+    </script>
 </div>
 </div>

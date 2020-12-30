@@ -51,8 +51,8 @@ Route::get('/admin/home', 'HomeController@index')->name('admin.home');
 
 Route::get('/admin/pages', 'PagesController@index')->name('admin.pages'); //Request page
 Route::get('/admin/pages', 'PagesController@AjaxPublishedPages')->name('admin.pages'); // show the draft pages
-Route::get('/admin/pages/getdraftpages', 'PagesController@AjaxDraftPages')->name('admin.pages.draft'); // show the draft pages
-
+Route::get('/admin/pages/drafts', 'PagesController@AjaxDraftPages')->name('admin.pages.draft'); // show the draft pages
+Route::get('/admin/pages/trashed', 'PagesController@AjaxTrashedPages')->name('admin.pages.draft'); // show the draft pages
 
 
 Route::get('/admin/pages/pagetree', 'PagesController@Pagestree')->name('admin.pages.tree');
@@ -68,7 +68,7 @@ Route::post('/admin/pages/update', 'PagesController@update');
 
 Route::post('/admin/pages/delete', 'PagesController@destroy')->name('Backend.Pages.destroy');
 
-Route::put('/admin/pages/forcedelete', 'PagesController@permDelete')->name('Backend.Pages.forcedelete');
+Route::post('/admin/pages/forcedelete', 'PagesController@permDelete')->name('Backend.Pages.forcedelete');
 
 Route::put('/admin/pages/restore', 'PagesController@restore')->name('Backend.Pages.restore');
 Route::post('/admin/pages/publish', 'PagesController@publish')->name('Backend.Pages.publish');

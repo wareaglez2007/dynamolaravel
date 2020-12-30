@@ -10,11 +10,11 @@
             </tr>
         </thead>
         <tbody>
-
+            @if ($draftcount != 0)
 
             @foreach ($draftpages as $k => $page)
 
-                <tr id="pid{{ $page->id }}">
+                <tr id="activeid{{ $page->id }}">
                     <!---Position field-->
                     <th scope="row" id="page_position_clone{{ $page->id }}">
                         <form action="admin/pages/update/updateposition" method="post">
@@ -59,7 +59,7 @@
                                     class="dropdown-item" id="publish_function{{ $page->id }}">Publish</a>
                                 <!--Delete action--->
                                 <a href=""
-                                    onclick="event.preventDefault();DeletePage({{ $page->id }},{{ $page->parent_page_id }})"
+                                    onclick="event.preventDefault();DeleteAnyPage({{ $page->id }},{{ $page->parent_id != NULL ? $page->parent_id : 0 }},{{$draftpages->currentPage()}},{{$draftpages->firstItem()}},{{$draftpages->lastItem()}} ,'/drafts' )"
                                     class="dropdown-item">Delete</a>
                             </div>
                         </div>
@@ -69,12 +69,16 @@
 
             @endforeach
 
-
+            @else
+            <tr id="notrashpages">
+                <th class="text-muted">There is no item here yer.</th>
+            </tr>
+        @endif
 
         </tbody>
     </table>
     <div id="draft_pagination">
-        {{ $draftpages->withpath('/admin/pages/getdraftpages') }}
+        {{ $draftpages->withpath('/admin/pages/drafts') }}
     </div>
     <script>
         $(function() {

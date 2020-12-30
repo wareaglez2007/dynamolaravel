@@ -31,7 +31,7 @@
         </thead>
         <tbody>
 
-
+            @if ($publishcount != 0)
             @foreach ($pageslist as $k => $page)
                 <tr id="activeid{{ $page->id }}">
                     <!---Position field-->
@@ -83,10 +83,10 @@
                                     class="dropdown-item">Edit</a>
                                 <!--Delete action-->
                                 <a href=""
-                                    onclick="event.preventDefault();DeleteActivePage({{ $page->id }},{{ $page->parent_id }})"
+                                    onclick="event.preventDefault();DeleteAnyPage({{ $page->id }},{{ $page->parent_id != NULL ? $page->parent_id : 0 }}, {{$pageslist->currentPage()}},{{$pageslist->firstItem()}},{{$pageslist->lastItem()}},'')"
                                     class="dropdown-item">Delete</a>
                                 <!--Unbublish action-->
-                                <a href="" onclick="event.preventDefault();UnPublishPage({{ $page->id }})"
+                                <a href="" onclick="event.preventDefault();UnPublishPage({{ $page->id}}, {{$pageslist->currentPage()}},{{$pageslist->firstItem()}},{{$pageslist->lastItem()}})"
                                     class="dropdown-item" id="unpublish_function{{ $page->id }}">Unpublish</a>
                             </div>
                         </div>
@@ -94,7 +94,11 @@
                 </tr>
 
             @endforeach
-
+            @else
+            <tr id="notrashpages">
+                <th class="text-muted">There is no item here yer.</th>
+            </tr>
+        @endif
         </tbody>
     </table>
 

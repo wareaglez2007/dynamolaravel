@@ -85,13 +85,6 @@
 
         ///////////////////////NOW DRAFTS
 
-
-
-
-
-
-
-
         $(function() {
             $('#draftcount').on('click', function(e) {
                 e.preventDefault();
@@ -99,7 +92,7 @@
                 //  $('#load a').css('color', '#dfecf6');
                 //$('#load').append('<img style="position: absolute; left: 0; top: 0; z-index: 100000;" src="/images/loading.gif" />');
 
-                var url = '/admin/pages/getdraftpages';
+                var url = '/admin/pages/drafts';
                 getPublished(url);
                 // window.history.pushState("", "", url);
             });
@@ -116,47 +109,31 @@
             }
         });
 
+        ///////////////////////NOW Trashed
 
+        $(function() {
+            $('#trashcount').on('click', function(e) {
+                e.preventDefault();
+                $(this).tab('show');
+                //  $('#load a').css('color', '#dfecf6');
+                //$('#load').append('<img style="position: absolute; left: 0; top: 0; z-index: 100000;" src="/images/loading.gif" />');
 
-
-
-
-
-
-        function GetAllPublishedPages() {
-            $.get('/admin/pages/getpublishedtpages', function(getview) {
-                console.log(getview);
-               // $('#published').show();
-            });
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $(
-                            'meta[name="csrf-token"]')
-                        .attr(
-                            'content')
-                }
+                var url = '/admin/pages/trashed';
+                getPublished(url);
+                // window.history.pushState("", "", url);
             });
 
-
-        }
-
-        function GetAllDraftPages() {
-            $.get('/admin/pages/getdraftpages', function(getview) {
-                console.log(getview);
-             //   $('#published').hide();
-            });
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $(
-                            'meta[name="csrf-token"]')
-                        .attr(
-                            'content')
-                }
-            });
-
-
-        }
-
+            function getPublished(url) {
+                $.ajax({
+                    url: url
+                }).done(function(data) {
+                    //  console.log(data);
+                    $('#some_ajax').html(data);
+                }).fail(function() {
+                    //Do some error
+                });
+            }
+        });
     </script>
 
         <!---Call AJAX FUNCTIONS HERE-->

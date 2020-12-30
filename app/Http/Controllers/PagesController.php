@@ -45,8 +45,7 @@ class PagesController extends Controller
             'draftcount' => $draft_pages_count,
             'trashed' => $trashed_page_count,
             'allcount' => $all_pages_count
-            ]);
-
+        ]);
     }
 
 
@@ -73,7 +72,7 @@ class PagesController extends Controller
                 'allcount' => $all_pages_count,
                 'request' => $request
             ])->render();
-        }else{
+        } else {
             return view('admin.modules.Pages.pages', [
                 'pageslist' => $pageslist,
                 'deleted_pages' => $deleted_pages,
@@ -105,7 +104,7 @@ class PagesController extends Controller
                 'draftpages' => $draft_pages,
                 'allcount' => $all_pages_count
             ])->render();
-        }else{
+        } else {
             return view('admin.modules.Pages.pages', [
 
                 'publishcount' => $publish_page_count,
@@ -116,7 +115,35 @@ class PagesController extends Controller
             ]);
         }
     }
+    public function AjaxTrashedPages(Request $request, pages $pages)
+    {
+        $deleted_pages = $pages->onlyTrashed()->orderBy('position', 'ASC')->paginate(7);
+        $draft_pages_count = $pages->where('pages.active', 0)->count();
+        $all_pages_count = $pages->withTrashed()->count();
+        $publish_page_count = $pages->where('active', 1)->count();
+        $trashed_page_count = $pages->onlyTrashed()->count();
 
+        if ($request->ajax()) {
+
+            return view('admin.layouts.partials.page', [
+
+                'publishcount' => $publish_page_count,
+                'draftcount' => $draft_pages_count,
+                'trashed' => $trashed_page_count,
+                'deleted_pages' => $deleted_pages,
+                'allcount' => $all_pages_count
+            ])->render();
+        } else {
+            return view('admin.modules.Pages.pages', [
+
+                'publishcount' => $publish_page_count,
+                'draftcount' => $draft_pages_count,
+                'trashed' => $trashed_page_count,
+                'deleted_pages' => $deleted_pages,
+                'allcount' => $all_pages_count
+            ]);
+        }
+    }
     /**
      * Pages Tree
      */
@@ -326,7 +353,8 @@ class PagesController extends Controller
         //Check if the page has any children 1st
         //Find all children if parent is zero
         //look at the page id in parent_page_id column of childpages table
-        if ($request->parent == NULL) {
+        $parent = $request->parent == 0 ? NULL : $request->parent;
+        if ($parent == NULL) {
             $child = $pages->with('childItems')->where('parent_id', $request->id)->update(['parent_id' => NULL]);
         }
         $pages->where('id', $request->id)->delete();
@@ -334,6 +362,35 @@ class PagesController extends Controller
 
         $success_message = "Page has been deleted.";
         //return redirect('admin/pages/')->with('message', $success_message);
+        return response()->json(['success' => $success_message]);
+    }
+
+        /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\pages  $pages
+     * @return \Illuminate\Http\Response
+     */
+    public function permDelete(Request $request, pages $pages, slugs $slugs)
+    {
+        //
+        //Check if the page has any children 1st
+        //Find all children if parent is zero
+        //look at the page id in parent_page_id column of childpages table
+
+        //  $parent_info = pages::find($id)->childPages()->where('pages_id', $id)->first();
+        $parent = $request->parent == 0 ? NULL : $request->parent;
+        if ($parent == NULL) {
+            $child = $pages->with('childItems')->where('parent_id', $request->id)->update(['parent_id' => NULL]);
+        }
+
+        $update_new_positions = $pages->where('position', '>', $request->position)->decrement('position');
+
+        //if is not zero means the page is a child and not a main and do not change
+        $pages->where('id', $request->id)->forceDelete();
+        $slugs->where('pages_id', $request->id)->forceDelete();
+
+        $success_message = "Page has been deleted.";
         return response()->json(['success' => $success_message]);
     }
 

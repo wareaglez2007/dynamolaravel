@@ -23,7 +23,7 @@
                             <a href="" class="text-muted btn-group btn-group-sm" id="position_updated{{ $page->id }}"
                                 onclick="event.preventDefault();DoUpdatePosition({{ $page->position }}, {{ $page->id }} )"><i
                                     class="bi bi-arrow-down-up"></i></a>
-                            <select class="form-control btn-group btn-group-sm" style="width: 80px;" name="position"
+                            <select class="form-control btn-group btn-group-sm" style="width: auto;" name="position"
                                 id="position{{ $page->id }}">
                                 @for ($i = 1; $i <= $allcount; $i++)
                                     @if ($i == $page->position)
@@ -77,6 +77,7 @@
 
         </tbody>
     </table>
+    <hr/>
     <div id="draft_pagination">
         {{ $draftpages->withpath('/admin/pages/drafts') }}
     </div>

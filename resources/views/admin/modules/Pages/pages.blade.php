@@ -4,61 +4,66 @@
 @endsection
 @extends('admin.layouts.app')
 @section('content')
-<div class="card" >
-    <div class="card-header ">
-
-        <ul class="nav nav-tabs card-header-tabs" id="backend-pages" role="tablist">
-            <li class="nav-item">
-
-                <a class="nav-link text-muted active" href="#published" role="tab"
-                    aria-controls="published" aria-selected="true" id="pubcount"><i class="bi bi-eye"></i>
-                    Published
-                   <span id="pcount"> ({{ $publishcount }}) </span></a>
 
 
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-muted" href="#draft" role="tab" aria-controls="draft"
-                    aria-selected="false" id="draftcount"><i class="bi bi-eye-slash"></i>
-                    Draft
-                    <span id="dcount">({{ $draftcount }})</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-muted" href="#trashed" role="tab" aria-controls="trashed" aria-selected="false"
-                    id="trashcount"><i class="bi bi-trash"></i>
-                    Trashed
-                   <span id="tcount"> ({{ $trashed }})</span></a>
-            </li>
-            <li class="nav-item">
-                <form action="{{ route('admin.pages.create') }}">
-                    <button class="btn btn-success"
-                        style="height: 35px; line-height: 33px; padding: 0 25px; background: #1d9f3c; border-radius: 2px; margin-left:25px;">Add
-                        new</button>
-                </form>
+    <div class="alert alert-success" id="ajaxactioncalls" style="display: none"></div>
+    <div class="alert alert-danger" id="ajaxadangercalls" style="display: none"></div>
 
-            </li>
 
-        </ul>
 
-    </div>
+    <div class="card">
+        <div class="card-header ">
+
+            <ul class="nav nav-tabs card-header-tabs" id="backend-pages" role="tablist">
+                <li class="nav-item">
+
+                    <a class="nav-link text-muted active" href="#published" role="tab" aria-controls="published"
+                        aria-selected="true" id="pubcount"><i class="bi bi-folder-check"></i>
+                        Published
+                        <span id="pcount"> ({{ $publishcount }}) </span></a>
+
+
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-muted" href="#draft" role="tab" aria-controls="draft" aria-selected="false"
+                        id="draftcount"><i class="bi bi-folder-plus"></i>
+                        Draft
+                        <span id="dcount">({{ $draftcount }})</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-muted" href="#trashed" role="tab" aria-controls="trashed" aria-selected="false"
+                        id="trashcount"><i class="bi bi-trash"></i>
+                        Trashed
+                        <span id="tcount"> ({{ $trashed }})</span></a>
+                </li>
+
+
+            </ul>
+
+        </div>
 
         @include('admin.layouts.partials.page')
+        <div class="card-footer">
+            <form action="{{ route('admin.pages.create') }}">
+                <button class="btn btn-success"
+                    style="height: 35px; line-height: 33px; padding: 0 25px; background: #1d9f3c; border-radius: 2px; margin-left:25px;">Add
+                    new</button>
+            </form>
+        </div>
     </div>
+
 
 
     <script>
         //$('#backend-pages a').on('click', function(e) {
-      //      e.preventDefault()
-           // $(this).tab('show')
-      //  })
+        //      e.preventDefault()
+        // $(this).tab('show')
+        //  })
 
     </script>
     <script type="text/javascript">
-
-
-
         $(function() {
-           $('#pubcount').on('click', function(e) {
+            $('#pubcount').on('click', function(e) {
                 e.preventDefault();
                 $(this).tab('show');
                 //  $('#load a').css('color', '#dfecf6');
@@ -134,8 +139,9 @@
                 });
             }
         });
+
     </script>
 
-        <!---Call AJAX FUNCTIONS HERE-->
-        <script src="{{ asset('js/ajaxcalls.js') }}" defer></script>
+    <!---Call AJAX FUNCTIONS HERE-->
+    <script src="{{ asset('js/ajaxcalls.js') }}" defer></script>
 @endsection

@@ -25,10 +25,14 @@ function PublishPage(id, pagenum, first, last) {
                 }
                 var url = '/admin/pages/drafts?page=' + pagenum;
 
+                $('#ajaxactioncalls').attr('style', 'display: visible;');
+                $('#ajaxactioncalls').html('<img src="/storage/ajax-loader.gif">' + response.success + "...");
                 $('#activeid' + draftpage.id).fadeOut(700, function () {
                     $('#activeid' + draftpage.id).remove();
                     getPublished(url);
                 });
+
+                $('#ajaxactioncalls').fadeOut(2500);
                 function getPublished(url) {
                     $.ajax({
                         url: url
@@ -77,12 +81,15 @@ function UnPublishPage(id, pagenum, first, last) {
                 }
                 var url = '/admin/pages?page=' + pagenum;
 
+                $('#ajaxactioncalls').attr('style', 'display: visible;');
+                $('#ajaxactioncalls').html('<img src="/storage/ajax-loader.gif">' + response.success + "...");
+
                 $('#activeid' + activepage.id).fadeOut(700, function () {
                     $('#activeid' + activepage.id).remove();
                     getPublished(url);
                 });
 
-
+                $('#ajaxactioncalls').fadeOut(2500);
                 function getPublished(url) {
                     $.ajax({
                         url: url
@@ -107,7 +114,7 @@ function UnPublishPage(id, pagenum, first, last) {
 } //closeing for PublishPage function
 
 //Delete Any Page
-function DeleteAnyPage(id, parent, pagenum, first, last, type ) {
+function DeleteAnyPage(id, parent, pagenum, first, last, type) {
     $.get('/admin/pages/all/todelete/' + id + '/' + parent, function (todelete) {
         //console.log(todelete);
         $.ajaxSetup({
@@ -130,13 +137,18 @@ function DeleteAnyPage(id, parent, pagenum, first, last, type ) {
                 if (first == last) {
                     pagenum = pagenum - 1;
                 }
-                var url = '/admin/pages'+type+'?page=' + pagenum;
-                console.log(url);
+                var url = '/admin/pages' + type + '?page=' + pagenum;
+               // console.log(url);
+               $('#ajaxactioncalls').attr('style', 'display: visible;');
+               $('#ajaxactioncalls').html('<img src="/storage/ajax-loader.gif">' + response.success + "...");
 
                 $('#activeid' + todelete.id).fadeOut(700, function () {
                     $('#activeid' + todelete.id).remove();
                     getPublished(url);
                 });
+
+                $('#ajaxactioncalls').fadeOut(2500);
+
                 function getPublished(url) {
                     $.ajax({
                         url: url
@@ -186,10 +198,16 @@ function PermDeletePage(id, parent, pagenum, first, last, position) {
                 }
                 var url = '/admin/pages/trashed?page=' + pagenum;
 
+                //ajaxadangercalls
+                $('#ajaxadangercalls').attr('style', 'display: visible;');
+                $('#ajaxadangercalls').html('<img src="/storage/ajax-loader-red.gif">' + response.success);
+
                 $('#activeid' + todelete.id).fadeOut(700, function () {
                     $('#activeid' + todelete.id).remove();
                     getPublished(url);
                 });
+
+                $('#ajaxadangercalls').fadeOut(2500);
                 function getPublished(url) {
                     $.ajax({
                         url: url
@@ -236,11 +254,15 @@ function RestorePage(id, pagenum, first, last) {
                     pagenum = pagenum - 1;
                 }
                 var url = '/admin/pages/trashed?page=' + pagenum;
+                $('#ajaxactioncalls').attr('style', 'display: visible;');
+                $('#ajaxactioncalls').html('<img src="/storage/ajax-loader.gif">' + response.success + "...");
 
                 $('#activeid' + torestore.id).fadeOut(700, function () {
                     $('#activeid' + torestore.id).remove();
                     getPublished(url);
                 });
+
+                $('#ajaxactioncalls').fadeOut(2500);
                 function getPublished(url) {
                     $.ajax({
                         url: url

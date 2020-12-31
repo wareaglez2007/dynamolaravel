@@ -6,26 +6,7 @@
                 <th scope="col">Position</th>
                 <th scope="col">ID</th>
                 <th scope="col">Title</th>
-                <th scope="col">
-                    <!---Bulk Actions -->
-                    <div class="dropdown show btn btn-outline-success">
-                        <a class="btn btn-sm dropdown-toggle " href="#" role="button" id="dropdownMenuLink"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <b>Bulk Actions</b>&nbsp;<i class="bi bi-toggles"></i>
-
-                        </a>
-                        <!--Edit action-->
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <!--Published page actions-->
-
-                            <!--Delete action-->
-                            <a href="" class="dropdown-item">Delete All</a>
-                            <!--Unbublish action-->
-                            <a href="" class="dropdown-item">Unpublish All</a>
-                        </div>
-                    </div>
-
-                </th>
+                <th scope="col">Actions</th>
             </tr>
 
         </thead>
@@ -40,12 +21,12 @@
                             @csrf
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             <a href="" class="text-muted btn-group btn-group-sm" id="position_updated{{ $page->id }}"
-                                onclick="event.preventDefault();DoUpdatePosition({{ $page->position }}, {{ $page->id }} )"><i
+                                onclick="event.preventDefault();DoUpdatePosition({{ $page->position }}, {{ $page->id }}, {{$pageslist->currentPage()}} )"><i
                                     class="bi bi-arrow-down-up"></i>
                             </a>
-                            <select class="form-control btn-group btn-group-sm" style="width: 80px;" name="position"
+                            <select class="form-control btn-group btn-group-sm" style="width: auto;" name="position"
                                 id="position{{ $page->id }}"
-                                onchange="event.preventDefault();DoUpdatePosition({{ $page->position }}, {{ $page->id }} )">
+                                onchange="event.preventDefault();DoUpdatePosition({{ $page->position }}, {{ $page->id }} , {{$pageslist->currentPage()}})">
                                 @for ($i = 1; $i <= $allcount; $i++)
                                     @if ($i == $page->position)
 
@@ -101,15 +82,16 @@
         @endif
         </tbody>
     </table>
-
+<hr/>
 
     {{ $pageslist->withPath('/admin/pages') }}
+
 </div>
 
 <!---SCRIPT FOR UPDATE POSITION-->
 <script>
     //END OF WINDOW ON LOAD
-    function DoUpdatePosition(old_position, id) {
+    function DoUpdatePosition(old_position, id, cpage) {
         var old_position = old_position;
         var new_position = $('select#position' + id).val();
         console.log(old_position + " " + new_position + " " + id);
@@ -131,10 +113,31 @@
                 id: id
             },
             success: function(response) {
-                setTimeout(function() { // wait for 7 mili secs(2)
+               // setTimeout(function() { // wait for 7 mili secs(2)
 
-                    location.reload(); // then reload the page.(3)
-                }, 200);
+                 //   location.reload(); // then reload the page.(3)
+              //  }, 200);
+
+
+                var url = '/admin/pages?page='+cpage;
+                console.log(url);
+                getPublished(url);
+
+                function getPublished(url) {
+                $.ajax({
+                    url: url
+                }).done(function(data) {
+                    //  console.log(data);
+                    $('#some_ajax').html(data);
+                }).fail(function() {
+                    //Do some error
+                });
+            }
+
+
+
+
+
             },
             error: function(errors) {
 

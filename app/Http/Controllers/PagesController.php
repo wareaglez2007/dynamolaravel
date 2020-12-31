@@ -263,8 +263,14 @@ class PagesController extends Controller
             ->update([
                 'active' => request('change_status')
             ]);
-
-        return response()->json(['success' => request()]);
+        $title = $pages->find(request('page_id'));
+                if($request->change_status == 1){
+                    $keyword = "published";
+                }else{
+                    $keyword = "Unpublished";
+                }
+         $success_message = "Page <b>".$title->title."</b> has been ".$keyword;
+        return response()->json(['success' => $success_message]);
         // return redirect('admin/pages');
     }
 
@@ -276,7 +282,10 @@ class PagesController extends Controller
         $restore_page = $pages->withTrashed()->find($request->id)->restore();
         $restore_page_slug = $page_slugs->withTrashed()->where('pages_id', $request->id)->restore();
 
-        return response()->json(['success' => request()]);
+        $title = $pages->find($request->id);
+
+        $success_message = "Page <b>".$title->title."</b> has been restored.";
+        return response()->json(['success' => $success_message]);
     }
 
 
@@ -337,7 +346,7 @@ class PagesController extends Controller
             'content' => $request->description,
             'owner' => $request->title,
         ]);
-        $success_message = "Page " . $request->title . " has been updated";
+        $success_message = "Page <b>" . $request->title . "</b> has been updated";
         return response()->json(['success' => $success_message]);
         //return redirect('admin/pages/edit/' . $request->page_id)->withErrors($validatedData);
     }
@@ -357,10 +366,12 @@ class PagesController extends Controller
         if ($parent == NULL) {
             $child = $pages->with('childItems')->where('parent_id', $request->id)->update(['parent_id' => NULL]);
         }
+        $title = $pages->find($request->id);
         $pages->where('id', $request->id)->delete();
         $slugs->where('pages_id', $request->id)->delete();
 
-        $success_message = "Page has been deleted.";
+
+        $success_message = "Page <b>".$title->title."</b> has been deleted.";
         //return redirect('admin/pages/')->with('message', $success_message);
         return response()->json(['success' => $success_message]);
     }
@@ -384,13 +395,15 @@ class PagesController extends Controller
             $child = $pages->with('childItems')->where('parent_id', $request->id)->update(['parent_id' => NULL]);
         }
 
+        $success_message = "Page has been permanatly deleted <i class='bi bi-exclamation-circle'></i>";
+
         $update_new_positions = $pages->where('position', '>', $request->position)->decrement('position');
 
         //if is not zero means the page is a child and not a main and do not change
         $pages->where('id', $request->id)->forceDelete();
         $slugs->where('pages_id', $request->id)->forceDelete();
 
-        $success_message = "Page has been deleted.";
+
         return response()->json(['success' => $success_message]);
     }
 

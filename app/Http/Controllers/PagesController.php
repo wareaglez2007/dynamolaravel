@@ -486,4 +486,33 @@ class PagesController extends Controller
 
         return response()->json(['success' => $success_message]);
     }
+
+    //Bulk Unpublish function
+    public function BulkUnpublish(Request $request, pages $pages){
+
+        $count = $pages->where('active', 1)->count();
+        $success_message = "There are no published pages here.";
+        if($count > 0){
+            $pages->where('active', 1)->update(['active' => 0]);
+            $success_message = "All pages have been unpublished.";
+        }
+
+
+        return response()->json(['success' => $success_message]);
+
+    }
+     //Bulk Publish function
+     public function BulkPublish(Request $request, pages $pages){
+
+        $count = $pages->where('active', 0)->count();
+        $success_message = "There are no unpublished pages here.";
+        if($count > 0){
+            $pages->where('active', 0)->update(['active' => 1]);
+            $success_message = "All pages have been published.";
+        }
+
+
+        return response()->json(['success' => $success_message]);
+
+    }
 }

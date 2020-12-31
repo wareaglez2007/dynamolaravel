@@ -49,7 +49,7 @@ Route::get('/admin/home', 'HomeController@index')->name('admin.home');
 
 
 
-Route::get('/admin/pages', 'PagesController@index')->name('admin.pages'); //Request page
+//Route::get('/admin/pages', 'PagesController@index')->name('admin.pages'); //Request page
 Route::get('/admin/pages', 'PagesController@AjaxPublishedPages')->name('admin.pages'); // show the draft pages
 Route::get('/admin/pages/drafts', 'PagesController@AjaxDraftPages')->name('admin.pages.draft'); // show the draft pages
 Route::get('/admin/pages/trashed', 'PagesController@AjaxTrashedPages')->name('admin.pages.draft'); // show the draft pages
@@ -76,7 +76,8 @@ Route::post('/admin/pages/edit/addimages', 'PagesController@AppendImageToPage')-
 Route::post('/admin/pages/edit/dettachimage', 'PagesController@DettachImageFromPage');
 
 Route::post('/admin/pages/update/updateposition', 'PagesController@UpdatePosition');
-
+Route::post('/admin/pages/bulkunpublish', 'PagesController@BulkUnpublish');
+Route::post('/admin/pages/bulkpublish', 'PagesController@BulkPublish');
 
 
 

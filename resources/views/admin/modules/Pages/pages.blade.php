@@ -44,101 +44,11 @@
 
         @include('admin.layouts.partials.page')
         <div class="card-footer">
-            <form action="{{ route('admin.pages.create') }}">
-                <button class="btn btn-success"
-                    style="height: 35px; line-height: 33px; padding: 0 25px; background: #1d9f3c; border-radius: 2px; margin-left:25px;">Add
-                    new</button>
-            </form>
+
         </div>
     </div>
 
-
-
-    <script>
-        //$('#backend-pages a').on('click', function(e) {
-        //      e.preventDefault()
-        // $(this).tab('show')
-        //  })
-
-    </script>
     <script type="text/javascript">
-        $(function() {
-            $('#pubcount').on('click', function(e) {
-                e.preventDefault();
-                $(this).tab('show');
-                //  $('#load a').css('color', '#dfecf6');
-                //$('#load').append('<img style="position: absolute; left: 0; top: 0; z-index: 100000;" src="/images/loading.gif" />');
-
-                var url = $(this).attr('href');
-                getPublished(url);
-                //window.history.pushState("", "", url);
-            });
-
-            //pubcount
-
-            function getPublished(url) {
-                $.ajax({
-                    url: url
-                }).done(function(data) {
-                    //  console.log(data);
-                    $('#some_ajax').html(data);
-                }).fail(function() {
-                    //Do some error
-                });
-            }
-        });
-
-        ///////////////////////NOW DRAFTS
-
-        $(function() {
-            $('#draftcount').on('click', function(e) {
-                e.preventDefault();
-                $(this).tab('show');
-                //  $('#load a').css('color', '#dfecf6');
-                //$('#load').append('<img style="position: absolute; left: 0; top: 0; z-index: 100000;" src="/images/loading.gif" />');
-
-                var url = '/admin/pages/drafts';
-                getPublished(url);
-                // window.history.pushState("", "", url);
-            });
-
-            function getPublished(url) {
-                $.ajax({
-                    url: url
-                }).done(function(data) {
-                    //  console.log(data);
-                    $('#some_ajax').html(data);
-                }).fail(function() {
-                    //Do some error
-                });
-            }
-        });
-
-        ///////////////////////NOW Trashed
-
-        $(function() {
-            $('#trashcount').on('click', function(e) {
-                e.preventDefault();
-                $(this).tab('show');
-                //  $('#load a').css('color', '#dfecf6');
-                //$('#load').append('<img style="position: absolute; left: 0; top: 0; z-index: 100000;" src="/images/loading.gif" />');
-
-                var url = '/admin/pages/trashed';
-                getPublished(url);
-                // window.history.pushState("", "", url);
-            });
-
-            function getPublished(url) {
-                $.ajax({
-                    url: url
-                }).done(function(data) {
-                    //  console.log(data);
-                    $('#some_ajax').html(data);
-                }).fail(function() {
-                    //Do some error
-                });
-            }
-        });
 
     </script>
 

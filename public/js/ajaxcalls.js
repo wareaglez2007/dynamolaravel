@@ -286,3 +286,211 @@ function RestorePage(id, pagenum, first, last) {
     }) //closing for get
 }
 
+
+//SCRIPT FOR UPDATE POSITION
+    //END OF WINDOW ON LOAD
+    function DoUpdatePosition(old_position, id, cpage, page) {
+        var old_position = old_position;
+        var new_position = $('select#position' + id).val();
+        // console.log(old_position + " " + new_position + " " + id);
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $(
+                        'meta[name="csrf-token"]')
+                    .attr(
+                        'content')
+            }
+        });
+        $.ajax({
+            url: "/admin/pages/update/updateposition",
+            type: "post",
+            data: {
+                old_p: old_position,
+                new_p: new_position,
+                id: id
+            },
+            success: function(response) {
+                // setTimeout(function() { // wait for 7 mili secs(2)
+
+                //   location.reload(); // then reload the page.(3)
+                //  }, 200);
+
+
+                var url = page + '?page=' + cpage;
+                //    console.log(url);
+                getPublished(url);
+
+                function getPublished(url) {
+                    $.ajax({
+                        url: url
+                    }).done(function(data) {
+                        //  console.log(data);
+                        $('#some_ajax').html(data);
+                    }).fail(function() {
+                        //Do some error
+                    });
+                }
+
+            },
+            error: function(errors) {
+
+            }
+        });
+    }
+    ///BULK UNPUBLISH FUNCTION
+    function BulkUnpublish() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $(
+                        'meta[name="csrf-token"]')
+                    .attr(
+                        'content')
+            }
+        }); //closing of ajaxSetup
+        $.ajax({
+            url: "/admin/pages/bulkunpublish",
+            type: "post",
+            success: function(response) {
+
+                $('#ajaxactioncalls').attr('style', 'display: visible;');
+                $('#ajaxactioncalls').html('<img src="/storage/ajax-loader.gif">' + response.success +
+                    "...");
+
+                var url = "/admin/pages";
+                $("tr.eachrow").each(function() {
+                    $(this).fadeOut(700, function() {
+                        $(this).remove();
+                        getPublished(url);
+                    });
+
+
+                });
+                $('#ajaxactioncalls').fadeOut(2500);
+                function getPublished(url) {
+                    $.ajax({
+                        url: url
+                    }).done(function(data) {
+                        $('#some_ajax').html(data);
+                    }).fail(function() {
+                        //Do some error
+                    });
+                }
+                //Call another ajax
+                $.get('/admin/pages/published/count', function(newcount) {
+                    $('#tcount').text('(' + newcount.tashedcount + ')');
+                    $('#dcount').text('(' + newcount.draftnewcount + ')');
+                    $('#pcount').text('(' + newcount.newcount + ')');
+
+                });
+
+            }
+        }) //closing for ajax
+    }//Closing of BulkUnpublish function
+
+    ///BULK PUBLISH FUNCTION
+    function BulkPublish() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $(
+                        'meta[name="csrf-token"]')
+                    .attr(
+                        'content')
+            }
+        }); //closing of ajaxSetup
+        $.ajax({
+            url: "/admin/pages/bulkpublish",
+            type: "post",
+            success: function(response) {
+
+                $('#ajaxactioncalls').attr('style', 'display: visible;');
+                $('#ajaxactioncalls').html('<img src="/storage/ajax-loader.gif">' + response.success +
+                    "...");
+
+                var url = "/admin/pages/drafts";
+                $("tr.eachdraftrow").each(function() {
+                    $(this).fadeOut(700, function() {
+                        $(this).remove();
+                        getPublished(url);
+                    });
+
+
+                });
+                $('#ajaxactioncalls').fadeOut(2500);
+                function getPublished(url) {
+                    $.ajax({
+                        url: url
+                    }).done(function(data) {
+                        $('#some_ajax').html(data);
+                    }).fail(function() {
+                        //Do some error
+                    });
+                }
+                //Call another ajax
+                $.get('/admin/pages/published/count', function(newcount) {
+                    $('#tcount').text('(' + newcount.tashedcount + ')');
+                    $('#dcount').text('(' + newcount.draftnewcount + ')');
+                    $('#pcount').text('(' + newcount.newcount + ')');
+
+                });
+
+            }
+        }) //closing for ajax
+    }//Closing of BulkUnpublish function
+
+
+
+            ///////////////////////NOW PUBLISHED
+            $(function() {
+                $('#pubcount').on('click', function(e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                    var url = $(this).attr('href');
+                    getPublished(url);
+                });
+                function getPublished(url) {
+                    $.ajax({
+                        url: url
+                    }).done(function(data) {
+                        $('#some_ajax').html(data);
+                    }).fail(function() {
+                        //Do some error
+                    });
+                }
+            });
+            ///////////////////////NOW DRAFTS
+            $(function() {
+                $('#draftcount').on('click', function(e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                    var url = '/admin/pages/drafts';
+                    getPublished(url);
+                });
+                function getPublished(url) {
+                    $.ajax({
+                        url: url
+                    }).done(function(data) {
+                        $('#some_ajax').html(data);
+                    }).fail(function() {
+                        //Do some error
+                    });
+                }
+            });
+            ///////////////////////NOW Trashed
+            $(function() {
+                $('#trashcount').on('click', function(e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                    var url = '/admin/pages/trashed';
+                    getPublished(url);
+                });
+                function getPublished(url) {
+                    $.ajax({
+                        url: url
+                    }).done(function(data) {
+                        $('#some_ajax').html(data);
+                    }).fail(function() {
+                        //Do some error
+                    });
+                }
+            });

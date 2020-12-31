@@ -29,19 +29,19 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                     <!--Restore action-->
-                                    <a href="javascript:void(0)" onclick="RestorePage({{ $page->id }}, {{$deleted_pages->currentPage()}},{{$deleted_pages->firstItem()}},{{$deleted_pages->lastItem()}})"
+                                    <a href="javascript:void(0)"
+                                        onclick="RestorePage({{ $page->id }}, {{ $deleted_pages->currentPage() }},{{ $deleted_pages->firstItem() }},{{ $deleted_pages->lastItem() }})"
                                         class="dropdown-item" id="in_trash_restore{{ $page->id }}">Restore</a>
                                     <!--Perm DELETE action-->
-                                    <a href="javascript:void(0)"
-                                        onclick="PermDeletePage(
+                                    <a href="javascript:void(0)" onclick="PermDeletePage(
                                             {{ $page->id }},
-                                        {{ $page->parent_id != NULL ? $page->parent_id : 0 }},
-                                        {{$deleted_pages->currentPage()}},
-                                        {{$deleted_pages->firstItem()}},
-                                        {{$deleted_pages->lastItem()}},
-                                        {{$page->position}}
-                                        )"
-                                        class="dropdown-item" id="in_trash_permdel{{ $page->id }}">Permanent Delete</a>
+                                        {{ $page->parent_id != null ? $page->parent_id : 0 }},
+                                        {{ $deleted_pages->currentPage() }},
+                                        {{ $deleted_pages->firstItem() }},
+                                        {{ $deleted_pages->lastItem() }},
+                                        {{ $page->position }}
+                                        )" class="dropdown-item" id="in_trash_permdel{{ $page->id }}">Permanent
+                                        Delete</a>
                                 </div>
 
                             </div>
@@ -62,32 +62,26 @@
         {{ $deleted_pages->withPath('/admin/pages/trashed') }}
     </div>
 
+</div>
 
-    <script>
-        $(function() {
-            $('#trashed_pagination .pagination a').on('click', function(e) {
-                e.preventDefault();
 
-                //  $('#load a').css('color', '#dfecf6');
-                //$('#load').append('<img style="position: absolute; left: 0; top: 0; z-index: 100000;" src="/images/loading.gif" />');
-
-                var url = $(this).attr('href');
-                getPublished(url);
-                // window.history.pushState("", "", url);
-            });
-
-            function getPublished(url) {
-                $.ajax({
-                    url: url
-                }).done(function(data) {
-                    //  console.log(data);
-                    $('#some_ajax').html(data);
-                }).fail(function() {
-                    //Do some error
-                });
-            }
+<script>
+    $(function() {
+        $('#trashed_pagination .pagination a').on('click', function(e) {
+            e.preventDefault();
+            var url = $(this).attr('href');
+            getPublished(url);
+            // window.history.pushState("", "", url);
         });
+        function getPublished(url) {
+            $.ajax({
+                url: url
+            }).done(function(data) {
+                $('#some_ajax').html(data);
+            }).fail(function() {
+                //Do some error
+            });
+        }
+    });
 
-    </script>
-</div>
-</div>
+</script>

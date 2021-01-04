@@ -187,7 +187,7 @@ class PagesController extends Controller
         //before inserting we need to check and see if the page name is unique or not
         $validatedData = $request->validate([
             'title' => ['required', 'unique:pages', 'max:255'],
-            'description' => ['required'],
+            'content' => ['required'],
         ]);
         $count = $pages->get()->count();
         $pages->title = $request->title;
@@ -197,6 +197,7 @@ class PagesController extends Controller
         $pages->owner = $request->owner;
         $pages->position = (int)$count + 1;
         $pages->save();
+        dd($pages->save());
         if (strtolower($request->title) != "home") {
             $slugs->slug = $this->SlugsCreator($request->slug);
             $pages->slug()->save($slugs);

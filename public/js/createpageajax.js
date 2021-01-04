@@ -106,7 +106,7 @@
                                             parent_page_id: PageParent,
                                             slug: PageSlug,
                                             owner: PageOwner,
-                                            description: PageDesription
+                                            content: PageDesription
 
                                         }, //End of data
                                         success: function(response) {

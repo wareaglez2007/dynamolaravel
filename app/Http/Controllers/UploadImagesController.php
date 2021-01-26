@@ -21,7 +21,7 @@ class UploadImagesController extends Controller
     public function getUploadForm()
     {
         $images = UploadImages::get();
-        return view('admin.modules.Images.uploadimages', compact('images'));
+        return view('admin.layouts.partials.controller', compact('images'))->render();
     }
     /**
      * @function CreateDirectory

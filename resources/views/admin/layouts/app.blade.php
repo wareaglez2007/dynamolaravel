@@ -63,14 +63,15 @@
                     <div class="sidebar-sticky pt-3">
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
-
-                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-markdown-fill"
-                                        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <a class="nav-link" href="{{ route('admin.home') }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-house-fill" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd"
-                                            d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm11.5 1a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L11 9.293V5.5a.5.5 0 0 1 .5-.5zM3.56 7.01V11H2.5V5.001h1.208l1.71 3.894h.04l1.709-3.894h1.2V11H7.294V7.01h-.057l-1.42 3.239h-.773l-1.428-3.24H3.56z" />
+                                            d="M8 3.293l6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6zm5-.793V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
+                                        <path fill-rule="evenodd"
+                                            d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z" />
                                     </svg>&nbsp;
-                                    Available Modules
+                                    Home
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -80,7 +81,7 @@
                                 <div class="accordion" id="accordionExample">
 
                                     <a class="nav-link" data-toggle="collapse" data-target="#collapseOne"
-                                        aria-expanded="false" aria-controls="collapseOne" href="#" >
+                                        aria-expanded="false" aria-controls="collapseOne" href="#">
 
                                         <svg width="1em" height="1em" viewBox="0 0 16 16"
                                             class="bi bi-file-earmark-ppt-fill" fill="currentColor"
@@ -93,7 +94,8 @@
 
                                     <div class="collapse hide" id="collapseOne" class="" aria-labelledby="headingOne"
                                         data-parent="#accordionExample">
-                                        <a href="{{ route('admin.pages') }}" class="list-group-item nav-link" id="pages_manager_ajax">Edit
+                                        <a href="{{ route('admin.pages') }}" class="list-group-item nav-link"
+                                            id="pages_manager_ajax">Edit
                                             Pages</a>
                                         <a href="{{ route('admin.pages.create') }}"
                                             class="list-group-item nav-link">Create New</a>
@@ -108,7 +110,7 @@
 
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="">
+                                <a class="nav-link" href="{{ route('admin.navigations') }}">
 
                                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-signpost-2"
                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -121,7 +123,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
+                                <a class="nav-link" href="{{ route('admin.seo') }}">
 
                                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-graph-up"
                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -132,7 +134,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
+                                <a class="nav-link" href="{{ route('admin.social') }}">
 
                                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-emoji-sunglasses"
                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -174,7 +176,7 @@
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
+                                <a class="nav-link" href="{{ route('admin.business') }}">
 
                                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-shop"
                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">

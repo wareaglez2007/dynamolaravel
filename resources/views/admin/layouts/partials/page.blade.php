@@ -26,9 +26,6 @@
                 @include('admin.layouts.partials.trashedpages')
             @endif
 
-
-
-
         </div>
     </div>
 </div>

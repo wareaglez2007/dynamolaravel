@@ -445,7 +445,7 @@ function RestorePage(id, pagenum, first, last) {
                 $('#pubcount').on('click', function(e) {
                     e.preventDefault();
                     $(this).tab('show');
-                    var url = $(this).attr('href');
+                    var url = '/admin/pages';
                     getPublished(url);
                 });
                 function getPublished(url) {

@@ -36,7 +36,7 @@ Auth::routes();
  * Controller = HomeController
  */
 
-Route::get('/admin/home', 'HomeController@index')->name('admin.home');
+Route::get('/admin', 'DashboardController@index')->name('admin.home');
 /**
  * Modules:
  * Admin Section for Module routes
@@ -52,7 +52,7 @@ Route::get('/admin/home', 'HomeController@index')->name('admin.home');
 //Route::get('/admin/pages', 'PagesController@index')->name('admin.pages'); //Request page
 Route::get('/admin/pages', 'PagesController@AjaxPublishedPages')->name('admin.pages'); // show the draft pages
 Route::get('/admin/pages/drafts', 'PagesController@AjaxDraftPages')->name('admin.pages.draft'); // show the draft pages
-Route::get('/admin/pages/trashed', 'PagesController@AjaxTrashedPages')->name('admin.pages.draft'); // show the draft pages
+Route::get('/admin/pages/trashed', 'PagesController@AjaxTrashedPages')->name('admin.pages.trash'); // show the draft pages
 
 
 Route::get('/admin/pages/pagetree', 'PagesController@Pagestree')->name('admin.pages.tree');
@@ -83,9 +83,26 @@ Route::post('/admin/pages/bulkpublish', 'PagesController@BulkPublish');
 Route::get('/admin/Images/uploadimage', 'UploadImagesController@getUploadForm')->name('admin.images.upload');
 Route::post('/admin/Images/uploadimage', 'UploadImagesController@postUploadForm');
 
+/**
+ * Navigations Manger
+ */
 
+Route::get('/admin/navigations', 'NavigationController@index')->name('admin.navigations');
+/**
+ * SEO Manger
+ */
+Route::get('/admin/seo', 'SEOController@index')->name('admin.seo');
 
+/**
+ * Social Media Manager
+ */
+Route::get('/admin/social-media', 'SocialMediaController@index')->name('admin.social');
 
+/**
+ * Business Information Manager
+ */
+
+Route::get('/admin/business-info', 'BusinessController@index')->name('admin.business');
 
 /***************************AJAX FOR PAGES**********************/
 //validatenewdata

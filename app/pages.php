@@ -34,6 +34,6 @@ class pages extends Model
     }
     public function childItems()
     {
-        return $this->hasMany(pages::class, 'parent_id')->with('items');
+        return $this->hasMany(pages::class, 'parent_id')->with('childItems');
     }
 }

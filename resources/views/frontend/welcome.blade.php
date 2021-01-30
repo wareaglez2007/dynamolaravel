@@ -93,7 +93,7 @@
                 @if (Route::has('login'))
                     <li class="nav-item">
                         @auth
-                            <a href="{{ url('admin/pages') }}" class="nav-link"> {{ Auth::user()->name }}'s Dashboard</a>
+                            <a href="{{ url('admin') }}" class="nav-link"> {{ Auth::user()->name }}'s Dashboard</a>
                         </li>
 
                     @else

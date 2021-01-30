@@ -150,6 +150,7 @@ class PagesController extends Controller
     public function Pagestree(pages $pages)
     {
         $tree = pages::whereNull('parent_id')->with('childItems')->orderBy('position', 'ASC')->get();
+      //  dd($tree);
         return view('admin.modules.Pages.pagetree', ['items' => $tree]);
     }
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\pages;
 
 class NavigationController extends Controller
 {
@@ -18,9 +19,15 @@ class NavigationController extends Controller
     }
 
 
-    public function index(Request $request)
+    public function index(Request $request,pages $pages )
     {
 
-        return view('admin.modules.general', ['mod_name' => 'Navigation Manager']);
+        $tree = pages::whereNull('parent_id')->with('childItems')->orderBy('position', 'ASC')->get();
+        return view('admin.modules.general', [
+        'mod_name' => 'Navigation Manager',
+        'items' => $tree
+
+
+        ]);
     }
 }

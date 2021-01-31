@@ -1,10 +1,40 @@
-<li>{{ $sub_items->title }}</li>
+@if (count($sub_items->items) > 0)
+    <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">{{ $sub_items->title }}</a>
+    @else
+    <li><a class="dropdown-item" href="#">{{ $sub_items->title }}</a></li>
+@endif
+
+
 @if ($sub_items->items)
-    <ul>
-        @if(count($sub_items->items) > 0)
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        @if (count($sub_items->items) > 0)
             @foreach ($sub_items->items as $childItems)
                 @include('admin.layouts.partials.sub_items', ['sub_items' => $childItems])
             @endforeach
         @endif
     </ul>
 @endif
+
+
+<style>
+    .navbar-nav li:hover>ul.dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-submenu {
+        position: relative;
+    }
+
+    .dropdown-submenu>.dropdown-menu {
+        top: 0;
+        left: 100%;
+        margin-top: -6px;
+    }
+
+    /* rotate caret on hover */
+    .dropdown-menu>li>a:hover:after {
+        text-decoration: underline;
+        transform: rotate(-90deg);
+    }
+
+</style>

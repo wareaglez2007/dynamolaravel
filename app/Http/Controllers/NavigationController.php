@@ -22,7 +22,10 @@ class NavigationController extends Controller
     public function index(Request $request,pages $pages )
     {
 
-        $tree = pages::whereNull('parent_id')->with('childItems')->orderBy('position', 'ASC')->get();
+        $tree = pages::whereNull('parent_id')->with('childItems')->whereNull('parent_id')->orderBy('position', 'ASC')->get();
+
+       // dd($tree);
+
         return view('admin.modules.general', [
         'mod_name' => 'Navigation Manager',
         'items' => $tree

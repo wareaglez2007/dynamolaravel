@@ -52,8 +52,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="">Slug</label>
-                                    <input type="text" name="slug" id="" class="form-control" placeholder="Page URI"
-                                        aria-describedby="helpId" disabled @if ($editview->slug != null)
+                                    <input type="text" name="slug" id="slug" class="form-control" placeholder="Page URI"
+                                        aria-describedby="helpId" @if ($editview->slug != null)
                                     value="{{ $editview->slug->slug }}"
                                 @else
                                     value=""
@@ -245,6 +245,7 @@
             var PageParent = $('select#page_parent').val();
             var PageOwner = $('#owner').val();
             var PageDesription = CKEDITOR.instances.editor.getData();
+            var slug = $('#slug').val();
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
@@ -260,7 +261,8 @@
                     subtitle: PageSubTitle,
                     parent_id: PageParent,
                     owner: PageOwner,
-                    description: PageDesription
+                    description: PageDesription,
+                    slug: slug,
 
                 }, //End of data
                 success: function(response) {

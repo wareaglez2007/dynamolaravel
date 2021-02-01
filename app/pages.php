@@ -36,4 +36,12 @@ class pages extends Model
     {
         return $this->hasMany(pages::class, 'parent_id')->with('childItems');
     }
+
+    /**
+     * get the parent of a page
+     */
+    public function parent(){
+
+        return $this->belongsTo(pages::class, 'parent_id')->with('parent');
+    }
 }

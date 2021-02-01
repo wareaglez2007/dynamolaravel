@@ -22,7 +22,7 @@ class NavigationController extends Controller
     public function index(Request $request,pages $pages )
     {
 
-        $tree = pages::whereNull('parent_id')->with('childItems')->whereNull('parent_id')->orderBy('position', 'ASC')->get();
+        $tree = pages::whereNull('parent_id')->with('childItems')->with('slug')->whereNull('parent_id')->orderBy('position', 'ASC')->get();
 
        // dd($tree);
 

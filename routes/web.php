@@ -14,13 +14,13 @@ use Illuminate\Http\Request;
 |
 */
 
-/**
- * RS 12/14/2020
- * Frontend Section routes
- */
-Route::get('/', function () {
-    return view('frontend.welcome');
-});
+
+
+
+
+//Route::get('/{slug}', function () {
+  //  return view('frontend.welcome');
+//});
 
 /********************************************************/
 
@@ -35,8 +35,6 @@ Auth::routes();
  * Dashborard
  * Controller = HomeController
  */
-
-Route::get('/admin', 'DashboardController@index')->name('admin.home');
 /**
  * Modules:
  * Admin Section for Module routes
@@ -50,6 +48,8 @@ Route::get('/admin', 'DashboardController@index')->name('admin.home');
 
 
 //Route::get('/admin/pages', 'PagesController@index')->name('admin.pages'); //Request page
+
+Route::get('/admin', 'DashboardController@index')->name('admin.home');
 Route::get('/admin/pages', 'PagesController@AjaxPublishedPages')->name('admin.pages'); // show the draft pages
 Route::get('/admin/pages/drafts', 'PagesController@AjaxDraftPages')->name('admin.pages.draft'); // show the draft pages
 Route::get('/admin/pages/trashed', 'PagesController@AjaxTrashedPages')->name('admin.pages.trash'); // show the draft pages
@@ -133,3 +133,21 @@ Route::get('/admin/pages/published/count', 'PagesController@getNewPublishedCount
  */
 
 /************************END OF PAGES***************************/
+
+
+/**
+ * RS 12/14/2020
+ * Frontend Section routes
+ */
+//Route::get('/', function () {
+  //  return view('frontend.welcome');
+//});
+
+Route::get('/', 'FrontendController@index');
+
+Route::get('/{slug}', 'FrontendController@SingleSlug');
+
+Route::prefix('{any}')->group(function () {
+    Route::get('/{slug}', 'FrontendController@MultipleSlugs')->where('slug','^[a-zA-Z0-9-_\/]+$');;
+});
+

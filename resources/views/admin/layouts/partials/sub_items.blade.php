@@ -1,7 +1,10 @@
 @if (count($sub_items->items) > 0)
-    <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">{{ $sub_items->title }}</a>
+
+
+
+    <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle xx" href="{{$sub_items->slug->uri}}">{{ $sub_items->title }}</a>
     @else
-    <li><a class="dropdown-item" href="#">{{ $sub_items->title }}</a></li>
+    <li><a class="dropdown-item" href="{{$sub_items->slug->uri}}">{{ $sub_items->title }}</a></li>
 @endif
 
 

@@ -150,7 +150,7 @@ class PagesController extends Controller
     public function Pagestree(pages $pages)
     {
         $tree = pages::whereNull('parent_id')->with('childItems')->orderBy('position', 'ASC')->get();
-      //  dd($tree);
+        //  dd($tree);
         return view('admin.modules.Pages.pagetree', ['items' => $tree]);
     }
     /**
@@ -198,9 +198,14 @@ class PagesController extends Controller
         $pages->owner = $request->owner;
         $pages->position = (int)$count + 1;
         $pages->save();
-        dd($pages->save());
+        // dd($pages->save());
         if (strtolower($request->title) != "home") {
-            $slugs->slug = $this->SlugsCreator($request->slug);
+            if (empty($request->slug)) {
+                $slug = $this->SlugsCreator($request->title);
+            } else {
+                $slug = $this->SlugsCreator($request->slug);
+            }
+            $slugs->slug = $slug;
             $pages->slug()->save($slugs);
         }
 
@@ -266,12 +271,12 @@ class PagesController extends Controller
                 'active' => request('change_status')
             ]);
         $title = $pages->find(request('page_id'));
-                if($request->change_status == 1){
-                    $keyword = "published";
-                }else{
-                    $keyword = "Unpublished";
-                }
-         $success_message = "Page <b>".$title->title."</b> has been ".$keyword;
+        if ($request->change_status == 1) {
+            $keyword = "published";
+        } else {
+            $keyword = "Unpublished";
+        }
+        $success_message = "Page <b>" . $title->title . "</b> has been " . $keyword;
         return response()->json(['success' => $success_message]);
         // return redirect('admin/pages');
     }
@@ -286,7 +291,7 @@ class PagesController extends Controller
 
         $title = $pages->find($request->id);
 
-        $success_message = "Page <b>".$title->title."</b> has been restored.";
+        $success_message = "Page <b>" . $title->title . "</b> has been restored.";
         return response()->json(['success' => $success_message]);
     }
 
@@ -328,7 +333,7 @@ class PagesController extends Controller
      * @param  \App\pages  $pages
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, pages $pages)
+    public function update(Request $request, pages $pages, slugs $slugs)
     {
         $check_title = $pages->find($request->id);
         if ($check_title->title == $request->title) { //meaning if the values are the same allow
@@ -340,6 +345,24 @@ class PagesController extends Controller
             'title' => ['required', $unique_rule, 'max:255'],
 
         ]);
+
+        $get_slugs = $slugs->where('pages_id', $request->id)->get();
+
+        //we will fix the slug uri to be
+        //IF it has parents then get their slugs and append it /services/residential-services/name
+
+        $par = $this->array_values_recursive($request->parent_id);
+        $count_parents = count($par);
+        $slug  = "";
+        for($i=0; $i < $count_parents; $i++){
+            $slug .= "/".$par[$i]->slug->slug;
+        }
+
+        $page_final_slug = $slug."/".$request->slug;
+        $updated_slugs_uri = $slugs->where('pages_id', $request->id)->update(['uri' => $page_final_slug]);
+
+
+
         //Update
         $pages->where('id', $request->id)->update([
             'title' => $request->title,
@@ -348,10 +371,32 @@ class PagesController extends Controller
             'content' => $request->description,
             'owner' => $request->title,
         ]);
+        //Check Slug
+        $get_slugs_count = $slugs->where('pages_id', $request->id)->count();
+
+        if ($get_slugs_count == 0) {
+            //Means we need to update this slug
+            $slugs->slug = $request->slug;
+            $slugs->pages_id = $request->id;
+            $slugs->create(['slug' => $request->slug, 'pages_id' => $request->id]);
+        }
+
+
+
         $success_message = "Page <b>" . $request->title . "</b> has been updated";
         return response()->json(['success' => $success_message]);
         //return redirect('admin/pages/edit/' . $request->page_id)->withErrors($validatedData);
     }
+
+    public function array_values_recursive($id) {
+        $array = pages::where('id', $id)->with('slug')->get();
+        $flat = array();
+        foreach($array as $value) {
+              $flat = array_merge($flat, $this->array_values_recursive($value['parent_id']));
+              $flat[] = $value;
+        }
+        return $flat;
+      }
 
     /**
      * Remove the specified resource from storage.
@@ -373,12 +418,12 @@ class PagesController extends Controller
         $slugs->where('pages_id', $request->id)->delete();
 
 
-        $success_message = "Page <b>".$title->title."</b> has been deleted.";
+        $success_message = "Page <b>" . $title->title . "</b> has been deleted.";
         //return redirect('admin/pages/')->with('message', $success_message);
         return response()->json(['success' => $success_message]);
     }
 
-        /**
+    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\pages  $pages
@@ -490,31 +535,31 @@ class PagesController extends Controller
     }
 
     //Bulk Unpublish function
-    public function BulkUnpublish(Request $request, pages $pages){
+    public function BulkUnpublish(Request $request, pages $pages)
+    {
 
         $count = $pages->where('active', 1)->count();
         $success_message = "There are no published pages here.";
-        if($count > 0){
+        if ($count > 0) {
             $pages->where('active', 1)->update(['active' => 0]);
             $success_message = "All pages have been unpublished.";
         }
 
 
         return response()->json(['success' => $success_message]);
-
     }
-     //Bulk Publish function
-     public function BulkPublish(Request $request, pages $pages){
+    //Bulk Publish function
+    public function BulkPublish(Request $request, pages $pages)
+    {
 
         $count = $pages->where('active', 0)->count();
         $success_message = "There are no unpublished pages here.";
-        if($count > 0){
+        if ($count > 0) {
             $pages->where('active', 0)->update(['active' => 1]);
             $success_message = "All pages have been published.";
         }
 
 
         return response()->json(['success' => $success_message]);
-
     }
 }

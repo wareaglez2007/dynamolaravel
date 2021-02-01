@@ -12,7 +12,7 @@
                         @if (count($item->childItems))
                             <!--Level 1-->
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="http://example.com"
+                                <a class="nav-link dropdown-toggle" href="{{$item->slug->uri}}"
                                     id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
                                     aria-expanded="false"> {{ $item->title }}
                                 </a>
@@ -24,7 +24,7 @@
                             </li>
                         @else
                             <li class="nav-item active">
-                                <a class="nav-link" href="#">{{ $item->title }}</a>
+                                <a class="nav-link" href="{{$item->slug->uri}}">{{ $item->title }}</a>
                             </li>
                         @endif
 

@@ -29,7 +29,7 @@ class FrontendController extends Controller
             foreach ($pages_info as $info) {
                 $pages_children = $pages->with('childItems')->find($info->pages->id);
 
-                dd($pages_children);
+                return view('frontend.welcome', ['page_data' => $pages_info, 'page_children' => $pages_children]);
             }
         } else {
             return abort(404);

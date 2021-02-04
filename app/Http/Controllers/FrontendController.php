@@ -28,8 +28,12 @@ class FrontendController extends Controller
         if (count($pages_info) > 0) {
             foreach ($pages_info as $info) {
                 $pages_children = $pages->with('childItems')->find($info->pages->id);
+                $tree = pages::whereNull('parent_id')->with('childItems')->with('slug')->whereNull('parent_id')->orderBy('position', 'ASC')->get();
 
-                return view('frontend.welcome', ['page_data' => $pages_info, 'page_children' => $pages_children]);
+                return view('frontend.welcome', [
+                    'page_data' => $pages_info,
+                    'page_children' => $pages_children,
+                    'items' => $tree]);
             }
         } else {
             return abort(404);

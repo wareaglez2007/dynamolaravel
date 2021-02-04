@@ -39,4 +39,4 @@
         </form>
     </div>
 </nav>
-
+@include('admin.layouts.partials.navigation')

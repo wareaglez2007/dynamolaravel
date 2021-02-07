@@ -135,7 +135,8 @@
                                             </svg>&nbsp;
                                             See all
                                             pages</a>
-                                        <a href="/admin/pages/show/{{ $editview->id }}" class="dropdown-item">
+
+                                        <a href="/page/{{ $editview->id }}/preview" class="dropdown-item" target="new">
                                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-textarea-t"
                                                 fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd"

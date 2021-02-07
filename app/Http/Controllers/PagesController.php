@@ -319,6 +319,7 @@ class PagesController extends Controller
 
 
         $edit_view = $pages->with('slug')->find($id);
+        //dd($edit_view);
         $page_list = $pages->select('id', 'title')->where('id', "!=", $id)->get();
         return view('admin.modules.Pages.edit', [
             'editview' => $edit_view,

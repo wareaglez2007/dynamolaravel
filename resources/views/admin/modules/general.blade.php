@@ -30,7 +30,7 @@
 
                         @endif
                         @if (request()->path() == 'admin/navigations')
-                            @include('admin.layouts.partials.navigation')
+                            @include('admin.modules.Navigations.navmod')
                         @endif
                         @if (request()->path() == 'admin/seo')
                             @include('admin.layouts.partials.seo')

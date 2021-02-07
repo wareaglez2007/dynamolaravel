@@ -1,7 +1,5 @@
+<!--Beginning of Regular Sub Menu Style-->
 @if (count($sub_items->items) > 0)
-
-
-
     <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle xx" href="{{$sub_items->slug->uri}}">{{ $sub_items->title }}</a>
     @else
     <li><a class="dropdown-item" href="{{$sub_items->slug->uri}}">{{ $sub_items->title }}</a></li>
@@ -12,7 +10,7 @@
     <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
         @if (count($sub_items->items) > 0)
             @foreach ($sub_items->items as $childItems)
-                @include('admin.layouts.partials.sub_items', ['sub_items' => $childItems])
+                @include('admin.modules.Navigations.NavStyles.regular-menus.sub_items', ['sub_items' => $childItems])
             @endforeach
         @endif
     </ul>
@@ -41,3 +39,4 @@
     }
 
 </style>
+<!---End of Regular Sub Menu Style-->

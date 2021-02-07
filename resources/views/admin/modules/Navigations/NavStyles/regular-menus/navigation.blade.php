@@ -1,3 +1,4 @@
+<!---Regular Menu Style-->
 <div class="container" style="min-height: 65;">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Navbar</a>
@@ -18,7 +19,7 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                     @foreach ($item->childItems as $childItems)
-                                        @include('admin.layouts.partials.sub_items', ['sub_items' => $childItems])
+                                        @include('admin.modules.Navigations.NavStyles.regular-menus.sub_items', ['sub_items' => $childItems])
                                     @endforeach
                                 </ul>
                             </li>
@@ -34,3 +35,4 @@
         </div>
     </nav>
 </div>
+<!--End of Regular menu style-->

@@ -147,7 +147,13 @@ Route::get('/', 'FrontendController@index');
 
 Route::get('/{slug}', 'FrontendController@SingleSlug');
 
+Route::get('/page/{id}/preview', 'FrontendController@ShowWithId')->name('previews');
+
+
+
+
+
 Route::prefix('{any}')->group(function () {
-    Route::get('/{slug}', 'FrontendController@MultipleSlugs')->where('slug','^[a-zA-Z0-9-_\/]+$');;
+    Route::get('/{slug}', 'FrontendController@MultipleSlugs')->where('slug','^[a-zA-Z0-9-_\/]+$');
 });
 

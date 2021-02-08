@@ -44,6 +44,9 @@
                         @if (request()->path() == 'admin')
                             @include('admin.layouts.partials.dashboard')
                         @endif
+                        @if (request()->path() == 'admin/forms')
+                            @include('admin.layouts.partials.forms')
+                        @endif
                     </div>
                 </div>
 

@@ -90,6 +90,7 @@
 </head>
 
 <body>
+    <!--FIXED TOP SECTION-->
     <header>
         <nav id="navbar_top" class="navbar navbar-expand-lg fixed-top  navbar-dark bg-dark">
             <button class="navbar-toggler" type="button" aria-expanded="true" aria-label="Toggle navigation"
@@ -100,12 +101,13 @@
             </div> <!-- container.// -->
         </nav>
     </header>
+    <!--END OF FIXED TOP SECTION-->
     <!--Navigation-->
     @include('frontend.layouts.nav')
 
     <main class="container">
 
-            @yield('content')
+        @yield('content')
 
     </main>
 
@@ -124,10 +126,6 @@
             $(".offcanvas").removeClass("show");
             $("body").removeClass("offcanvas-active");
         });
-
-
-
-
 
     </script>
 

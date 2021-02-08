@@ -104,6 +104,12 @@ Route::get('/admin/social-media', 'SocialMediaController@index')->name('admin.so
 
 Route::get('/admin/business-info', 'BusinessController@index')->name('admin.business');
 
+/**
+ * Forms Creat/Edit/Delete Manager
+ */
+
+Route::get('/admin/forms', 'FormController@index')->name('admin.forms');
+
 /***************************AJAX FOR PAGES**********************/
 //validatenewdata
 Route::post('/admin/pages/create/validatenewdata', 'PagesController@validateNewPageData')->name('Backend.Pages.validateNewData');

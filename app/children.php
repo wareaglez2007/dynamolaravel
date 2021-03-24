@@ -20,18 +20,18 @@ class children extends Model
      */
     public function pages()
     {
-        return $this->belongsTo('App\pages');
+        return $this->belongsTo('App\pages')->where('active', 1)->orderBy('position', 'ASC');
     }
 
 
 
     public function parent(){
 
-        return $this->hasOne(children::class, 'pages_id');
+        return $this->hasOne(children::class, 'pages_id')->where('active', 1)->orderBy('position', 'ASC');
     }
     public function child()
     {
-        return $this->hasMany(children::class, 'parent')->with('parent');
+        return $this->hasMany(children::class, 'parent')->with('parent')->where('active', 1)->orderBy('position', 'ASC');
     }
 
     /**

@@ -30,11 +30,11 @@ class pages extends Model
     public function items()
     {
 
-        return $this->hasMany(pages::class, 'parent_id');
+        return $this->hasMany(pages::class, 'parent_id')->where('active', 1)->orderBy('position', 'ASC');
     }
     public function childItems()
     {
-        return $this->hasMany(pages::class, 'parent_id')->with('childItems');
+        return $this->hasMany(pages::class, 'parent_id')->with('childItems')->where('active', 1)->orderBy('position', 'ASC');
     }
 
     /**
@@ -42,6 +42,6 @@ class pages extends Model
      */
     public function parent(){
 
-        return $this->belongsTo(pages::class, 'parent_id')->with('parent');
+        return $this->belongsTo(pages::class, 'parent_id')->with('parent')->where('active', 1)->orderBy('position', 'ASC');
     }
 }

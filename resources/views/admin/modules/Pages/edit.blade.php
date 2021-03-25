@@ -6,7 +6,62 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">{{ __('Edit Page') }}</div>
+
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-4">{{ __('Edit Page') }}</div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <b>Page Status:</b>
+
+                                <form action="" method="POST" class="page-stat-form">
+
+                                    @csrf
+                                    <label class="switch">
+
+                                        <input type="checkbox" @if ($editview->active == 1) checked @endif data-toggle="toggle" data-on="Yes"
+                                            data-off="No" id="page_stat">
+
+                                        <span class="slider round"></span>
+                                    </label>
+                                    <input type="hidden" name="page_id" id="page_id" value="{{ $editview->id }}" />
+                                </form>
+
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <script>
+                        $(document).ready(function() {
+                            $(".switch input[type=checkbox]").click(function() {
+
+                                $.ajaxSetup({
+                                        headers: {
+                                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                                'content')
+                                        }
+                                    }),
+
+
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "/admin/pages/edit/updatestatus",
+                                        data: {
+                                            page_id: $("#page_id").val(),
+                                            status: $(this).prop("checked") ? 1 : 0
+                                        },
+                                        success: function(response) {
+                                            console.log(response);
+                                        }
+                                    });
+                            });
+                        });
+
+                    </script>
+
 
                     <div class="card-body">
                         @if (session('status'))
@@ -41,7 +96,8 @@
                                             @if ($editview->parent_id == $item->id)
                                                 {{ $selected = 'selected' }}
 
-                                                <option value="{{ $item->id }}" {{ $selected }}>{{ $item->title }}
+                                                <option value="{{ $item->id }}" {{ $selected }}>
+                                                    {{ $item->title }}
                                                 </option>
                                             @else
                                                 <option value="{{ $item->id }}">{{ $item->title }}
@@ -53,12 +109,9 @@
                                 <div class="form-group">
                                     <label for="">Slug</label>
                                     <input type="text" name="slug" id="slug" class="form-control" placeholder="Page URI"
-                                        aria-describedby="helpId" @if ($editview->slug != null)
-                                    value="{{ $editview->slug->slug }}"
+                                        aria-describedby="helpId" @if ($editview->slug != null) value="{{ $editview->slug->slug }}"
                                 @else
-                                    value=""
-                                    @endif
-                                    >
+                                                            value="" @endif>
                                     <small id="helpId" class="text-muted">This will be used for the link in the front
                                         end. i.e. www.donain.com/about-us</small>
                                 </div>

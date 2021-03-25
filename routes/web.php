@@ -116,6 +116,9 @@ Route::post('/admin/pages/create/validatenewdata', 'PagesController@validateNewP
 //validatPageSlugUniqueness
 Route::post('/admin/pages/create/validateslug', 'PagesController@validatPageSlugUniqueness')->name('Backend.Pages.validateslug');
 
+//Toggle publish or unplish in edit page ajax call
+Route::post('/admin/pages/edit/updatestatus', 'PagesController@updatePageStatus');
+
 /* 1. Get Draft pages by ID
  * 2. Get new count for Published, Draft and Deleted pags
  * 3. Get

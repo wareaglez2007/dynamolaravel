@@ -563,4 +563,15 @@ class PagesController extends Controller
 
         return response()->json(['success' => $success_message]);
     }
+
+    //Update page status with toggle button
+
+    public function updatePageStatus(Request $request, pages $pages){
+        $page_id = $request->page_id;
+        $status = $request->status;
+
+        $update_page_status = $pages->where('id', $page_id)->update(['active' => $status]);
+        $success_message = "page status changed to ".$status;
+        return response()->json(['success' => $success_message]);
+    }
 }

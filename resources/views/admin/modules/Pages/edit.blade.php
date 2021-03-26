@@ -62,8 +62,10 @@
 
                     </script>
 
+                    <!-- Main page information section-->
 
-                    <div class="card-body">
+                    <!--Card body 1 -->
+                    <div class="card-body" style="border-right: 1px solid rgba(0, 0, 0, 0.125)">
                         @if (session('status'))
                             <div class="alert alert-success" role="alert">
                                 {{ session('status') }}
@@ -77,7 +79,8 @@
                                     <label for="">Page Tile</label>
                                     <input type="text" name="title" id="title" class="form-control" placeholder="Page Tile"
                                         aria-describedby="helpId" value="{{ $editview->title }}">
-                                    <small id="helpId" class="text-muted">This will be the name of your from i.e Home,
+                                    <small id="helpId" class="text-muted">This will be the name of your from i.e
+                                        Home,
                                         About, etc.</small>
                                 </div>
                                 <div class="form-group">
@@ -111,8 +114,9 @@
                                     <input type="text" name="slug" id="slug" class="form-control" placeholder="Page URI"
                                         aria-describedby="helpId" @if ($editview->slug != null) value="{{ $editview->slug->slug }}"
                                 @else
-                                                            value="" @endif>
-                                    <small id="helpId" class="text-muted">This will be used for the link in the front
+                                                                                    value="" @endif>
+                                    <small id="helpId" class="text-muted">This will be used for the link in the
+                                        front
                                         end. i.e. www.donain.com/about-us</small>
                                 </div>
                                 <div class="form-group">
@@ -143,8 +147,90 @@
                                         placeholder="Publish Start Date" aria-describedby="helpId"
                                         value="{{ $editview->created_at }}">
                                 </div>
-                                <!---Images Section-->
 
+
+                                <!--Components section RS 03-26-2021-->
+
+
+                                <p>Add Sections:</p>
+                                <!--Questions for components
+                                            1. is this page a homepage? Y/N
+                                            2. Carousel? Y/N
+                                            3. if yes. Add section for carousel and adding images.
+                                            4....
+                                        -->
+                                <!--Section 1 q1 -->
+                                <div class="form-group">
+                                    <label for="" class="form-label">Is this a homepage?</label>
+                                    <input type="checkbox" name="is_homepage" id="is_homepage" class=""
+                                        aria-describedby="helpId" @if ($editview->is_homepage == 1) value="1" checked
+                                        @else
+                                                value="null" @endif
+
+                                                @if ($homepageCount != 0 && $editview->is_homepage != 1 )
+                                                    disabled
+                                                @endif
+                                                >
+                                    <input type="hidden" name="page_id" id="page_id" value="{{ $editview->id }}" />
+                                    <span id="homepage_message"></span>
+                                </div>
+                                <!--section1 q2-->
+                                <div class="form-group">
+                                    <label for="" class="form-label">Does the page need a carousel?</label>
+                                    <input type="checkbox" name="need_carousel" id="need_carousel" class=""
+                                        aria-describedby="helpId" value="1">
+                                </div>
+                                <script>
+                                    $(document).ready(function() {
+                                        $("#is_homepage").on('change', function() {
+
+                                            homepage = $(this).prop("checked") ? 1 : null;
+                                            console.log(homepage);
+                                            $.ajaxSetup({
+                                                    headers: {
+                                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+                                                            .attr(
+                                                                'content')
+                                                    }
+                                                }),
+
+
+                                                $.ajax({
+                                                    type: "POST",
+                                                    url: "/admin/pages/edit/homepage",
+                                                    data: {
+                                                        page_id: $("#page_id").val(),
+                                                        status: homepage
+                                                    },
+                                                    success: function(response) {
+
+                                                        console.log(response.success);
+                                                        $('#homepage_message').attr('class',
+                                                            'text-success');
+                                                        $('#homepage_message').text(response
+                                                            .success);
+
+
+                                                    },
+                                                    error: function(response) {
+                                                        console.log(response.responseJSON.errors);
+                                                        $('#homepage_message').attr('class',
+                                                            'text-danger');
+                                                        $('#homepage_message').text(response.responseJSON.errors);
+
+                                                    }
+                                                });
+                                        });
+                                    });
+
+                                </script>
+                                <!-- END Components section---->
+
+
+
+
+                                <!---Images Section-->
+                                <p>Media: <i>(Select images for this page)</i></p>
 
                                 <!---END IMAGES SECTION-->
                                 <div class="form-group">
@@ -217,6 +303,8 @@
                         </div>
 
                     </div>
+
+                    <!-- END Main page Info section-->
                 </div>
             </div>
         </div>

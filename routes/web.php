@@ -118,6 +118,8 @@ Route::post('/admin/pages/create/validateslug', 'PagesController@validatPageSlug
 
 //Toggle publish or unplish in edit page ajax call
 Route::post('/admin/pages/edit/updatestatus', 'PagesController@updatePageStatus');
+//is homepage check
+Route::post('/admin/pages/edit/homepage', 'PagesController@isHomepage');
 
 /* 1. Get Draft pages by ID
  * 2. Get new count for Published, Draft and Deleted pags

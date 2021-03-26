@@ -321,9 +321,11 @@ class PagesController extends Controller
         $edit_view = $pages->with('slug')->find($id);
         //dd($edit_view);
         $page_list = $pages->select('id', 'title')->where('id', "!=", $id)->get();
+        $homepage_count = $pages->where("is_homepage", 1)->count();
         return view('admin.modules.Pages.edit', [
             'editview' => $edit_view,
-            'pages' => $page_list
+            'pages' => $page_list,
+            'homepageCount' => $homepage_count
         ]);
     }
 
@@ -355,11 +357,11 @@ class PagesController extends Controller
         $par = $this->array_values_recursive($request->parent_id);
         $count_parents = count($par);
         $slug  = "";
-        for($i=0; $i < $count_parents; $i++){
-            $slug .= "/".$par[$i]->slug->slug;
+        for ($i = 0; $i < $count_parents; $i++) {
+            $slug .= "/" . $par[$i]->slug->slug;
         }
 
-        $page_final_slug = $slug."/".$request->slug;
+        $page_final_slug = $slug . "/" . $request->slug;
         $updated_slugs_uri = $slugs->where('pages_id', $request->id)->update(['uri' => $page_final_slug]);
 
 
@@ -389,15 +391,16 @@ class PagesController extends Controller
         //return redirect('admin/pages/edit/' . $request->page_id)->withErrors($validatedData);
     }
 
-    public function array_values_recursive($id) {
+    public function array_values_recursive($id)
+    {
         $array = pages::where('id', $id)->with('slug')->get();
         $flat = array();
-        foreach($array as $value) {
-              $flat = array_merge($flat, $this->array_values_recursive($value['parent_id']));
-              $flat[] = $value;
+        foreach ($array as $value) {
+            $flat = array_merge($flat, $this->array_values_recursive($value['parent_id']));
+            $flat[] = $value;
         }
         return $flat;
-      }
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -566,12 +569,51 @@ class PagesController extends Controller
 
     //Update page status with toggle button
 
-    public function updatePageStatus(Request $request, pages $pages){
+    public function updatePageStatus(Request $request, pages $pages)
+    {
         $page_id = $request->page_id;
         $status = $request->status;
 
         $update_page_status = $pages->where('id', $page_id)->update(['active' => $status]);
-        $success_message = "page status changed to ".$status;
+        $success_message = "page status changed to " . $status;
         return response()->json(['success' => $success_message]);
+    }
+    //03-26-2021 check as the homepage
+    public function isHomepage(Request $request, pages $pages)
+    {
+        //there can ONLY be one homepage
+        //1st check if any of the values in the pages table is already a homepage
+        $page_id = $request->page_id;
+        $status = $request->status;
+            //Check page and see its homepage status
+            $is_homepage = pages::find($page_id);
+            if($is_homepage->is_homepage == 1 && $status == 1){
+                $error_message = "This page is already the homepage!";
+                return response()->json(['errors' => $error_message],422);
+
+            }else if($is_homepage->is_homepage == 1 && $status == null ){
+                pages::where("id", $page_id)->update(["is_homepage" => $status]);
+                $success_message =  "This page is no longer a homepage.";
+                return response()->json(['success' => $success_message]);
+
+            }else{
+                //check to see if there is another page that is a homepage
+                $check_homepage = pages::where('is_homepage', 1)->get();
+                if (count($check_homepage) > 0) {
+                    foreach ($check_homepage as $hp) {
+                        $error_message = "There can be only one homepage per website. Please uncheck page " . $hp->title . " id= " . $hp->id;
+                    }
+                    return response()->json(['errors' => $error_message],422);
+                }else{
+                    pages::where("id", $page_id)->update(["is_homepage" => $status]);
+                    if ($status == 1) {
+                        $success_message =  "Page has been set as the homepage.";
+                    } else {
+                        $success_message =  "This page is no longer a homepage.";
+                    }
+
+                    return response()->json(['success' => $success_message]);
+                }
+            }
     }
 }

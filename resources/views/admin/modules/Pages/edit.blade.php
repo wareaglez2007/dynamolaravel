@@ -62,6 +62,43 @@
 
                     </script>
 
+
+                    <!--Edit the slug-->
+                    <div class="card-header">
+                        <form action="" method="POST">
+                            <a href="{{config('app.url')}}{{ $permalink }}/" class="text-muted">{{config('app.url')}}{{ $permalink }}/</a>
+                            <a href="{{ $editview->slug->slug }}" id="basic-url"> {{ $editview->slug->slug }}</a>
+                            <a href="#" id="slug_editor"><i
+                                class="bi bi-pen-fill"></i></a>
+                                <span id="cancel_slug_edit" class="d-none"><a href="#"  >/Cancel</a></span>
+                            @csrf
+
+
+                        </form>
+                    </div>
+                    <script>
+                        $(document).ready(function() {
+                            $("#slug_editor").on("click", function() {
+
+                                $("#basic-url").replaceWith($('<input type="text" value="'+$("#basic-url").attr('href')+'" id="basic-url"/>'));
+                                $("#cancel_slug_edit").attr('class', "");
+
+                            });
+                            $("#cancel_slug_edit").on("click", function(){
+                                //<i class="bi bi-check-circle"></i>
+
+                                //$("#slug_editor").replaceWith('');
+                                $("#basic-url").replaceWith($('<a href="'+$("#basic-url").val()+'" id="basic-url">'+$("#basic-url").val()+'</a>'));
+                                $("#cancel_slug_edit").attr('class', "d-none");
+                            });
+
+                        });
+
+
+
+                    </script>
+
+
                     <!-- Main page information section-->
 
                     <!--Card body 1 -->
@@ -114,7 +151,7 @@
                                     <input type="text" name="slug" id="slug" class="form-control" placeholder="Page URI"
                                         aria-describedby="helpId" @if ($editview->slug != null) value="{{ $editview->slug->slug }}"
                                 @else
-                                                                                    value="" @endif>
+                                                                                                        value="" @endif>
                                     <small id="helpId" class="text-muted">This will be used for the link in the
                                         front
                                         end. i.e. www.donain.com/about-us</small>
@@ -154,23 +191,22 @@
 
                                 <p>Add Sections:</p>
                                 <!--Questions for components
-                                            1. is this page a homepage? Y/N
-                                            2. Carousel? Y/N
-                                            3. if yes. Add section for carousel and adding images.
-                                            4....
-                                        -->
+                                                                1. is this page a homepage? Y/N
+                                                                2. Carousel? Y/N
+                                                                3. if yes. Add section for carousel and adding images.
+                                                                4....
+                                                            -->
                                 <!--Section 1 q1 -->
                                 <div class="form-group">
                                     <label for="" class="form-label">Is this a homepage?</label>
                                     <input type="checkbox" name="is_homepage" id="is_homepage" class=""
                                         aria-describedby="helpId" @if ($editview->is_homepage == 1) value="1" checked
                                         @else
-                                                value="null" @endif
-
-                                                @if ($homepageCount != 0 && $editview->is_homepage != 1 )
-                                                    disabled
-                                                @endif
-                                                >
+                                                                    value="null" @endif
+                                        @if ($homepageCount != 0 && $editview->is_homepage != 1)
+                                    disabled
+                                    @endif
+                                    >
                                     <input type="hidden" name="page_id" id="page_id" value="{{ $editview->id }}" />
                                     <span id="homepage_message"></span>
                                 </div>
@@ -216,7 +252,8 @@
                                                         console.log(response.responseJSON.errors);
                                                         $('#homepage_message').attr('class',
                                                             'text-danger');
-                                                        $('#homepage_message').text(response.responseJSON.errors);
+                                                        $('#homepage_message').text(response
+                                                            .responseJSON.errors);
 
                                                     }
                                                 });

@@ -198,17 +198,29 @@ class PagesController extends Controller
         $pages->owner = $request->owner;
         $pages->position = (int)$count + 1;
         $pages->save();
-        // dd($pages->save());
+
         if (strtolower($request->title) != "home") {
             if (empty($request->slug)) {
                 $slug = $this->SlugsCreator($request->title);
             } else {
                 $slug = $this->SlugsCreator($request->slug);
             }
+
+            //Create the URI
+            $par = $this->array_values_recursive($request->parent_page_id);
+            $count_parents = count($par);
+            $slug_uri  = "";
+            for ($i = 0; $i < $count_parents; $i++) {
+                $slug_uri .= "/" . $par[$i]->slug->slug;
+            }
+
+            $page_final_slug = $slug_uri . "/" . $slug;
+
+
             $slugs->slug = $slug;
+            $slugs->uri = $page_final_slug;
             $pages->slug()->save($slugs);
         }
-
 
         $success_message = "Page " . request('title') . " has been added to your pages.";
         return response()->json(['success' => $success_message]);
@@ -322,7 +334,23 @@ class PagesController extends Controller
         //dd($edit_view);
         $page_list = $pages->select('id', 'title')->where('id', "!=", $id)->get();
         $homepage_count = $pages->where("is_homepage", 1)->count();
+
+        //Create the URI
+        $par = $this->array_values_recursive($edit_view->parent_id);
+        $count_parents = count($par);
+        $slug_uri  = "";
+        for ($i = 0; $i < $count_parents; $i++) {
+            $slug_uri .= "/" . $par[$i]->slug->slug;
+        }
+
+
+
+
+
+
+
         return view('admin.modules.Pages.edit', [
+            'permalink' =>$slug_uri,
             'editview' => $edit_view,
             'pages' => $page_list,
             'homepageCount' => $homepage_count
@@ -585,35 +613,33 @@ class PagesController extends Controller
         //1st check if any of the values in the pages table is already a homepage
         $page_id = $request->page_id;
         $status = $request->status;
-            //Check page and see its homepage status
-            $is_homepage = pages::find($page_id);
-            if($is_homepage->is_homepage == 1 && $status == 1){
-                $error_message = "This page is already the homepage!";
-                return response()->json(['errors' => $error_message],422);
-
-            }else if($is_homepage->is_homepage == 1 && $status == null ){
-                pages::where("id", $page_id)->update(["is_homepage" => $status]);
-                $success_message =  "This page is no longer a homepage.";
-                return response()->json(['success' => $success_message]);
-
-            }else{
-                //check to see if there is another page that is a homepage
-                $check_homepage = pages::where('is_homepage', 1)->get();
-                if (count($check_homepage) > 0) {
-                    foreach ($check_homepage as $hp) {
-                        $error_message = "There can be only one homepage per website. Please uncheck page " . $hp->title . " id= " . $hp->id;
-                    }
-                    return response()->json(['errors' => $error_message],422);
-                }else{
-                    pages::where("id", $page_id)->update(["is_homepage" => $status]);
-                    if ($status == 1) {
-                        $success_message =  "Page has been set as the homepage.";
-                    } else {
-                        $success_message =  "This page is no longer a homepage.";
-                    }
-
-                    return response()->json(['success' => $success_message]);
+        //Check page and see its homepage status
+        $is_homepage = pages::find($page_id);
+        if ($is_homepage->is_homepage == 1 && $status == 1) {
+            $error_message = "This page is already the homepage!";
+            return response()->json(['errors' => $error_message], 422);
+        } else if ($is_homepage->is_homepage == 1 && $status == null) {
+            pages::where("id", $page_id)->update(["is_homepage" => $status]);
+            $success_message =  "This page is no longer a homepage.";
+            return response()->json(['success' => $success_message]);
+        } else {
+            //check to see if there is another page that is a homepage
+            $check_homepage = pages::where('is_homepage', 1)->get();
+            if (count($check_homepage) > 0) {
+                foreach ($check_homepage as $hp) {
+                    $error_message = "There can be only one homepage per website. Please uncheck page " . $hp->title . " id= " . $hp->id;
                 }
+                return response()->json(['errors' => $error_message], 422);
+            } else {
+                pages::where("id", $page_id)->update(["is_homepage" => $status]);
+                if ($status == 1) {
+                    $success_message =  "Page has been set as the homepage.";
+                } else {
+                    $success_message =  "This page is no longer a homepage.";
+                }
+
+                return response()->json(['success' => $success_message]);
             }
+        }
     }
 }

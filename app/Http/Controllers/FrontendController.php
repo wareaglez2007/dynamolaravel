@@ -92,7 +92,7 @@ class FrontendController extends Controller
                         }
 
                         $tree = pages::whereNull('parent_id')->with('childItems')->with('slug')->whereNull('parent_id')->where('active', 1)->orderBy('position', 'ASC')->get();
-                       // dd($tree);
+
                         return view('frontend.welcome', [
                             'page_data' => $pages_info,
                             'page_children' => $pages_children,

@@ -65,36 +65,114 @@
 
                     <!--Edit the slug-->
                     <div class="card-header">
-                        <form action="" method="POST">
-                            <a href="{{config('app.url')}}{{ $permalink }}/" class="text-muted">{{config('app.url')}}{{ $permalink }}/</a>
-                            <a href="{{ $editview->slug->slug }}" id="basic-url"> {{ $editview->slug->slug }}</a>
-                            <a href="#" id="slug_editor"><i
-                                class="bi bi-pen-fill"></i></a>
-                                <span id="cancel_slug_edit" class="d-none"><a href="#"  >/Cancel</a></span>
-                            @csrf
+                        <p>Permalink</p>
+                        @if ($editview->slug->slug != null)
+                            <div class="col-md-6">
+                                <form action="/admin/pages/create/validateslug" method="POST">
+                                    <input type="hidden" value="{{ config('app.url') }}{{ $permalink }}/"
+                                        id="site_url" />
+                                    <input type="hidden" value="{{ $editview->slug->slug }}" id="hidden_page_slug" />
+                                    <input type="hidden" value="{{ $editview->id }}" id="edit_url_pg_id" />
+                                    <div class="input-group input-group-sm mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"
+                                                id="inputGroup-sizing-sm">{{ config('app.url') }}{{ $permalink }}/</span>
+                                        </div>
+                                        <input type="text" class="form-control" aria-label="Sizing example input"
+                                            id="slug_input_section" aria-describedby="inputGroup-sizing-sm"
+                                            value="{{ $editview->slug->slug }}" disabled>
+
+                                        <button type="button" class="form-control btn btn-outline-secondary"
+                                            id="do_edit_slug" style="max-width: 60px;"
+                                            onclick="event.preventDefault();EnableSlugEdit();"><i
+                                                class="bi bi-lock"></i></button>
+
+                                                <button type="button" class="form-control btn btn-success d-none"
+                                                id="save_edit_slug" style="max-width: 60px;"
+                                                onclick="event.preventDefault();">Save</button>
+
+                                    </div>
+                                    <small id="helpIdSlug" class="text-muted">This will be used for the link in the front
+                                        end.
+                                        i.e. www.donain.com/about-us</small>
+                                    @csrf
 
 
-                        </form>
+                                </form>
+                            </div>
+                        @else
+                            <a href="{{ config('app.url') }}{{ $permalink }}/" id="" class="text-muted">
+                                {{ config('app.url') }}{{ $permalink }}/</a>
+                        @endif
+
                     </div>
                     <script>
-                        $(document).ready(function() {
-                            $("#slug_editor").on("click", function() {
+                        //TODO:
+                        //if user clicks on the edit icon, then enable the slug edit.
+                        function EnableSlugEdit() {
+                            if ($("#slug_input_section").prop('disabled') == true) {
+                                $("#slug_input_section").prop('disabled', false);
+                                $("#do_edit_slug i").attr("class", "bi bi-unlock");
+                            } else {
+                                $("#slug_input_section").prop('disabled', true);
+                                $("#do_edit_slug i").attr("class", "bi bi-lock");
+                            }
+                        }
 
-                                $("#basic-url").replaceWith($('<input type="text" value="'+$("#basic-url").attr('href')+'" id="basic-url"/>'));
-                                $("#cancel_slug_edit").attr('class', "");
+                        //If the slug name is not unique give error
+                        //Ajax call to see if title
+                        $('#slug_input_section').on('keyup', function() {
+                            console.log($("#hidden_page_slug").val());
+                            var page_slug = $('#slug_input_section').val();
+                            var old_slug = $('#hidden_page_slug').val();
+                            if(old_slug == page_slug){
 
-                            });
-                            $("#cancel_slug_edit").on("click", function(){
-                                //<i class="bi bi-check-circle"></i>
+                            }else if (page_slug != "") {
+                                $.ajaxSetup({
+                                    headers: {
+                                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
+                                            'content')
+                                    }
+                                }); //End of ajax setup
+                                $.ajax({
+                                    url: "/admin/pages/create/validateslug",
+                                    method: "post",
+                                    data: {
+                                        slug: page_slug
+                                    },
+                                    success: function(response) {
+                                        $('#helpIdSlug').attr('class', 'text-success');
+                                        $('#helpIdSlug').text(response.success);
+                                        //
+                                        $("#do_edit_slug").attr("class",
+                                            "form-control btn btn-success d-none");
+                                        $("#do_edit_slug").prop("disabled", true);
+                                        $("#save_edit_slug").attr("class", "form-control btn btn-success");
 
-                                //$("#slug_editor").replaceWith('');
-                                $("#basic-url").replaceWith($('<a href="'+$("#basic-url").val()+'" id="basic-url">'+$("#basic-url").val()+'</a>'));
-                                $("#cancel_slug_edit").attr('class', "d-none");
-                            });
+                                    }, //end of success
+                                    error: function(error) {
+                                        console.log(error);
+                                        $('#page_slug').focus();
+                                        setTimeout(function() {
+                                            $('#page_slug').focus()
+                                        }, 50);
+                                        $('#helpIdSlug').attr('class', 'text-danger');
+                                        $('#helpIdSlug').text(error.responseJSON.slug);
+                                        $("#do_edit_slug").attr("class", "form-control btn btn-danger");
+                                        $("#do_edit_slug").prop("disabled", true);
+                                        $("#save_edit_slug").attr("class", "form-control btn btn-success d-none");
 
-                        });
 
+                                    } //end of error
+                                }); //end of ajax
 
+                            } else {
+                                $('#helpIdSlug').attr('class', 'text-danger');
+                                $('#helpIdSlug').text("Slug cannot be empty!");
+                                $("#do_edit_slug").attr("class", "form-control btn btn-danger");
+                                $("#do_edit_slug").prop("disabled", true);
+                            }
+                        }); //End of keyup
 
                     </script>
 
@@ -151,7 +229,7 @@
                                     <input type="text" name="slug" id="slug" class="form-control" placeholder="Page URI"
                                         aria-describedby="helpId" @if ($editview->slug != null) value="{{ $editview->slug->slug }}"
                                 @else
-                                                                                                        value="" @endif>
+                                                                                                                                                        value="" @endif>
                                     <small id="helpId" class="text-muted">This will be used for the link in the
                                         front
                                         end. i.e. www.donain.com/about-us</small>
@@ -191,19 +269,18 @@
 
                                 <p>Add Sections:</p>
                                 <!--Questions for components
-                                                                1. is this page a homepage? Y/N
-                                                                2. Carousel? Y/N
-                                                                3. if yes. Add section for carousel and adding images.
-                                                                4....
-                                                            -->
+                                                                                                                1. is this page a homepage? Y/N
+                                                                                                                2. Carousel? Y/N
+                                                                                                                3. if yes. Add section for carousel and adding images.
+                                                                                                                4....
+                                                                                                            -->
                                 <!--Section 1 q1 -->
                                 <div class="form-group">
                                     <label for="" class="form-label">Is this a homepage?</label>
                                     <input type="checkbox" name="is_homepage" id="is_homepage" class=""
                                         aria-describedby="helpId" @if ($editview->is_homepage == 1) value="1" checked
                                         @else
-                                                                    value="null" @endif
-                                        @if ($homepageCount != 0 && $editview->is_homepage != 1)
+                                                                                                                    value="null" @endif @if ($homepageCount != 0 && $editview->is_homepage != 1)
                                     disabled
                                     @endif
                                     >

@@ -68,11 +68,14 @@
                         <p>Permalink</p>
                         @if ($editview->slug->slug != null)
                             <div class="col-md-6">
-                                <form action="/admin/pages/create/validateslug" method="POST">
+                                <form action="" method="POST">
+                                    @csrf
                                     <input type="hidden" value="{{ config('app.url') }}{{ $permalink }}/"
                                         id="site_url" />
                                     <input type="hidden" value="{{ $editview->slug->slug }}" id="hidden_page_slug" />
                                     <input type="hidden" value="{{ $editview->id }}" id="edit_url_pg_id" />
+                                    <input type="hidden" value="{{ $editview->parent_id }}" id="edit_url_parent" />
+                                    <input type="hidden" value="{{ config('app.url') }}" id="page_base_url"/>
                                     <div class="input-group input-group-sm mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"
@@ -80,28 +83,29 @@
                                         </div>
                                         <input type="text" class="form-control" aria-label="Sizing example input"
                                             id="slug_input_section" aria-describedby="inputGroup-sizing-sm"
-                                            value="{{ $editview->slug->slug }}" disabled>
-
+                                            value="{{ $editview->slug->slug }}" disabled onkeyup="CheckUserSlugInput()">
+                                        <!--Unlock button-->
                                         <button type="button" class="form-control btn btn-outline-secondary"
                                             id="do_edit_slug" style="max-width: 60px;"
                                             onclick="event.preventDefault();EnableSlugEdit();"><i
                                                 class="bi bi-lock"></i></button>
-
-                                                <button type="button" class="form-control btn btn-success d-none"
-                                                id="save_edit_slug" style="max-width: 60px;"
-                                                onclick="event.preventDefault();">Save</button>
+                                        <!--Save Buton-->
+                                        <button type="button" class="form-control btn btn-success d-none"
+                                            id="save_edit_slug" style="max-width: 60px;"
+                                            onclick="event.preventDefault();SaveSlugChanges({{ $editview->id }}, {{ $editview->parent_id }})">Save</button>
 
                                     </div>
                                     <small id="helpIdSlug" class="text-muted">This will be used for the link in the front
                                         end.
                                         i.e. www.donain.com/about-us</small>
-                                    @csrf
-
+                                        <br/>
+                                        <a href="{{ config('app.url') }}{{ $editview->slug->uri }}" id="page_link" class="text-muted" target="new">
+                                            {{ config('app.url') }}{{ $editview->slug->uri }}</a>
 
                                 </form>
                             </div>
                         @else
-                            <a href="{{ config('app.url') }}{{ $permalink }}/" id="" class="text-muted">
+                            <a href="{{ config('app.url') }}{{ $permalink }}/" id="page_link" class="text-muted">
                                 {{ config('app.url') }}{{ $permalink }}/</a>
                         @endif
 
@@ -121,13 +125,14 @@
 
                         //If the slug name is not unique give error
                         //Ajax call to see if title
-                        $('#slug_input_section').on('keyup', function() {
-                            console.log($("#hidden_page_slug").val());
+
+                        function CheckUserSlugInput() {
                             var page_slug = $('#slug_input_section').val();
                             var old_slug = $('#hidden_page_slug').val();
-                            if(old_slug == page_slug){
-
-                            }else if (page_slug != "") {
+                            var page_id = $("#edit_url_pg_id").val();
+                            var page_parent = $("#edit_url_parent").val();
+                            var base_url = $("#page_base_url").val();
+                            if (page_slug != "") {
                                 $.ajaxSetup({
                                     headers: {
                                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
@@ -143,36 +148,88 @@
                                     success: function(response) {
                                         $('#helpIdSlug').attr('class', 'text-success');
                                         $('#helpIdSlug').text(response.success);
-                                        //
                                         $("#do_edit_slug").attr("class",
-                                            "form-control btn btn-success d-none");
+                                            "form-control btn btn-outline-secondary d-none");
                                         $("#do_edit_slug").prop("disabled", true);
-                                        $("#save_edit_slug").attr("class", "form-control btn btn-success");
+                                        $("#save_edit_slug").attr("class",
+                                            "form-control btn btn-success");
+                                        return true;
 
                                     }, //end of success
                                     error: function(error) {
                                         console.log(error);
-                                        $('#page_slug').focus();
+                                        $('#slug_input_section').focus();
                                         setTimeout(function() {
-                                            $('#page_slug').focus()
+                                            $('#slug_input_section').focus()
                                         }, 50);
                                         $('#helpIdSlug').attr('class', 'text-danger');
                                         $('#helpIdSlug').text(error.responseJSON.slug);
-                                        $("#do_edit_slug").attr("class", "form-control btn btn-danger");
+                                        $("#do_edit_slug").attr("class",
+                                            "form-control btn btn-outline-secondary");
                                         $("#do_edit_slug").prop("disabled", true);
-                                        $("#save_edit_slug").attr("class", "form-control btn btn-success d-none");
-
+                                        $("#save_edit_slug").attr("class",
+                                            "form-control btn btn-success d-none");
+                                        return false;
 
                                     } //end of error
                                 }); //end of ajax
-
-                            } else {
-                                $('#helpIdSlug').attr('class', 'text-danger');
-                                $('#helpIdSlug').text("Slug cannot be empty!");
-                                $("#do_edit_slug").attr("class", "form-control btn btn-danger");
-                                $("#do_edit_slug").prop("disabled", true);
                             }
-                        }); //End of keyup
+
+
+                        }
+
+                        //Save slug changes-------------------------------------
+                        function SaveSlugChanges(id, parent) {
+                            //if save edit slug is hit------------*****-----03-31-2021
+                            var slug = $('#slug_input_section').val();
+                            var base_url = $("#page_base_url").val();
+                            var old_slug = $("#hidden_page_slug").val();
+                            console.log(parent);
+                            $.ajaxSetup({
+                                headers: {
+                                    'X-CSRF-TOKEN': $(
+                                            'meta[name="csrf-token"]')
+                                        .attr(
+                                            'content')
+                                }
+
+                            }); //End of ajax setup
+
+                            $.ajax({
+                                url: "/admin/pages/edit/editpageslug",
+                                method: "post",
+                                data: {
+                                    page_id: id,
+                                    parent_id: parent,
+                                    slug: slug,
+                                    old_slug: old_slug
+                                },
+                                success: function(response) {
+
+                                    $('#helpIdSlug').attr('class', 'text-success');
+                                    $('#helpIdSlug').text(response.success.success_messag);
+                                    $("#save_edit_slug").attr("class",
+                                        "form-control btn btn-success d-none");
+                                    $("#slug_input_section").prop('disabled', true);
+
+                                    $("#do_edit_slug").attr("class", "form-control btn btn-outline-secondary");
+                                    $("#do_edit_slug").prop("disabled", false);
+                                    $("#do_edit_slug i").attr("class", "bi bi-lock");
+                                    $('#page_link').prop("href", base_url+response.success.uri);
+                                        $('#page_link').text(base_url+response.success.uri);
+                                        $('#slug_input_section').val(response.success.slug);
+
+                                }, //end of success save edit  ajax call
+                                error: function(error) {
+
+                                    $('#helpIdSlug').attr('class', 'text-danger');
+                                    $('#helpIdSlug').text(error.responseJSON.error_message);
+                                    $("#save_edit_slug").attr("class", "form-control btn btn-danger");
+                                    $('#slug_input_section').val(error.responseJSON.slug);
+                                } //end of error save edit ajax call
+                            }); //End of save edit ajax call------***----------***---
+
+                        }
 
                     </script>
 
@@ -229,7 +286,7 @@
                                     <input type="text" name="slug" id="slug" class="form-control" placeholder="Page URI"
                                         aria-describedby="helpId" @if ($editview->slug != null) value="{{ $editview->slug->slug }}"
                                 @else
-                                                                                                                                                        value="" @endif>
+                                                                                                                                                                                        value="" @endif>
                                     <small id="helpId" class="text-muted">This will be used for the link in the
                                         front
                                         end. i.e. www.donain.com/about-us</small>
@@ -269,18 +326,18 @@
 
                                 <p>Add Sections:</p>
                                 <!--Questions for components
-                                                                                                                1. is this page a homepage? Y/N
-                                                                                                                2. Carousel? Y/N
-                                                                                                                3. if yes. Add section for carousel and adding images.
-                                                                                                                4....
-                                                                                                            -->
+                                                                                                                                                1. is this page a homepage? Y/N
+                                                                                                                                                2. Carousel? Y/N
+                                                                                                                                                3. if yes. Add section for carousel and adding images.
+                                                                                                                                                4....
+                                                                                                                                            -->
                                 <!--Section 1 q1 -->
                                 <div class="form-group">
                                     <label for="" class="form-label">Is this a homepage?</label>
                                     <input type="checkbox" name="is_homepage" id="is_homepage" class=""
                                         aria-describedby="helpId" @if ($editview->is_homepage == 1) value="1" checked
                                         @else
-                                                                                                                    value="null" @endif @if ($homepageCount != 0 && $editview->is_homepage != 1)
+                                                                                                                                                    value="null" @endif @if ($homepageCount != 0 && $editview->is_homepage != 1)
                                     disabled
                                     @endif
                                     >

@@ -272,6 +272,39 @@ class PagesController extends Controller
 
         return response()->json(['success' => $success_message]);
     }
+    /**
+     * Update Page slug from Edit pages
+     * 03-31-2021
+     * After ajax checks slug validation
+     */
+    public function updatePageSlug(Request $request, slugs $slug)
+    {
+
+        if(request('slug') == ""){
+            $error_message = ['error_message' => "Slug for this page cannot be empty!", 'slug' => request('old_slug')];
+            return response()->json($error_message,  422);
+        }
+        $slug_validator = $this->SlugsCreator(request('slug'));
+
+        $slug  = "";
+        if ($request->parent_id != 0) {
+            $par = $this->array_values_recursive($request->parent_id);
+            $count_parents = count($par);
+
+            for ($i = 0; $i < $count_parents; $i++) {
+                $slug .= "/" . $par[$i]->slug->slug;
+            }
+        }
+
+
+        $uri = $slug . "/" . $slug_validator;
+
+
+        $success_message = ['success_message' =>"Slug " . $slug_validator . " has been updated!", 'uri' => $uri, 'slug' => $slug_validator];
+        slugs::where("pages_id", request('page_id'))->update(['slug' => $slug_validator, 'uri' => $uri]);
+        return response()->json(['success' => $success_message]);
+    }
+
 
     /***
      * Publish a page
@@ -327,11 +360,7 @@ class PagesController extends Controller
      */
     public function edit(pages $pages, $id)
     {
-
-
-
         $edit_view = $pages->with('slug')->find($id);
-        //dd($edit_view);
         $page_list = $pages->select('id', 'title')->where('id', "!=", $id)->get();
         $homepage_count = $pages->where("is_homepage", 1)->count();
 
@@ -343,14 +372,8 @@ class PagesController extends Controller
             $slug_uri .= "/" . $par[$i]->slug->slug;
         }
 
-
-
-
-
-
-
         return view('admin.modules.Pages.edit', [
-            'permalink' =>$slug_uri,
+            'permalink' => $slug_uri,
             'editview' => $edit_view,
             'pages' => $page_list,
             'homepageCount' => $homepage_count

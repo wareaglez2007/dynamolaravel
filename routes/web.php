@@ -121,6 +121,9 @@ Route::post('/admin/pages/edit/updatestatus', 'PagesController@updatePageStatus'
 //is homepage check
 Route::post('/admin/pages/edit/homepage', 'PagesController@isHomepage');
 
+//Save new or same slug for edit pages 03-31-2021
+Route::post('/admin/pages/edit/editpageslug', 'PagesController@updatePageSlug')->name('Backend.Pages.editSlugs');
+
 /* 1. Get Draft pages by ID
  * 2. Get new count for Published, Draft and Deleted pags
  * 3. Get

@@ -1,9 +1,2 @@
-<div class="row">
-<!--Form creation page-->
-
-{{-- what we need?--}}
-{{-- Form name, form fields, form actions, form table to save data --}}
-
-
-
-</div>
+<div class="card-header">{{ $mod_name }}</div>
+<div class="card-body"></div>

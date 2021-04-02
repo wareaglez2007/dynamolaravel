@@ -83,6 +83,10 @@ Route::post('/admin/pages/bulkpublish', 'PagesController@BulkPublish');
 Route::get('/admin/Images/uploadimage', 'UploadImagesController@getUploadForm')->name('admin.images.upload');
 Route::post('/admin/Images/uploadimage', 'UploadImagesController@postUploadForm');
 
+
+
+
+
 /**
  * Navigations Manger
  */

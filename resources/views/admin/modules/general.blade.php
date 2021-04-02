@@ -12,11 +12,9 @@
 
 
     <div class="card">
-        <div class="card-header">{{ $mod_name }}</div>
-        <div class="card-body">
-            <div class="container">
-                <div class="row justify-content-center" id='some_ajax'>
-                    <div class="col-md-12">
+
+
+
                         @if (session('status'))
                             <div class="alert alert-success" role="alert">
                                 {{ session('status') }}
@@ -47,12 +45,10 @@
                         @if (request()->path() == 'admin/forms')
                             @include('admin.layouts.partials.forms')
                         @endif
-                    </div>
-                </div>
+                        @if (request()->path() == 'admin/Images/uploadimage')
+                        @include('admin.layouts.partials.uploadimages')
+                    @endif
 
-
-            </div>
-        </div>
     </div>
 
 @endsection

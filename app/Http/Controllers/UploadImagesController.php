@@ -67,15 +67,19 @@ class UploadImagesController extends Controller
                 // you can also use the original name
                 $imageName = time() . '-' . $file->getClientOriginalName();
                 // save original image
-                $image->save($this->imagesPath . $imageName);
+                $file->storeAs('/public/uploads/' , $imageName);
+                Storage::url($imageName);
+
+               // $image->save($this->imagesPath . $imageName);
                 $image_width = getimagesize($file)[0];
                 $image_height = getimagesize($file)[1];
                 if ($image_width > 150) {
                     $image->resize($image_width / 4, $image_height / 4);
                 }
                 // resize and save thumbnail
-
-                $image->save($this->thumbnailPath . $imageName);
+                $file->storeAs('/public/uploads/thumbnails/' , $imageName);
+                Storage::url($imageName);
+               // $image->save($this->thumbnailPath . $imageName);
 
                 $upload = new UploadImages();
                 $upload->file = $imageName;
@@ -104,4 +108,30 @@ class UploadImagesController extends Controller
 
         }
     }
+
+        //Deleting IMAGES
+        public function DeleteImages(Request $request){
+
+            //Delete File directory
+            //file $request->path_to, may need to substring the trailing slash
+
+           Storage::disk('public')->delete('uploads/'.$request->image_name); //Deletes the files
+           Storage::disk('public')->delete('uploads/thumbnails/'.$request->image_name); //Deletes the files
+           // Storage::disk('public')->delete('images/'.$request->image_name); // Deletes the directory
+
+
+
+            //GET it from AJAX
+            UploadImages::where('id', $request->id)->forceDelete();
+            $success_message = "Image $request->image_name has been deleted!!!";
+            $images = UploadImages::orderBy('id', 'DESC')->get();
+            if ($request->ajax()) {
+                return response()->json([
+                    'view' => view('admin.layouts.partials.imageuploadsection')->with(['images' => $images])->render(), 'success' => $success_message
+                ]);
+
+
+            }
+
+        }
 }

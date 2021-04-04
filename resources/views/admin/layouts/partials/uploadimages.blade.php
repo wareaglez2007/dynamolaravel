@@ -1,7 +1,21 @@
 <div class="card-header">{{ $mod_name }}</div>
 <div class="card-header">
-    <div class="alert alert-success d-none" id="ajaxactioncallimages"></div>
-    <div class="alert alert-danger d-none" id="ajaxadangercallimages"></div>
+
+
+    <div class="alert alert-success d-none alert-dismissible fade show" role="alert" id="ajaxactioncallimages">
+        <span id="s_message"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="alert alert-danger d-none alert-dismissible fade show" role="alert" id="ajaxadangercallimages">
+        <span id="e_message"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
     <form action="{{ URL::to('/admin/Images/uploadimage') }}" method="POST" enctype="multipart/form-data"
         id="upload_images_form">
         @csrf
@@ -39,20 +53,23 @@
             processData: false,
             contentType: false,
             success: function(data) {
-                console.log(data.success);
+                //  console.log(data.success);
                 $("#ajaxactioncallimages").attr('class', "alert alert-success")
-                $("#ajaxactioncallimages").html("<p>" + data.success + "</p>");
+                $("#ajaxactioncallimages #s_message").html('<img src="/storage/ajax-loader.gif">' + data
+                    .success);
                 $('#images_section').html(data.view);
-
+                // $('#ajaxactioncallimages').fadeOut(2500);
             }, //end of success
             error: function(error) {
-             
+
                 $("#ajaxactioncallimages").attr('class', "alert alert-danger");
                 $.each(error.responseJSON.errors, function(index, val) {
-                    $("#ajaxactioncallimages").append("<p>" +val  + "</p>");
-                    console.log(index, val);
+                    $("#ajaxactioncallimages #e_message").html(
+                        "<img src='/storage/ajax-loader-red.gif'>" + val);
+                    //   $('#ajaxactioncallimages').fadeOut(2500);
+                    //console.log(index, val);
                 });
-                
+
                 console.log(error);
 
 

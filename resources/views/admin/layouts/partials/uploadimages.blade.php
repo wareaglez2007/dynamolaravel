@@ -1,4 +1,4 @@
-<div class="card-header">{{ $mod_name }}</div>
+<div class="card-header" id="upload_header">{{ $mod_name }}</div>
 <div class="card-header">
 
 
@@ -32,6 +32,8 @@
         </div>
     </form>
 
+
+
 </div>
 <script>
     $("#upload_images_form").on("change", function() {
@@ -53,24 +55,42 @@
             processData: false,
             contentType: false,
             success: function(data) {
-                //  console.log(data.success);
-                $("#ajaxactioncallimages").attr('class', "alert alert-success")
-                $("#ajaxactioncallimages #s_message").html('<img src="/storage/ajax-loader.gif">' + data
-                    .success);
+                //first listen back from ajax to see if the image is valide or not
+                $.each(data.validations, function(index, val) {
+                    console.log(val.upload);
+                    var alert = "success";
+                    var mess = val;
+                    var seconds = 7500;
+                    if(val.upload != null){
+                        alert = "danger";
+                        mess = val.upload;
+                        seconds = 30000;
+                    }else{
+                        alert = "success";
+                        mess = val;
+                        seconds = 7500;
+                    }
+                    $("#upload_header").prepend('<div class="alert alert-'+alert+'" id="up_' +
+                        index +
+                        '"> <span class="spinner-border spinner-border-sm" role="status" id="mess_' +
+                        index + '"></span>' + mess + '</div>');
+                   $('#up_' + index).fadeOut(seconds);
+
+                });
                 $('#images_section').html(data.view);
-                // $('#ajaxactioncallimages').fadeOut(2500);
+               
             }, //end of success
             error: function(error) {
 
                 $("#ajaxactioncallimages").attr('class', "alert alert-danger");
-                $.each(error.responseJSON.errors, function(index, val) {
+                $.each(error.responseJSON.erros, function(index, val) {                
                     $("#ajaxactioncallimages #e_message").html(
                         "<img src='/storage/ajax-loader-red.gif'>" + val);
                     //   $('#ajaxactioncallimages').fadeOut(2500);
                     //console.log(index, val);
                 });
 
-                console.log(error);
+
 
 
             } //end of error

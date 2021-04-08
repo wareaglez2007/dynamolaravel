@@ -261,3 +261,36 @@ div.image_div a {
   }
 
 
+/*
+Image upload module section
+04-08-2021
+Moved from admin/layouts/partials/imagesuploadsection.blade.php
+*/
+.square {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    overflow: hidden;
+}
+
+#uploadedimages img {
+    position: absolute !important;
+    width: 100%;
+    height: auto;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+}
+
+#uploadedimages img.landscape {
+    height: 100%;
+    width: auto;
+}
+
+#uploadedimages .upload-img-thumbnail {
+    padding: 0.25rem;
+    background-color: #f8fafc;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    height: auto;
+}

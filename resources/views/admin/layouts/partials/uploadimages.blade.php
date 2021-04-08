@@ -24,8 +24,15 @@
 
             </div>
             <div class="col-md-4">
-                <input type="file" name="upload[]" id="chosen_images" multiple>
+                
+
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" name="upload[]" id="chosen_images" multiple>
+                    <label class="custom-file-label" for="customFile">Choose file(s)</label>
+                  </div>
+
             </div>
+
             <div class="col-md-4">
 
             </div>
@@ -35,81 +42,10 @@
 
 
 </div>
-<script>
-    $("#upload_images_form").on("change", function() {
-        //When user selects the open button call ajax
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $(
-                        'meta[name="csrf-token"]')
-                    .attr(
-                        'content')
-            }
 
-        }); //End of ajax setup
-        $.ajax({
-            url: "/admin/Images/uploadimage",
-            method: "post",
-            cache: false,
-            data: new FormData(this),
-            processData: false,
-            contentType: false,
-            success: function(data) {
-                //first listen back from ajax to see if the image is valide or not
-                $.each(data.validations, function(index, val) {
-                    console.log(val.upload);
-                    var alert = "success";
-                    var mess = val;
-                    var seconds = 7500;
-                    if(val.upload != null){
-                        alert = "danger";
-                        mess = val.upload;
-                        seconds = 9000;
-                    }else{
-                        alert = "success";
-                        mess = val;
-                        seconds = 7500;
-                    }
-                    $("#upload_header").prepend('<div class="alert alert-'+alert+'" id="up_' +
-                        index +
-                        '"> <span class="spinner-border spinner-border-sm" role="status" id="mess_' +
-                        index + '"></span>' + mess + '</div>');
-                   $('#up_' + index).fadeOut(seconds);
+ <!--Upload Images, Edit, Delete AJAX CALL NEW -->
+ <script src="{{ asset('js/uploadimagesajax.js') }}" defer></script>
 
-                });
-                $('#images_section').html(data.view);
-
-            }, //end of success
-            error: function(error) {
-
-                $("#ajaxactioncallimages").attr('class', "alert alert-danger");
-                $.each(error.responseJSON.erros, function(index, val) {
-                    $("#ajaxactioncallimages #e_message").html(
-                        "<img src='/storage/ajax-loader-red.gif'>" + val);
-                    //   $('#ajaxactioncallimages').fadeOut(2500);
-                    //console.log(index, val);
-                });
-
-
-
-
-            } //end of error
-        }); //end of ajax
-
-    }); //End of on change
-
-    function getPublished(url) {
-        $.ajax({
-            url: url
-        }).done(function(data) {
-
-            // $('#images_section').html(data.view);
-        }).fail(function() {
-
-        });
-    }
-
-</script>
 <div class="card-body">
     @if (session('status'))
         <div class="alert alert-success" role="alert">
@@ -133,3 +69,4 @@
     </div>
 
 </div>
+

@@ -79,13 +79,15 @@ Route::post('/admin/pages/update/updateposition', 'PagesController@UpdatePositio
 Route::post('/admin/pages/bulkunpublish', 'PagesController@BulkUnpublish');
 Route::post('/admin/pages/bulkpublish', 'PagesController@BulkPublish');
 
-
+/**
+ * Images
+ * Controller = ImagesController
+ */
 Route::get('/admin/Images/uploadimage', 'UploadImagesController@getUploadForm')->name('admin.images.upload');
 Route::post('/admin/Images/uploadimage', 'UploadImagesController@postUploadForm');
-
-///
-Route::post('admin/Images/deleteselectedimage', 'UploadImagesController@DeleteImages');
-
+Route::get('/admin/Images/deleteselectedimage', 'UploadImagesController@DeleteImages');
+Route::get('/admin/Images/getafterdelete', 'UploadImagesController@AfterDelete');
+Route::post('/admin/Images/updateimagesinfo', 'UploadImagesController@UpdateImages'); /****NEW***/
 
 /**
  * Navigations Manger
@@ -145,10 +147,7 @@ Route::get('/admin/pages/published/count', 'PagesController@getNewPublishedCount
 
 /************************END OF PAGES***************************/
 
-/**
- * Images
- * Controller = ImagesController
- */
+
 
 /************************END OF PAGES***************************/
 

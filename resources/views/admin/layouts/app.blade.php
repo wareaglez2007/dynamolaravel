@@ -208,6 +208,6 @@
         </div>
 
     </div>
-    <script src="{{ asset('js/ajaxcontroller.js') }}" defer></script>
+
 
 </body>

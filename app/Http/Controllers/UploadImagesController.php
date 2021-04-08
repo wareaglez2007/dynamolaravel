@@ -29,7 +29,7 @@ class UploadImagesController extends Controller
      */
     public function getUploadForm()
     {
-        $images = UploadImages::orderBy('id', 'DESC')->get();
+        $images = UploadImages::orderBy('id', 'DESC')->paginate(18);
         //return view('admin.layouts.partials.controller', compact('images'))->render();
         return view("admin.modules.general", ['mod_name' => "Images",  'images' => $images]);
     }
@@ -101,7 +101,7 @@ class UploadImagesController extends Controller
                     $upload->save();
                 }
             }
-            $images = UploadImages::orderBy('id', 'DESC')->get();
+            $images = UploadImages::orderBy('id', 'DESC')->paginate(18);
             if ($request->ajax()) {
 
 
@@ -128,10 +128,46 @@ class UploadImagesController extends Controller
         //GET it from AJAX
         UploadImages::where('id', $request->id)->forceDelete();
         $success_message = "Image $request->image_name has been deleted!!!";
+        $count = UploadImages::count();
+
+        $images = UploadImages::orderBy('id', 'DESC')->paginate(18);
+        
+        
+        if ($request->ajax()) {
+            return response()->json([
+                'view' => view('admin.layouts.partials.imageuploadsection')->with(['images' => $images])->render(), 'success' => $success_message, 'count' => $count
+            ]);
+        }
+    }
+    public function AfterDelete(Request $request)
+    {
+        $count = UploadImages::count();
+
+        $images = UploadImages::orderBy('id', 'DESC')->paginate(18);
+
+
+        if ($request->ajax()) {
+            return response()->json([
+                'view' => view('admin.layouts.partials.imageuploadsection')->with(['images' => $images])->render(), 'count' => $count
+            ]);
+        }
+    }
+
+
+    /**
+     * This function will update information about the image
+     */
+    public function UpdateImages(Request $request, UploadImages $uploadImages)
+    {
+
+
+        $uploadImages->where('id', $request->id)->update(['image_original_name' => $request->image_name, 'image_alt_text' => $request->image_alt_text]);
+
+        $success_message = "Image $request->image_name has been Updated.";
         $images = UploadImages::orderBy('id', 'DESC')->get();
         if ($request->ajax()) {
             return response()->json([
-                'view' => view('admin.layouts.partials.imageuploadsection')->with(['images' => $images])->render(), 'success' => $success_message
+                'success' => $success_message
             ]);
         }
     }

@@ -9,9 +9,9 @@
                     <a href="{{ $img->id }}" id="{{ $img->id }}" data-toggle="modal"
                         data-target="#image_modal_{{ $img->id }}"
                         title="{{ asset('storage/thumbnails/' . $img->image_original_name) }}"
-                        onclick="event.preventDefault();ShowImageEditOptions({{ $img->id }})">
+                        onclick="event.preventDefault();">
                         <img src="{{ asset('storage/thumbnails/' . $img->file) }}" @if ($img->image_width != $img->image_height) class="upload-img-thumbnail landscape"
-    @else
+@else
                         class="upload-img-thumbnail" @endif
                             alt="/images/thumbs/{{ $img->file }}" />
                     </a>
@@ -20,12 +20,6 @@
                     onclick="event.preventDefault();DeleteSelectedImage({{ $img->id }}, '{{ $img->file }}')">
                     <i class="bi bi-trash-fill text-danger"></i>
                 </a>
-                <p style="font-size:10px;">Name: {{ $img->image_original_name }} Width:{{ $img->image_width }}
-                    Height:
-                    {{ $img->image_height }} </p>
-
-
-
             </div>
             <!-- Modal -->
             <div class="modal fade" id="image_modal_{{ $img->id }}" tabindex="-1"
@@ -39,12 +33,58 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                        <img src="{{ asset('storage/thumbnails/' . $img->file) }}" @if ($img->image_width != $img->image_height) class="upload-img-thumbnail landscape"  @else
-            class="upload-img-thumbnail" @endif alt="/images/thumbs/{{ $img->file }}" />
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img src="{{ asset('storage/' . $img->file) }}" class="img-thumbnail "
+                                        class="upload-img-thumbnail" alt="/images/thumbs/{{ $img->file }}" />
+                                </div>
+                                <div class="col-md-6">
+                                    <!--Edit image properties-->
+                                    <div class="form-group">
+                                        <label for="">Title:</label>
+                                        <input type="text" class="form-control"
+                                            value="{{ $img->image_original_name }}" name="title_{{ $img->id }}"
+                                            id="title_{{ $img->id }}" aria-describedby="helpId" placeholder="">
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="">Alt text:</label>
+                                        <input type="text" class="form-control" name="alt_{{ $img->id }}"
+                                            id="alt_{{ $img->id }}" aria-describedby="helpId" placeholder="">
+                                        <small id="helpId" class="form-text text-muted">Alternative text</small>
+                                    </div>
+                                    <!-- height & width -->
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="">Width:</label>
+                                                <input type="text" class="form-control"
+                                                    name="width_{{ $img->id }}" id="width_{{ $img->id }}"
+                                                    aria-describedby="helpId" placeholder=""
+                                                    value="{{ $img->image_width }}">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="">Height:</label>
+                                                <input type="text" class="form-control"
+                                                    name="height_{{ $img->id }}" id="height_{{ $img->id }}"
+                                                    aria-describedby="helpId" placeholder=""
+                                                    value="{{ $img->image_height }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
+                            <button type="button" class="btn btn-primary"
+                                onclick="event.preventDefault();ShowImageEditOptions({{ $img->id }})">Save
+                                changes</button>
                         </div>
                     </div>
                 </div>

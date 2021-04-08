@@ -64,7 +64,7 @@
                     if(val.upload != null){
                         alert = "danger";
                         mess = val.upload;
-                        seconds = 30000;
+                        seconds = 9000;
                     }else{
                         alert = "success";
                         mess = val;
@@ -78,12 +78,12 @@
 
                 });
                 $('#images_section').html(data.view);
-               
+
             }, //end of success
             error: function(error) {
 
                 $("#ajaxactioncallimages").attr('class', "alert alert-danger");
-                $.each(error.responseJSON.erros, function(index, val) {                
+                $.each(error.responseJSON.erros, function(index, val) {
                     $("#ajaxactioncallimages #e_message").html(
                         "<img src='/storage/ajax-loader-red.gif'>" + val);
                     //   $('#ajaxactioncallimages').fadeOut(2500);

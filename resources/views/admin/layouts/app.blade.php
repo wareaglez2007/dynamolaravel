@@ -130,15 +130,26 @@
                                     <a class="nav-link" data-toggle="collapse" data-target="#collapsetwo"
                                         aria-expanded="false" aria-controls="collapseOne" href="#">
                                         <i class="bi bi-images"></i>&nbsp;
-                                        Media Manager
+                                        File Manager
                                     </a>
                                     <div class="collapse hide" id="collapsetwo" class="" aria-labelledby="headingTwo"
                                         data-parent="#accordionmenutwo">
                                         <a href="{{ route('admin.images.upload') }}" class="list-group-item nav-link"
                                             id="image_page">
 
-                                            Upload Images</a>
+                                            Images</a>
+                                            <a href="{{ route('admin.images.upload') }}" class="list-group-item nav-link"
+                                            id="css_page">
 
+                                            CSS Files</a>
+                                            <a href="{{ route('admin.images.upload') }}" class="list-group-item nav-link"
+                                            id="html_page">
+
+                                            HTML Files</a>
+                                            <a href="{{ route('admin.images.upload') }}" class="list-group-item nav-link"
+                                            id="js_page">
+
+                                            JS Files</a>
                                     </div>
                                 </div>
                             </li>

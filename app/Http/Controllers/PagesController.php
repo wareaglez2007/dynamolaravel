@@ -8,7 +8,7 @@ use App\children;
 use App\page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use App\UploadImages;
 class PagesController extends Controller
 {
 
@@ -372,11 +372,16 @@ class PagesController extends Controller
             $slug_uri .= "/" . $par[$i]->slug->slug;
         }
 
+        $images = UploadImages::orderBy('id', 'DESC')->paginate(18);
+
+
         return view('admin.modules.Pages.edit', [
             'permalink' => $slug_uri,
             'editview' => $edit_view,
             'pages' => $page_list,
-            'homepageCount' => $homepage_count
+            'homepageCount' => $homepage_count,
+            'mod_name' => "Images",
+            'images' => $images
         ]);
     }
 

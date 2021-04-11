@@ -63,6 +63,8 @@ Route::post('/admin/pages/store', 'PagesController@store')->name('admin.pages.st
 Route::get('/admin/pages/show/{id}', 'PagesController@show')->name('admin.pages.show');
 
 Route::get('/admin/pages/edit/{id}', 'PagesController@edit')->name('admin.pages.edit');
+//Edit page image view pagination
+Route::get('/admin/pages/editpagepaginations/{id}', 'PagesController@PageImagesPagination');
 
 Route::post('/admin/pages/update', 'PagesController@update');
 

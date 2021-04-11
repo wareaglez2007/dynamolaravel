@@ -135,7 +135,7 @@
                                     <input type="text" name="slug" id="slug" class="form-control" placeholder="Page URI"
                                         aria-describedby="helpId" @if ($editview->slug != null) value="{{ $editview->slug->slug }}"
                                 @else
-                                                                                                                                                                                                    value="" @endif>
+                                                                                                                                                                                                            value="" @endif>
                                     <small id="helpId" class="text-muted">This will be used for the link in the
                                         front
                                         end. i.e. www.donain.com/about-us</small>
@@ -181,7 +181,7 @@
                                     <input type="checkbox" name="is_homepage" id="is_homepage" class=""
                                         aria-describedby="helpId" @if ($editview->is_homepage == 1) value="1" checked
                                         @else
-                                                                                                                                                                value="null" @endif @if ($homepageCount != 0 && $editview->is_homepage != 1)
+                                                                                                                                                                        value="null" @endif @if ($homepageCount != 0 && $editview->is_homepage != 1)
                                     disabled
                                     @endif
                                     >
@@ -204,12 +204,13 @@
                                 <p>Media: <i>(Select images for this page)</i></p>
                                 <!--TODO: selecting images first from media manager -->
                                 <div class="form-group">
-                                    <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#staticBackdrop">Select Images for
+                                    <button type="button" class="btn btn-outline-dark" data-toggle="modal"
+                                        data-target="#showeditpageimages">Select Images for
                                         this page</button>
                                 </div>
                                 <!--Images Modal-->
                                 <!-- Modal -->
-                                <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false"
+                                <div class="modal fade" id="showeditpageimages" data-backdrop="static" data-keyboard="false"
                                     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
                                         <div class="modal-content">
@@ -217,23 +218,26 @@
                                                 <h5 class="modal-title" id="staticBackdropLabel">Media (images)</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
+                                                    <input type="hidden" value="{{ $editview->id }}"
+                                                        id="page_id_images" />
+                                                    <input type="hidden" id="pagination_page"
+                                                        value="{{ $images->nextPageUrl() }}" />
                                                 </button>
                                             </div>
-                                            <div class="modal-body">
+                                            <div class="modal-body" id="images_modal">
                                                 @include('admin.layouts.partials.showpageimages')
-
-                                                <div id="draft_pagination">
-                                                    {{ $images->withpath('/admin/Images/uploadimage') }}
-                                                </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
                                                     data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-outline-secondary"><i class="bi bi-paperclip"></i>&nbsp;Attach</button>
+                                                <button type="button" class="btn btn-outline-secondary"><i
+                                                        class="bi bi-paperclip"></i>&nbsp;Attach</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
+
 
                                 <!--End Images model-->
                                 <!---END IMAGES SECTION-->

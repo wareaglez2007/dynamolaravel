@@ -9,6 +9,7 @@ use App\page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\UploadImages;
+
 class PagesController extends Controller
 {
 
@@ -280,7 +281,7 @@ class PagesController extends Controller
     public function updatePageSlug(Request $request, slugs $slug)
     {
 
-        if(request('slug') == ""){
+        if (request('slug') == "") {
             $error_message = ['error_message' => "Slug for this page cannot be empty!", 'slug' => request('old_slug')];
             return response()->json($error_message,  422);
         }
@@ -300,7 +301,7 @@ class PagesController extends Controller
         $uri = $slug . "/" . $slug_validator;
 
 
-        $success_message = ['success_message' =>"Slug " . $slug_validator . " has been updated!", 'uri' => $uri, 'slug' => $slug_validator];
+        $success_message = ['success_message' => "Slug " . $slug_validator . " has been updated!", 'uri' => $uri, 'slug' => $slug_validator];
         slugs::where("pages_id", request('page_id'))->update(['slug' => $slug_validator, 'uri' => $uri]);
         return response()->json(['success' => $success_message]);
     }
@@ -372,7 +373,7 @@ class PagesController extends Controller
             $slug_uri .= "/" . $par[$i]->slug->slug;
         }
 
-        $images = UploadImages::orderBy('id', 'DESC')->paginate(18);
+        $images = UploadImages::orderBy('id', 'DESC')->paginate(12);
 
 
         return view('admin.modules.Pages.edit', [
@@ -383,6 +384,19 @@ class PagesController extends Controller
             'mod_name' => "Images",
             'images' => $images
         ]);
+    }
+    /**
+     * Edit page image pagination
+     */
+    public function PageImagesPagination(Request $request, pages $pages, $id)
+    {
+        $images = UploadImages::orderBy('id', 'DESC')->paginate(12);
+        $edit_view = $pages->with('slug')->find($id);
+        if ($request->ajax()) {
+            return response()->json([
+                'view' => view('admin.layouts.partials.showpageimages')->with(['images' => $images, 'editview' => $edit_view])->render()
+            ]);
+        }
     }
 
     /**

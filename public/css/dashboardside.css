@@ -294,3 +294,9 @@ Moved from admin/layouts/partials/imagesuploadsection.blade.php
     border-radius: 0.25rem;
     height: auto;
 }
+.small_square {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    overflow: hidden;
+}

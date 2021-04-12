@@ -210,8 +210,7 @@
                                 </div>
                                 <!--Images Modal-->
                                 <!-- Modal -->
-
-                                <div class="modal fade" id="showeditpageimages" data-backdrop="static" data-keyboard="false"
+                                <div class="modal fade" id="showeditpageimages"  data-keyboard="false"
                                     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
                                         <div class="modal-content">
@@ -270,11 +269,11 @@
                                                     image_data: image_data
                                                 },
                                                 success: function(data) {
-                                                    // $('#images_modal').html(data.view);
+                                                     $('#attached_images').html(data.view);
                                                     $.each(image_data.split("&"), function(index,
                                                         value) {
                                                         var images_ids = value.split("=");
-                                                        console.log(images_ids[1]);
+                                                       // console.log(images_ids[1]);
                                                         $("#" + images_ids[1] +
                                                             " .imgCheckbox0").removeClass(
                                                             "imgChked");
@@ -378,8 +377,11 @@
                                     });
 
                                 </script>
-
-
+                                    <!--Attached Images section-->
+                                    <div  id="attached_images">
+                                        @include('admin.layouts.partials.editpageatachedimages')
+                                     </div>
+                                    <!--Attached Images section-->
                                 <!--End Images model-->
                                 <!---END IMAGES SECTION-->
                                 <div class="form-group">

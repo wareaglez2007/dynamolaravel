@@ -412,21 +412,36 @@ class PagesController extends Controller
             $image_data = $uploadImages->find($value);
             $check_duplicate_image = page_images::where("upload_images_id", $value)->where("pages_id", $request->id)->count();
             if ($check_duplicate_image > 0) {
-                $response_messages['errors'][$key] = "Image " . $image_data->image_original_name. " already been assigned to this page!";
+                $response_messages['errors'][$key] = "Image " . $image_data->image_original_name . " already been assigned to this page!";
             } else {
-               
+
                 $page_images = new page_images();
                 $page_images->upload_images_id = $value;
                 $page_images->pages_id = $request->id;
                 $page_images->save();
-                $response_messages['success'][$key] = "Image: <b>".$image_data->image_original_name."</b> has been assigned to this page successfully!";
+                $response_messages['success'][$key] = "Image: <b>" . $image_data->image_original_name . "</b> has been assigned to this page successfully!";
             }
         }
-       
+
+        $edit_view =  pages::with('slug')->with('imageforpages')->find($request->id);
+        $images = UploadImages::orderBy('id', 'DESC')->paginate(12);
+        $page_list = $pages->select('id', 'title')->where('id', "!=", $request->id)->get();
+        $homepage_count = $pages->where("is_homepage", 1)->count();
+
+        //Create the URI
+        $par = $this->array_values_recursive($edit_view->parent_id);
+        $count_parents = count($par);
+        $slug_uri  = "";
+        for ($i = 0; $i < $count_parents; $i++) {
+            $slug_uri .= "/" . $par[$i]->slug->slug;
+        }
 
         if ($request->ajax()) {
             return response()->json([
-                "response" => $response_messages
+                "response" => $response_messages,
+                'view' => view('admin.layouts.partials.editpageatachedimages')->with([
+                    "editview" => $edit_view
+                ])->render()
             ]);
         }
     }

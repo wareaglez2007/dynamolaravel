@@ -164,7 +164,7 @@ class UploadImagesController extends Controller
         $uploadImages->where('id', $request->id)->update(['image_original_name' => $request->image_name, 'image_alt_text' => $request->image_alt_text]);
 
         $success_message = "Image $request->image_name has been Updated.";
-        $images = UploadImages::orderBy('id', 'DESC')->get();
+        
         if ($request->ajax()) {
             return response()->json([
                 'success' => $success_message

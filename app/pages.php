@@ -27,6 +27,11 @@ class pages extends Model
     {
         return $this->hasOne('App\slugs');
     }
+
+    public function page_images()
+    {
+        return $this->hasMany('App\page_images');
+    }
     public function items()
     {
 
@@ -43,5 +48,10 @@ class pages extends Model
     public function parent(){
 
         return $this->belongsTo(pages::class, 'parent_id')->with('parent')->where('active', 1)->orderBy('position', 'ASC');
+    }
+
+
+    public function imageforpages(){
+        return $this->belongsToMany('App\UploadImages', 'App\page_images', 'pages_id', 'upload_images_id');
     }
 }

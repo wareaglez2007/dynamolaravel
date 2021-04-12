@@ -68,6 +68,10 @@ Route::get('/admin/pages/editpagepaginations/{id}', 'PagesController@PageImagesP
 
 Route::post('/admin/pages/update', 'PagesController@update');
 
+//Atach Image to Page
+//DoAttachImages
+Route::post('/admin/pages/edit/attachimages', 'PagesController@DoAttachImages'); 
+
 Route::post('/admin/pages/delete', 'PagesController@destroy')->name('Backend.Pages.destroy');
 
 Route::post('/admin/pages/forcedelete', 'PagesController@permDelete')->name('Backend.Pages.forcedelete');
@@ -90,6 +94,8 @@ Route::post('/admin/Images/uploadimage', 'UploadImagesController@postUploadForm'
 Route::get('/admin/Images/deleteselectedimage', 'UploadImagesController@DeleteImages');
 Route::get('/admin/Images/getafterdelete', 'UploadImagesController@AfterDelete');
 Route::post('/admin/Images/updateimagesinfo', 'UploadImagesController@UpdateImages'); /****NEW***/
+///admin/Images/uploadimage/pagination
+Route::get('/admin/Images/uploadimage/pagination', 'UploadImagesController@ImageModulePagination');
 
 /**
  * Navigations Manger

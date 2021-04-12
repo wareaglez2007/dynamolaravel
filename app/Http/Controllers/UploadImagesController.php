@@ -131,8 +131,8 @@ class UploadImagesController extends Controller
         $count = UploadImages::count();
 
         $images = UploadImages::orderBy('id', 'DESC')->paginate(18);
-        
-        
+
+
         if ($request->ajax()) {
             return response()->json([
                 'view' => view('admin.layouts.partials.imageuploadsection')->with(['images' => $images])->render(), 'success' => $success_message, 'count' => $count
@@ -168,6 +168,18 @@ class UploadImagesController extends Controller
         if ($request->ajax()) {
             return response()->json([
                 'success' => $success_message
+            ]);
+        }
+    }
+    /**
+     * AJAX Pagination control for Upload images module
+     */
+    public function ImageModulePagination(Request $request){
+        $images = UploadImages::orderBy('id', 'DESC')->paginate(18);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'view' => view('admin.layouts.partials.imageuploadsection')->with(['images' => $images])->render()
             ]);
         }
     }

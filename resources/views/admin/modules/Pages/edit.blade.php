@@ -135,7 +135,7 @@
                                     <input type="text" name="slug" id="slug" class="form-control" placeholder="Page URI"
                                         aria-describedby="helpId" @if ($editview->slug != null) value="{{ $editview->slug->slug }}"
                                 @else
-                                                                                                                                                                                                            value="" @endif>
+                                                                                                                                                                                                                                                                                                    value="" @endif>
                                     <small id="helpId" class="text-muted">This will be used for the link in the
                                         front
                                         end. i.e. www.donain.com/about-us</small>
@@ -181,7 +181,7 @@
                                     <input type="checkbox" name="is_homepage" id="is_homepage" class=""
                                         aria-describedby="helpId" @if ($editview->is_homepage == 1) value="1" checked
                                         @else
-                                                                                                                                                                        value="null" @endif @if ($homepageCount != 0 && $editview->is_homepage != 1)
+                                                                                                                                                                                                                                                                value="null" @endif @if ($homepageCount != 0 && $editview->is_homepage != 1)
                                     disabled
                                     @endif
                                     >
@@ -210,6 +210,7 @@
                                 </div>
                                 <!--Images Modal-->
                                 <!-- Modal -->
+
                                 <div class="modal fade" id="showeditpageimages" data-backdrop="static" data-keyboard="false"
                                     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
@@ -225,18 +226,158 @@
                                                 </button>
                                             </div>
                                             <div class="modal-body" id="images_modal">
+
                                                 @include('admin.layouts.partials.showpageimages')
+
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
                                                     data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-outline-secondary"><i
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    id="attach_image_to_page"><i
                                                         class="bi bi-paperclip"></i>&nbsp;Attach</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
+                                <script>
+                                    $("#attach_image_to_page").on('click', function(e) {
+                                        e.preventDefault();
+                                        var ischecked = $(" span.imgCheckbox0").hasClass("imgChked");
+                                        if (ischecked) {
+                                            var id = $("#page_id").val();
+
+                                            //AJAX to attach Image to page
+                                            var image_data = $("#image_page_attachment").serialize();
+                                            //URL ='/admin/pages/edit/attachimages'
+                                            // console.log(image_data);
+                                            $.ajaxSetup({
+                                                headers: {
+                                                    'X-CSRF-TOKEN': $(
+                                                            'meta[name="csrf-token"]')
+                                                        .attr(
+                                                            'content')
+                                                }
+
+                                            }); //End of ajax setup
+                                            $.ajax({
+                                                url: '/admin/pages/edit/attachimages',
+                                                method: "post",
+                                                cache: false,
+                                                data: {
+                                                    id: id,
+                                                    image_data: image_data
+                                                },
+                                                success: function(data) {
+                                                    // $('#images_modal').html(data.view);
+                                                    $.each(image_data.split("&"), function(index,
+                                                        value) {
+                                                        var images_ids = value.split("=");
+                                                        console.log(images_ids[1]);
+                                                        $("#" + images_ids[1] +
+                                                            " .imgCheckbox0").removeClass(
+                                                            "imgChked");
+                                                        $("#image_id_" + images_ids[1])
+                                                            .remove();
+                                                    });
+
+
+                                                    var color = "";
+                                                    var elem = "";
+                                                    var index = 0;
+                                                    var current = 0;
+
+
+                                                    //For errors
+                                                    $.each(data.response.errors, function(index, elem) {
+                                                        current++;
+                                                        var mult = current * 300;
+                                                        var delay = 2500 + mult;
+                                                        color = "red";
+                                                        var toast =
+
+                                                            '<div id="toast_id_' + index +
+                                                            '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
+                                                            delay + '">' +
+                                                            '<div class="toast-header" style="background-color: ' +
+                                                            color +
+                                                            ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
+                                                            '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
+                                                            '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+                                                            '<div class="toast-body" id="toast_id_body' +
+                                                            index + '">' + elem +
+                                                            '</div> </div> </div>';
+                                                        $("#bottom_toast").append(toast);
+                                                        $('#toast_id_' + index).toast("show");
+                                                        setTimeout(function() {
+                                                            $('#toast_id_' + index)
+                                                                .remove();
+                                                        }, delay + 500);
+
+
+                                                    });
+                                                    //for success
+                                                    $.each(data.response.success, function(index,
+                                                        elem) {
+                                                        current++;
+                                                        var mult = current * 300;
+                                                        var delay = 2300 + mult;
+                                                        color = "green";
+
+                                                        var toast =
+
+                                                            '<div id="toast_id_' + index +
+                                                            '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
+                                                            delay + '" >' +
+                                                            '<div class="toast-header" style="background-color: ' +
+                                                            color +
+                                                            ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
+                                                            '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
+                                                            '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+                                                            '<div class="toast-body" id="toast_id_body' +
+                                                            index + '">' + elem +
+                                                            '</div> </div> </div>';
+                                                        $("#bottom_toast").append(toast);
+                                                        $('#toast_id_' + index).toast("show");
+                                                        setTimeout(function() {
+                                                            $('#toast_id_' + index)
+                                                                .remove();
+                                                        }, delay + 500);
+
+                                                    });
+
+
+                                                }, //end of success
+                                                error: function(error) {
+
+                                                    $("#ajaxactioncallimages").attr('class',
+                                                        "alert alert-danger");
+                                                    $.each(error.responseJSON.errors, function(index,
+                                                        val) {
+                                                        $("#ajaxactioncallimages #e_message")
+                                                            .html(
+                                                                "<img src='/storage/ajax-loader-red.gif'/>" +
+                                                                val);
+                                                        //   $('#ajaxactioncallimages').fadeOut(2500);
+                                                        // console.log(index, val);
+                                                    });
+
+                                                    // console.log(error);
+
+
+                                                } //end of error
+                                            }); //end of ajax
+
+
+
+
+                                        }
+
+
+                                    });
+
+                                </script>
 
 
                                 <!--End Images model-->
@@ -337,13 +478,13 @@
 
         </div>
     </div>
-    <script>
+    <form action="" method="post" id="image_page_attachment">
 
-
-    </script>
-
-
+    </form>
+    <div class="position-fixed bottom-0 right-0 p-3" style="z-index: 9999999; right: 0; bottom: 0;" id="bottom_toast">
+    </div>
     <!--EDIT PAGE SECTION-->
     <script src="{{ asset('js/editpageajax.js') }}" defer></script>
     <!---END OF AJAX JS-->
+
 @endsection

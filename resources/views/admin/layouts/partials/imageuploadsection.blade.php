@@ -1,5 +1,5 @@
 @if (is_countable($images) && count($images) > 0)
-    <div class="row">
+    <div class="row" id="mod_images_section">
         @foreach ($images as $img)
 
             <div class="col-md-2" style="margin-bottom: 15px" id="uploadedimages">
@@ -17,7 +17,7 @@
                     </a>
                 </div>
                 <a href=""
-                    onclick="event.preventDefault();DeleteSelectedImage({{ $img->id }}, '{{ $img->file }}', {{ $images->currentPage() }}, {{$images->count()}})">
+                    onclick="event.preventDefault();DeleteSelectedImage({{ $img->id }}, '{{ $img->file }}', {{ $images->currentPage() }}, {{ $images->count() }})">
                     <i class="bi bi-trash-fill text-danger"></i>
                 </a>
             </div>
@@ -27,7 +27,8 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel_{{ $img->id }}">Name: {{ $img->image_original_name }}</h5>
+                            <h5 class="modal-title" id="exampleModalLabel_{{ $img->id }}">Name:
+                                {{ $img->image_original_name }}</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -38,8 +39,9 @@
                                     <!--image-->
                                     <img src="{{ asset('storage/' . $img->file) }}" class="img-thumbnail "
                                         class="upload-img-thumbnail" alt="/images/thumbs/{{ $img->file }}" />
-                                        <!--link to image-->
-                                        <small class="text-muted"><b>Link: </b>{{ asset('storage/' . $img->file) }}</small>
+                                    <!--link to image-->
+                                    <small class="text-muted"><b>Link:
+                                        </b>{{ asset('storage/' . $img->file) }}</small>
                                 </div>
                                 <div class="col-md-6">
                                     <!--Edit image properties-->
@@ -86,8 +88,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <form action="{{ URL::to('/admin/Images/updateimagesinfo') }}" method="POST"
-                                >
+                            <form action="{{ URL::to('/admin/Images/updateimagesinfo') }}" method="POST">
                                 @csrf
                                 <button type="button" class="btn btn-primary"
                                     onclick="ShowImageEditOptions({{ $img->id }})">Save
@@ -98,10 +99,13 @@
                 </div>
             </div>
         @endforeach
+
     </div>
 
 
-
+    <div id="images_mod_pagination">
+        {{ $images->withpath('/admin/Images/uploadimage/pagination') }}
+    </div>
 
 
 
@@ -117,6 +121,25 @@
         </ul>
     </div>
 @endif
-<div id="draft_pagination">
-    {{ $images->withpath('/admin/Images/uploadimage') }}
-</div>
+
+<script>
+    //This function will make sure pagination is handlled with Ajax in the background
+    $(function() {
+        $('#images_mod_pagination .pagination a').on('click', function(e) {
+            e.preventDefault();
+            //URL for the pagiantion
+            var url = $(this).attr('href');
+            getView(url);
+        });
+
+        function getView(url) {
+            $.ajax({
+                url: url,
+                method: 'get'
+            }).done(function(data) {
+                $('#images_section').html(data.view);
+            }).fail(function() {});
+        }
+    });
+
+</script>

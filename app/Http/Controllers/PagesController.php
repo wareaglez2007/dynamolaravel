@@ -9,6 +9,7 @@ use App\page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\UploadImages;
+use App\page_images;
 
 class PagesController extends Controller
 {
@@ -395,6 +396,37 @@ class PagesController extends Controller
         if ($request->ajax()) {
             return response()->json([
                 'view' => view('admin.layouts.partials.showpageimages')->with(['images' => $images, 'editview' => $edit_view])->render()
+            ]);
+        }
+    }
+    /**
+     * Attaching Images to Pages
+     *
+     */
+    public function DoAttachImages(Request $request, pages $pages, UploadImages $uploadImages)
+    {
+        $params = [];
+        $response_messages = [];
+        parse_str($request->image_data, $params);
+        foreach ($params as $key => $value) {
+            $image_data = $uploadImages->find($value);
+            $check_duplicate_image = page_images::where("upload_images_id", $value)->where("pages_id", $request->id)->count();
+            if ($check_duplicate_image > 0) {
+                $response_messages['errors'][$key] = "Image " . $image_data->image_original_name. " already been assigned to this page!";
+            } else {
+               
+                $page_images = new page_images();
+                $page_images->upload_images_id = $value;
+                $page_images->pages_id = $request->id;
+                $page_images->save();
+                $response_messages['success'][$key] = "Image: <b>".$image_data->image_original_name."</b> has been assigned to this page successfully!";
+            }
+        }
+       
+
+        if ($request->ajax()) {
+            return response()->json([
+                "response" => $response_messages
             ]);
         }
     }

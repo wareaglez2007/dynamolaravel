@@ -19,6 +19,10 @@
             </div>
         @endforeach
     </div>
+@else
+    <div class="col-md-12">
+        <p>There are currently no images uploaded.</p>
+    </div>
 @endif
 <div id="editpage_pagination">
     {{ $images->withpath('/admin/pages/editpagepaginations/' . $editview->id) }}
@@ -60,8 +64,8 @@
         onclick: function(el) {
             var isChecked = el.hasClass("imgChked"),
                 imgEl = el.children()[0]; // the img element
-            
-           // console.log(imgEl.id + " is now " + (isChecked ? "checked" : "not-checked") + "!");
+
+            // console.log(imgEl.id + " is now " + (isChecked ? "checked" : "not-checked") + "!");
             var page_id = $("#page_id_image").val();
             if (isChecked) {
                 var input = $("<input>")

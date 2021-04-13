@@ -100,6 +100,10 @@
             </div>
         @endforeach
     </div>
+@else
+    <div class="col-md-12">
+        <p>There are currently no images uploaded.</p>
+    </div>
 @endif
 <script>
     function EditAttachedImageprops(id) {
@@ -170,8 +174,6 @@
 
     } //end of EditAttachedImageprops
 
-    function DetachImagesFromPage(page_id, image_id) {
 
-    } //end of DetachImagesFromPage(
 
 </script>

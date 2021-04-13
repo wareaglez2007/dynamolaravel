@@ -24,7 +24,7 @@
 
             </div>
             <div class="col-md-4">
-                
+
 
                 <div class="custom-file">
                     <input type="file" class="custom-file-input" name="upload[]" id="chosen_images" multiple>
@@ -42,7 +42,8 @@
 
 
 </div>
-
+<div class="position-fixed bottom-0 right-0 p-3" style="z-index: 9999999; right: 0; bottom: 0;" id="bottom_toast">
+</div>
  <!--Upload Images, Edit, Delete AJAX CALL NEW -->
  <script src="{{ asset('js/uploadimagesajax.js') }}" defer></script>
 

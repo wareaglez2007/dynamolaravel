@@ -445,6 +445,34 @@ class PagesController extends Controller
             ]);
         }
     }
+    /**
+     * DetachImageFromPage
+     */
+
+     public function DetachImageFromPage(Request $request, page_images $page_images){
+         $response_messages = [];
+         
+         //Check if image is in the table
+         $check = $page_images->where("upload_images_id", $request->image_id)->where("pages_id", $request->page_id)->count();
+         if($check > 0){
+             //lets delete that row from table
+             $page_images->where("upload_images_id", $request->image_id)->where("pages_id", $request->page_id)->forceDelete();
+             $response_messages['success'] = "Image has been detached from page.";
+             $edit_view =  pages::with('slug')->with('imageforpages')->find($request->page_id);
+         }else{
+            $response_messages['error'] = "An error has occured during this query request.";
+         }
+
+         if ($request->ajax()) {
+            return response()->json([
+                "response" => $response_messages,
+                'view' => view('admin.layouts.partials.editpageatachedimages')->with([
+                    "editview" => $edit_view
+                ])->render()
+            ]);
+        }
+
+     }
 
     /**
      * Update the specified resource in storage.

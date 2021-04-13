@@ -10,14 +10,13 @@
                         data-target="#image_modal_{{ $img->id }}"
                         title="{{ asset('storage/thumbnails/' . $img->image_original_name) }}"
                         onclick="event.preventDefault();">
-                        <img src="{{ asset('storage/thumbnails/' . $img->file) }}" @if ($img->image_width != $img->image_height) class="upload-img-thumbnail landscape"
-@else
+                    <img src="{{ asset('storage/thumbnails/' . $img->file) }}" @if ($img->image_width != $img->image_height) class="upload-img-thumbnail landscape" @else
                         class="upload-img-thumbnail" @endif
                             alt="/images/thumbs/{{ $img->file }}" />
                     </a>
                 </div>
                 <a href=""
-                    onclick="event.preventDefault();DeleteSelectedImage({{ $img->id }}, '{{ $img->file }}', {{ $images->currentPage() }}, {{ $images->count() }})">
+                    onclick="event.preventDefault();DeleteSelectedImage({{ $img->id }}, '{{ $img->file }}', '{{ $img->image_original_name }}', {{ $images->currentPage() }},  {{ $images->count() }})">
                     <i class="bi bi-trash-fill text-danger"></i>
                 </a>
             </div>
@@ -108,9 +107,15 @@
     </div>
 
 
+@else
+    <div class="row">
+        <div class="col-md-12">
+            <p>There are currently no images uploaded.</p>
+        </div>
 
-
+    </div>
 @endif
+
 @if (count($errors) > 0)
     <div class="alert alert-danger">
         <strong>Whoops!</strong> There were some problems with your file.

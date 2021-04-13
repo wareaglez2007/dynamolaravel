@@ -9,6 +9,7 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use App\page_images;
 
 class UploadImagesController extends Controller
 {
@@ -115,19 +116,25 @@ class UploadImagesController extends Controller
     //Deleting IMAGES
     public function DeleteImages(Request $request)
     {
+        $response_messages = [];
+        //We need to check if the image is assigned to a page
+        $check_assignment = page_images::where('upload_images_id', $request->id)->count();
+        if ($check_assignment > 0) {
+            $response_messages['errors'] = 'Image ' .$request->image_origin_name.' cannot be deleted because it has been assigned to a page';
+        } else {
+            //Delete File directory
+            //file $request->path_to, may need to substring the trailing slash
 
-        //Delete File directory
-        //file $request->path_to, may need to substring the trailing slash
-
-        Storage::disk('public')->delete($request->image_name); //Deletes the files
-        Storage::disk('public')->delete('thumbnails/' . $request->image_name); //Deletes the files
-        // Storage::disk('public')->delete('images/'.$request->image_name); // Deletes the directory
+            Storage::disk('public')->delete($request->image_name); //Deletes the files
+            Storage::disk('public')->delete('thumbnails/' . $request->image_name); //Deletes the files
+            // Storage::disk('public')->delete('images/'.$request->image_name); // Deletes the directory
 
 
 
-        //GET it from AJAX
-        UploadImages::where('id', $request->id)->forceDelete();
-        $success_message = "Image $request->image_name has been deleted!!!";
+            //GET it from AJAX
+            UploadImages::where('id', $request->id)->forceDelete();
+            $response_messages['success'] = "Image " .$request->image_origin_name." has been deleted!!!";
+        }
         $count = UploadImages::count();
 
         $images = UploadImages::orderBy('id', 'DESC')->paginate(18);
@@ -135,7 +142,7 @@ class UploadImagesController extends Controller
 
         if ($request->ajax()) {
             return response()->json([
-                'view' => view('admin.layouts.partials.imageuploadsection')->with(['images' => $images])->render(), 'success' => $success_message, 'count' => $count
+                'view' => view('admin.layouts.partials.imageuploadsection')->with(['images' => $images])->render(), 'response' => $response_messages, 'count' => $count
             ]);
         }
     }
@@ -164,7 +171,7 @@ class UploadImagesController extends Controller
         $uploadImages->where('id', $request->id)->update(['image_original_name' => $request->image_name, 'image_alt_text' => $request->image_alt_text]);
 
         $success_message = "Image $request->image_name has been Updated.";
-        
+
         if ($request->ajax()) {
             return response()->json([
                 'success' => $success_message
@@ -174,7 +181,8 @@ class UploadImagesController extends Controller
     /**
      * AJAX Pagination control for Upload images module
      */
-    public function ImageModulePagination(Request $request){
+    public function ImageModulePagination(Request $request)
+    {
         $images = UploadImages::orderBy('id', 'DESC')->paginate(18);
 
         if ($request->ajax()) {

@@ -70,7 +70,7 @@ Route::post('/admin/pages/update', 'PagesController@update');
 
 //Atach Image to Page
 //DoAttachImages
-Route::post('/admin/pages/edit/attachimages', 'PagesController@DoAttachImages'); 
+Route::post('/admin/pages/edit/attachimages', 'PagesController@DoAttachImages');
 
 Route::post('/admin/pages/delete', 'PagesController@destroy')->name('Backend.Pages.destroy');
 
@@ -79,7 +79,7 @@ Route::post('/admin/pages/forcedelete', 'PagesController@permDelete')->name('Bac
 Route::put('/admin/pages/restore', 'PagesController@restore')->name('Backend.Pages.restore');
 Route::post('/admin/pages/publish', 'PagesController@publish')->name('Backend.Pages.publish');
 Route::post('/admin/pages/edit/addimages', 'PagesController@AppendImageToPage')->name('Backend.Pages.doaddimages');
-Route::post('/admin/pages/edit/dettachimage', 'PagesController@DettachImageFromPage');
+Route::post('/admin/pages/edit/detachimage', 'PagesController@DetachImageFromPage');
 
 Route::post('/admin/pages/update/updateposition', 'PagesController@UpdatePosition');
 Route::post('/admin/pages/bulkunpublish', 'PagesController@BulkUnpublish');

@@ -98,6 +98,12 @@ Route::post('/admin/Images/updateimagesinfo', 'UploadImagesController@UpdateImag
 Route::get('/admin/Images/uploadimage/pagination', 'UploadImagesController@ImageModulePagination');
 
 /**
+ * Files
+ * Controller = FileshandlerController
+ */
+Route::get('/admin/Files/managefiles', 'FileshandlerController@index')->name('admin.files.upload');
+
+/**
  * Navigations Manger
  */
 

@@ -15,39 +15,42 @@
 
 
 
-                        @if (session('status'))
-                            <div class="alert alert-success" role="alert">
-                                {{ session('status') }}
-                            </div>
-                        @endif
+        @if (session('status'))
+            <div class="alert alert-success" role="alert">
+                {{ session('status') }}
+            </div>
+        @endif
 
-                        @if (session()->has('message'))
-                            <div class="alert alert-success">
-                                {{ session()->get('message') }}
-                            </div>
+        @if (session()->has('message'))
+            <div class="alert alert-success">
+                {{ session()->get('message') }}
+            </div>
 
-                        @endif
-                        @if (request()->path() == 'admin/navigations')
-                            @include('admin.modules.Navigations.navmod')
-                        @endif
-                        @if (request()->path() == 'admin/seo')
-                            @include('admin.layouts.partials.seo')
-                        @endif
-                        @if (request()->path() == 'admin/social-media')
-                            @include('admin.layouts.partials.socialmedia')
-                        @endif
-                        @if (request()->path() == 'admin/business-info')
-                            @include('admin.layouts.partials.business')
-                        @endif
-                        @if (request()->path() == 'admin')
-                            @include('admin.layouts.partials.dashboard')
-                        @endif
-                        @if (request()->path() == 'admin/forms')
-                            @include('admin.layouts.partials.forms')
-                        @endif
-                        @if (request()->path() == 'admin/Images/uploadimage')
-                        @include('admin.layouts.partials.uploadimages')
-                    @endif
+        @endif
+        @if (request()->path() == 'admin/navigations')
+            @include('admin.modules.Navigations.navmod')
+        @endif
+        @if (request()->path() == 'admin/seo')
+            @include('admin.layouts.partials.seo')
+        @endif
+        @if (request()->path() == 'admin/social-media')
+            @include('admin.layouts.partials.socialmedia')
+        @endif
+        @if (request()->path() == 'admin/business-info')
+            @include('admin.layouts.partials.business')
+        @endif
+        @if (request()->path() == 'admin')
+            @include('admin.layouts.partials.dashboard')
+        @endif
+        @if (request()->path() == 'admin/forms')
+            @include('admin.layouts.partials.forms')
+        @endif
+        @if (request()->path() == 'admin/Images/uploadimage')
+            @include('admin.layouts.partials.uploadimages')
+        @endif
+        @if (request()->path() == 'admin/Files/managefiles')
+            @include('admin.layouts.partials.uploadfiles')
+        @endif
 
     </div>
 

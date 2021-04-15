@@ -66,7 +66,7 @@
 
     <!--Show media section-->
     <div id="images_section">
-        @include('admin.layouts.partials.imageuploadsection')
+        @include('admin.layouts.partials.Mods.Images.imageuploadsection')
     </div>
 
 </div>

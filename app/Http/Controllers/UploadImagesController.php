@@ -107,7 +107,7 @@ class UploadImagesController extends Controller
 
 
                 return response()->json([
-                    'view' => view('admin.layouts.partials.imageuploadsection')->with(['images' => $images])->render(), 'validations' => $upload_messages, 'image_count' => count($request->upload)
+                    'view' => view('admin.layouts.partials.Mods.Images.imageuploadsection')->with(['images' => $images])->render(), 'validations' => $upload_messages, 'image_count' => count($request->upload)
                 ]);
             }
         }
@@ -142,7 +142,7 @@ class UploadImagesController extends Controller
 
         if ($request->ajax()) {
             return response()->json([
-                'view' => view('admin.layouts.partials.imageuploadsection')->with(['images' => $images])->render(), 'response' => $response_messages, 'count' => $count
+                'view' => view('admin.layouts.partials.Mods.Images.imageuploadsection')->with(['images' => $images])->render(), 'response' => $response_messages, 'count' => $count
             ]);
         }
     }
@@ -155,7 +155,7 @@ class UploadImagesController extends Controller
 
         if ($request->ajax()) {
             return response()->json([
-                'view' => view('admin.layouts.partials.imageuploadsection')->with(['images' => $images])->render(), 'count' => $count
+                'view' => view('admin.layouts.partials.Mods.Images.imageuploadsection')->with(['images' => $images])->render(), 'count' => $count
             ]);
         }
     }
@@ -187,7 +187,7 @@ class UploadImagesController extends Controller
 
         if ($request->ajax()) {
             return response()->json([
-                'view' => view('admin.layouts.partials.imageuploadsection')->with(['images' => $images])->render()
+                'view' => view('admin.layouts.partials.Mods.Images.imageuploadsection')->with(['images' => $images])->render()
             ]);
         }
     }

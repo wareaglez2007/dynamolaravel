@@ -27,29 +27,45 @@
             </div>
 
         @endif
+        <!-- Navigation Manager (needs work) -->
         @if (request()->path() == 'admin/navigations')
             @include('admin.modules.Navigations.navmod')
         @endif
+        <!-- SEO manager (needs work) -->
         @if (request()->path() == 'admin/seo')
             @include('admin.layouts.partials.seo')
         @endif
+        <!-- Social Media Management (needs work) -->
         @if (request()->path() == 'admin/social-media')
             @include('admin.layouts.partials.socialmedia')
         @endif
+        <!-- Business Information (needs work) -->
         @if (request()->path() == 'admin/business-info')
             @include('admin.layouts.partials.business')
         @endif
+        <!-- Main Dashboard (after login) (needs work) -->
         @if (request()->path() == 'admin')
             @include('admin.layouts.partials.dashboard')
         @endif
+        <!-- Forms (needs work) -->
         @if (request()->path() == 'admin/forms')
             @include('admin.layouts.partials.forms')
         @endif
+        <!-- Images -->
         @if (request()->path() == 'admin/Images/uploadimage')
-            @include('admin.layouts.partials.uploadimages')
+            @include('admin.layouts.partials.Mods.Images.uploadimages')
         @endif
+        <!-- Image page relation report (what image is assigned to which page) -->
+        @if (request()->path() == 'admin/Images/uploadimagereport')
+            @include('admin.layouts.partials.Mods.Images.imagesreport')
+        @endif
+        <!-- Files -->
         @if (request()->path() == 'admin/Files/managefiles')
-            @include('admin.layouts.partials.uploadfiles')
+            @include('admin.layouts.partials.Mods.Files.uploadfiles')
+        @endif
+        <!-- Files page relation report (what file is assigned to which page) -->
+        @if (request()->path() == 'admin/Files/managefilesreport')
+            @include('admin.layouts.partials.Mods.Files.filesreport')
         @endif
 
     </div>

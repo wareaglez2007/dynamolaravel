@@ -90,6 +90,10 @@ Route::post('/admin/pages/bulkpublish', 'PagesController@BulkPublish');
  * Controller = ImagesController
  */
 Route::get('/admin/Images/uploadimage', 'UploadImagesController@getUploadForm')->name('admin.images.upload');
+Route::get('/admin/Images/uploadimagereport', 'UploadImagesController@ViewImagesReports')->name('admin.images.report'); /****Report***/
+Route::get('/admin/Images/uploadimagereport/pagination', 'UploadImagesController@ImageReportModulePagination');/**Image report pagination */
+Route::post('/admin/Images/uploadimagereport/detachimage', 'UploadImagesController@DetachImageFromPage');
+
 Route::post('/admin/Images/uploadimage', 'UploadImagesController@postUploadForm');
 Route::get('/admin/Images/deleteselectedimage', 'UploadImagesController@DeleteImages');
 Route::get('/admin/Images/getafterdelete', 'UploadImagesController@AfterDelete');

@@ -9,7 +9,9 @@ use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\Support\Jsonable;
 use App\page_images;
+use App\pages;
 
 class UploadImagesController extends Controller
 {
@@ -120,7 +122,7 @@ class UploadImagesController extends Controller
         //We need to check if the image is assigned to a page
         $check_assignment = page_images::where('upload_images_id', $request->id)->count();
         if ($check_assignment > 0) {
-            $response_messages['errors'] = 'Image ' .$request->image_origin_name.' cannot be deleted because it has been assigned to a page';
+            $response_messages['errors'] = 'Image ' . $request->image_origin_name . ' cannot be deleted because it has been assigned to a page';
         } else {
             //Delete File directory
             //file $request->path_to, may need to substring the trailing slash
@@ -133,7 +135,7 @@ class UploadImagesController extends Controller
 
             //GET it from AJAX
             UploadImages::where('id', $request->id)->forceDelete();
-            $response_messages['success'] = "Image " .$request->image_origin_name." has been deleted!!!";
+            $response_messages['success'] = "Image " . $request->image_origin_name . " has been deleted!!!";
         }
         $count = UploadImages::count();
 
@@ -190,5 +192,61 @@ class UploadImagesController extends Controller
                 'view' => view('admin.layouts.partials.Mods.Images.imageuploadsection')->with(['images' => $images])->render()
             ]);
         }
+    }
+
+    /**
+     * Images Report
+     * ViewImagesReports
+     */
+    public function ViewImagesReports(pages $pages, page_images $page_images)
+    {
+        //Get Attached Images to each Page
+        $report = $page_images->with('attachedPages')->with('getImages')->paginate(10);
+
+        return view("admin.modules.general", ['mod_name' => "Images Report",  'report' => $report]);
+    }
+
+    /**
+     * Images Report Pagination
+     * ImageReportModulePagination
+     */
+    public function ImageReportModulePagination(Request $request)
+    {
+        //Get Attached Images to each Page
+        $report = page_images::with('attachedPages')->with('getImages')->paginate(10);
+        if ($request->ajax()) {
+            return response()->json([
+                'view' => view('admin.layouts.partials.Mods.Images.imagesreporttable')->with(['mod_name' => "Images Report",  'report' => $report])->render()
+            ]);
+        }
+    }
+
+        /**
+     * DetachImageFromPage
+     */
+
+    public function DetachImageFromPage(Request $request, page_images $page_images){
+        $response_messages = [];
+
+        //Check if image is in the table
+        $check = $page_images->where("upload_images_id", $request->image_id)->where("pages_id", $request->page_id)->count();
+        if($check > 0){
+            //lets delete that row from table
+            $page_images->where("upload_images_id", $request->image_id)->where("pages_id", $request->page_id)->forceDelete();
+            $response_messages['success'] = "Image has been detached from page.";
+            $report = page_images::with('attachedPages')->with('getImages')->paginate(10);
+        }else{
+           $response_messages['error'] = "An error has occured during this query request.";
+        }
+
+        if ($request->ajax()) {
+           return response()->json([
+               "response" => $response_messages,
+               'view' => view('admin.layouts.partials.Mods.Images.imagesreporttable')->with([
+                   "report" => $report,
+               ])->render()
+           ]);
+       }
+
     }
 }

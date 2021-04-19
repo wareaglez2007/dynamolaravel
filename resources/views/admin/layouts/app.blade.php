@@ -138,7 +138,7 @@
                                             id="image_page">
 
                                             Upload & Manage Images</a>
-                                            <a href="{{ route('admin.images.upload') }}" class="list-group-item nav-link"
+                                            <a href="{{ route('admin.images.report') }}" class="list-group-item nav-link"
                                             id="attached_images_page">
 
                                             Attached Images Report</a>

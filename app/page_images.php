@@ -22,6 +22,7 @@ class page_images extends Model
     public function attachedPages(){
         return $this->belongsTo( 'App\pages', 'pages_id');
     }
+
     public function getImages(){
         return $this->belongsTo( 'App\UploadImages', 'upload_images_id');
     }

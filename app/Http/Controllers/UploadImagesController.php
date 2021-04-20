@@ -198,12 +198,28 @@ class UploadImagesController extends Controller
      * Images Report
      * ViewImagesReports
      */
-    public function ViewImagesReports(pages $pages, page_images $page_images)
+    public function ViewImagesReports(pages $pages, page_images $page_images, Request $request)
     {
-        //Get Attached Images to each Page
-        $report = $page_images->with('attachedPages')->with('getImages')->paginate(10);
+        if(!isset($request->sortby)){
+            $request->sortby = 'pages_id';
+            $request->direction = 'ASC';
+        }
+        $request->session()->put('sortby', $request->sortby);
+        $request->session()->put('direction', $request->direction);
 
-        return view("admin.modules.general", ['mod_name' => "Images Report",  'report' => $report]);
+        //Get Attached Images to each Page
+        $report = $page_images->with('attachedPages')->with('getImages')->orderBy($request->sortby, $request->direction )->paginate(10);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'view' => view('admin.layouts.partials.Mods.Images.imagesreporttable')->with(['mod_name' => "Images Report",  'report' => $report])->render()
+            ]);
+        }else{
+            return view("admin.modules.general", ['mod_name' => "Images Report",  'report' => $report]);
+        }
+
+
+
     }
 
     /**
@@ -212,8 +228,10 @@ class UploadImagesController extends Controller
      */
     public function ImageReportModulePagination(Request $request)
     {
+
+       // dd($request->session()->get('direction'));
         //Get Attached Images to each Page
-        $report = page_images::with('attachedPages')->with('getImages')->paginate(10);
+        $report = page_images::with('attachedPages')->with('getImages')->orderBy($request->sortby, $request->direction )->paginate(10);
         if ($request->ajax()) {
             return response()->json([
                 'view' => view('admin.layouts.partials.Mods.Images.imagesreporttable')->with(['mod_name' => "Images Report",  'report' => $report])->render()

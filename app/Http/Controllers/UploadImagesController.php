@@ -200,26 +200,30 @@ class UploadImagesController extends Controller
      */
     public function ViewImagesReports(pages $pages, page_images $page_images, Request $request)
     {
-        if(!isset($request->sortby)){
-            $request->sortby = 'pages_id';
-            $request->direction = 'ASC';
-        }
-        $request->session()->put('sortby', $request->sortby);
-        $request->session()->put('direction', $request->direction);
+        if (!isset($request->sortby) && !isset($request->direction)) {
+            $sort_by =   'pages_id';
+            $direction  = 'ASC';
+        }else{
+            $sort_by = $request->sortby;
+            $direction = $request->direction;
 
+        }
+
+        $request->session()->put('sortby', $sort_by);
+        $request->session()->put('direction', $direction);
+        //
         //Get Attached Images to each Page
-        $report = $page_images->with('attachedPages')->with('getImages')->orderBy($request->sortby, $request->direction )->paginate(10);
+        $report = $page_images->with('attachedPages')->with('getImages')->orderBy(session()->get('sortby'), session()->get('direction'))->paginate(10);
 
         if ($request->ajax()) {
+
             return response()->json([
+                'sessions' => $request->session()->all(),
                 'view' => view('admin.layouts.partials.Mods.Images.imagesreporttable')->with(['mod_name' => "Images Report",  'report' => $report])->render()
             ]);
-        }else{
-            return view("admin.modules.general", ['mod_name' => "Images Report",  'report' => $report]);
+        } else {
+            return view("admin.modules.general", ['mod_name' => "Images Report",  'report' => $report, 'sessions' => $request->session()->all()]);
         }
-
-
-
     }
 
     /**
@@ -229,9 +233,9 @@ class UploadImagesController extends Controller
     public function ImageReportModulePagination(Request $request)
     {
 
-       // dd($request->session()->get('direction'));
+        // dd($request->session()->get('direction'));
         //Get Attached Images to each Page
-        $report = page_images::with('attachedPages')->with('getImages')->orderBy($request->sortby, $request->direction )->paginate(10);
+        $report = page_images::with('attachedPages')->with('getImages')->orderBy($request->sortby, $request->direction)->paginate(10);
         if ($request->ajax()) {
             return response()->json([
                 'view' => view('admin.layouts.partials.Mods.Images.imagesreporttable')->with(['mod_name' => "Images Report",  'report' => $report])->render()
@@ -239,32 +243,45 @@ class UploadImagesController extends Controller
         }
     }
 
-        /**
+    /**
      * DetachImageFromPage
      */
 
-    public function DetachImageFromPage(Request $request, page_images $page_images){
+    public function DetachImageFromPage(Request $request, page_images $page_images)
+    {
+
+        if (!isset($request->sortby) && !isset($request->direction)) {
+            $sort_by =   'pages_id';
+            $direction  = 'ASC';
+        }else{
+            $sort_by = $request->sortby;
+            $direction = $request->direction;
+
+        }
+
+        $request->session()->put('sortby', $sort_by);
+        $request->session()->put('direction', $direction);
+
         $response_messages = [];
 
         //Check if image is in the table
         $check = $page_images->where("upload_images_id", $request->image_id)->where("pages_id", $request->page_id)->count();
-        if($check > 0){
+        if ($check > 0) {
             //lets delete that row from table
             $page_images->where("upload_images_id", $request->image_id)->where("pages_id", $request->page_id)->forceDelete();
             $response_messages['success'] = "Image has been detached from page.";
-            $report = page_images::with('attachedPages')->with('getImages')->paginate(10);
-        }else{
-           $response_messages['error'] = "An error has occured during this query request.";
+            $report = page_images::with('attachedPages')->with('getImages')->orderBy(session()->get('sortby'), session()->get('direction'))->paginate(10);
+        } else {
+            $response_messages['error'] = "An error has occured during this query request.";
         }
 
         if ($request->ajax()) {
-           return response()->json([
-               "response" => $response_messages,
-               'view' => view('admin.layouts.partials.Mods.Images.imagesreporttable')->with([
-                   "report" => $report,
-               ])->render()
-           ]);
-       }
-
+            return response()->json([
+                "response" => $response_messages,
+                'view' => view('admin.layouts.partials.Mods.Images.imagesreporttable')->with([
+                    "report" => $report,
+                ])->render()
+            ]);
+        }
     }
 }

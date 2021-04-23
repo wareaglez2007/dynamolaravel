@@ -2,23 +2,38 @@
     <table class="table table-hover">
         <thead>
             <tr>
+                <?php session()->has('direction') ? ($direction = session()->get('direction')) :
+                ($direction = 'DESC');
+
+                ?>
 
                 <th scope="col"><a href=""
-                        onclick="event.preventDefault();DoSortBy('upload_images_id', 'DESC', {{ $report->currentPage() }});"
-                        class="text-muted" id="image_id_sorter" data-sortby="upload_images_id" data-direction="DESC"><i
-                            class="bi bi-sort-numeric-down text-secondary h4"></i> Image Id</a></th>
+                        onclick="event.preventDefault();DoSortBy('upload_images_id', '{{ session()->get('direction') }}' , {{ $report->currentPage() }});"
+                        class="text-muted" id="image_id_sorter"><i class="bi bi-arrow-down-up h5"></i> Image Id</a></th>
                 <th scope="col"><a href=""
-                        onclick="event.preventDefault();DoSortBy('pages_id', 'DESC', {{ $report->currentPage() }});"
-                        class="text-muted" id="page_id_sorter" data-sortby="pages_id" data-direction="DESC"><i class="bi bi-sort-numeric-down text-secondary h4"></i>
+                        onclick="event.preventDefault();DoSortBy('pages_id', '{{ session()->get('direction') }}' , {{ $report->currentPage() }});"
+                        class="text-muted" id="page_id_sorter"><i class="bi bi-arrow-down-up h5"></i>
                         Page ID</a></th>
-                <th scope="col">Page Name</th>
-                <th scope="col">Image Name</th>
-                <th scope="col">Image Preview</th>
-                <th scope="col">Detach</th>
+                <input type="hidden" id="pagination_sorter" data-sortby="{{ session()->get('sortby') }}"
+                    data-direction="{{ session()->get('direction') }}"
+                    data-sorticon="{{ session()->get('sort_icon') }}" />
+                <th scope="col" class="text-muted">Page</th>
+                <th scope="col" class="text-muted">Image</th>
+                <th scope="col" class="text-muted">Preview</th>
+                <th scope="col" class="text-muted">Detach</th>
             </tr>
         </thead>
         <script>
             function DoSortBy(orderby, direction, page) {
+
+                if (direction == 'DESC') {
+                    d = "ASC";
+                    direction = "ASC";
+                } else {
+                    direction = "DESC";
+                    d = "DESC";
+                }
+
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $(
@@ -29,7 +44,7 @@
 
                 }); //End of ajax setup
                 $.ajax({
-                    url: '/admin/Images/uploadimagereport/pagination',
+                    url: '/admin/Images/uploadimagereport',
                     method: "get",
                     //cache: false,
                     data: {
@@ -38,32 +53,20 @@
                         direction: direction,
                     },
                     success: function(data) {
-                        var d = "";
-                        var icon = "";
-                        if (direction == 'DESC') {
-                            d = "ASC";
-                            icon = "up-alt";
-                        } else {
-                            d = "DESC";
-                            icon = "down";
-                        }
-
-                        var url = '/admin/Images/uploadimagereport/pagination?page=' + page;
+                        var url = '/admin/Images/uploadimagereport?page=' + page;
                         //getView(url);
                         $('#image_report_section').html(data.view);
                         if (orderby == 'upload_images_id') {
+
                             $('#image_id_sorter').attr("onClick", "event.preventDefault();DoSortBy('" +
                                 orderby + "','" + d + "','" + page + "');");
-                                $('#image_id_sorter').attr("data-direction", d);
-                            $('#image_id_sorter i').attr("class", "bi bi-sort-numeric-" + icon +
-                                " text-secondary h4");
+
                         }
                         if (orderby == 'pages_id') {
+
                             $('#page_id_sorter').attr("onClick", "event.preventDefault();DoSortBy('" +
                                 orderby + "','" + d + "','" + page + "');");
-                            $('#page_id_sorter i').attr("class", "bi bi-sort-numeric-" + icon +
-                                " text-secondary h4");
-                                $('#page_id_sorter').attr("data-direction", d);
+
                         }
                     }, //end of success
                     error: function(error) {
@@ -104,7 +107,7 @@
                                 class="img-thumbnail " class="upload-img-thumbnail"
                                 alt="/images/thumbs/{{ $image_report->getImages->file }}" /></a></td>
                     <td><a href=""
-                            onclick="event.preventDefault();DetachImagesFromPage({{ $image_report->attachedPages->id }},{{ $image_report->getImages->id }}, {{ $report->currentPage() }}, {{ $report->count() }} );"><i
+                            onclick="event.preventDefault();DetachImagesFromPage({{ $image_report->attachedPages->id }},{{ $image_report->getImages->id }}, {{ $report->currentPage() }}, {{ $report->count() }}, '{{ session()->get('sortby') }}', '{{ session()->get('direction') }}' );"><i
                                 class="bi bi-x-square-fill text-danger"></i></a></td>
                 </tr>
             @endforeach
@@ -113,7 +116,7 @@
 
     </table>
     <span id="images_report_mod_pagination">
-        {{ $report->withpath('/admin/Images/uploadimagereport/pagination') }}
+        {{ $report->withpath('/admin/Images/uploadimagereport') }}
     </span>
     <script>
         //This function will make sure pagination is handlled with Ajax in the background
@@ -122,9 +125,10 @@
                 e.preventDefault();
                 //URL for the pagiantion
                 var url = $(this).attr('href');
-                var sortby = $("#image_id_sorter").data("sortby");
-                var direction = $("#image_id_sorter").data("direction");
-                getView(url+"&sortby="+sortby+"&direction="+direction);
+                var sortby = $("#pagination_sorter").data("sortby");
+                var direction = $("#pagination_sorter").data("direction");
+
+                getView(url + "&sortby=" + sortby + "&direction=" + direction);
             });
 
 
@@ -132,7 +136,7 @@
 
 
 
-        function DetachImagesFromPage(page_id, image_id, current_page, count) {
+        function DetachImagesFromPage(page_id, image_id, current_page, count, orderby, direction) {
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $(
@@ -149,6 +153,8 @@
                 data: {
                     image_id: image_id,
                     page_id: page_id,
+                    sortby: orderby,
+                    direction: direction,
                 },
                 success: function(data) {
                     var delay = 2300;
@@ -180,7 +186,7 @@
                         current_page = current_page - 1;
                     }
                     var url = '/admin/Images/uploadimagereport/pagination?page=' + current_page;
-                    getView(url);
+                    getView(url + "&sortby=" + orderby + "&direction=" + direction);
 
 
                 }, //end of success
@@ -203,9 +209,8 @@
 
 
         function getView(url) {
-            var sortby = $("#image_id_sorter").data("sortby");
-            var direction = $("#page_id_sorter").data("direction");
-            console.log(sortby);
+            var sortby = $("#pagination_sorter").data("sortby");
+            var direction = $("#pagination_sorter").data("direction");
             $.ajax({
                 url: url,
                 sortby: sortby,
@@ -215,7 +220,6 @@
                 $('#image_report_section').html(data.view);
             }).fail(function() {});
         }
-
 
     </script>
 @else

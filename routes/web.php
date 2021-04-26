@@ -106,7 +106,7 @@ Route::get('/admin/Images/uploadimage/pagination', 'UploadImagesController@Image
  * Controller = FileshandlerController
  */
 Route::get('/admin/Files/managefiles', 'FileshandlerController@index')->name('admin.files.upload');
-
+Route::post('/admin/files/uploadfiles', 'FileshandlerController@store')->name('admin.files.upload.save');
 /**
  * Navigations Manger
  */

@@ -32,7 +32,17 @@ class FileshandlerController extends Controller
      */
     public function index()
     {
-        return view("admin.modules.general", ['mod_name' => "Files Manager"]);
+        $fetch_files = fileshandler::orderBy('id', 'DESC')->get();
+
+        if (request()->ajax()) {
+
+
+            return response()->json([
+                'view' => view('admin.layouts.partials.Mods.Files.fileuploadsection')->with(['files' => $fetch_files, 'mod_name' => "Files Manager",])->render()
+            ]);
+        } else {
+            return view("admin.modules.general", ['mod_name' => "Files Manager", "files" => $fetch_files]);
+        }
     }
 
 
@@ -43,14 +53,14 @@ class FileshandlerController extends Controller
     public function createDirecrotory()
     {
         $paths = [
-            'file_path' => storage_path('app/public/files'),
-            'css_path' => storage_path('app/public/files/css'),
-            'js_path' => storage_path('app/public/files/js'),
-            'html_path' => storage_path('app/public/files/html'),
-            'pdf_path' => storage_path('app/public/files/pdf'),
-            'xml_path' => storage_path('app/public/files/xml'),
-            'csv_path' => storage_path('app/public/files/csv'),
-            'txt_path' => storage_path('app/public/files/txt'),
+            'file_path' => 'public/files/',
+            'css_path' => 'public/files/css/',
+            'js_path' => 'public/files/js/',
+            'html_path' => 'public/files/html/',
+            'pdf_path' => 'public/files/pdf/',
+            'xml_path' => 'public/files/xml/',
+            'csv_path' => 'public/files/csv/',
+            'txt_path' => 'public/files/txt/',
         ];
         foreach ($paths as $key => $path) {
             if (!File::isDirectory($path)) {
@@ -101,36 +111,43 @@ class FileshandlerController extends Controller
                     $upload_messages[$key] = $validator->errors();
                 } else {
                     $upload_messages[$key] = "File " . $file->getClientOriginalName() . " has been uploaded.";
-                    $filename = time().'-'.$file->getClientOriginalName();
-
+                    $filename = time() . '-' . $file->getClientOriginalName();
+                    //   dd($this->pdfpath.$filename);
                     //Check file extension
-                    if($file->extension() == "css"){
-                        $file->storeAs($this->csspath , $filename);
+                    if ($file->extension() == "css") {
+                        $file->storeAs($this->csspath, $filename);
+                        $storedURL =  Storage::url($this->csspath . $filename);
                     }
-                    if($file->extension() == "js"){
-                        $file->storeAs($this->jspath , $filename);
+                    if ($file->extension() == "js") {
+                        $file->storeAs($this->jspath, $filename);
+                        $storedURL =  Storage::url($this->jspath . $filename);
                     }
-                    if($file->extension() == "html"){
-                        $file->storeAs($this->htmlpath , $filename);
+                    if ($file->extension() == "html") {
+                        $file->storeAs($this->htmlpath, $filename);
+                        $storedURL =  Storage::url($this->htmlpath . $filename);
                     }
-                    if($file->extension() == "xml"){
+                    if ($file->extension() == "xml") {
                         $file->storeAs($this->xmlpath, $filename);
+                        $storedURL =  Storage::url($this->xmlpath . $filename);
                     }
-                    if($file->extension() == "csv"){
-                        $file->storeAs($this->csvpath , $filename);
+                    if ($file->extension() == "csv") {
+                        $file->storeAs($this->csvpath, $filename);
+                        $storedURL =  Storage::url($this->csvpath . $filename);
                     }
-                    if($file->extension() == "pdf"){
-                        $file->storeAs($this->pdfpath , $filename);
+                    if ($file->extension() == "pdf") {
+                        $file->storeAs($this->pdfpath, $filename);
+                        $storedURL =  Storage::url($this->pdfpath . $filename);
                     }
-                    if($file->extension() == "txt"){
-                        $file->storeAs($this->txtpath , $filename);
+                    if ($file->extension() == "txt") {
+                        $file->storeAs($this->txtpath, $filename);
+                        $storedURL =  Storage::url($this->txtpath . $filename);
                     }
 
                     $file_extension = $file->extension();
 
                     // save original image
                     // $file->storeAs('/public/uploads/' , $imageName);
-                   $storedURL =  Storage::url($filename);
+
                     $file_size = filesize($file);
 
 
@@ -143,12 +160,12 @@ class FileshandlerController extends Controller
                     $upload->save();
                 }
             }
-            $fetch_files = fileshandler::orderBy('id', 'DESC');
+            $fetch_files = fileshandler::orderBy('id', 'DESC')->get();
             if ($request->ajax()) {
 
 
                 return response()->json([
-                    'view' => view('admin.layouts.partials.imageuploadsection')->with(['images' => $fetch_files])->render(), 'validations' => $upload_messages, 'image_count' => count($request->upload)
+                    'view' => view('admin.layouts.partials.Mods.Files.fileuploadsection')->with(['files' => $fetch_files])->render(), 'validations' => $upload_messages, 'image_count' => count($request->upload)
                 ]);
             }
         }

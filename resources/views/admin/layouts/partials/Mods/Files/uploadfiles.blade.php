@@ -16,8 +16,8 @@
         </button>
     </div>
 
-    <form action="{{ URL::to('/admin/Images/uploadimage') }}" method="POST" enctype="multipart/form-data"
-        id="upload_images_form">
+    <form action="{{ URL::to('/admin/files/uploadfiles') }}" method="POST" enctype="multipart/form-data"
+        id="upload_files_form">
         @csrf
         <div class="row">
             <div class="col-md-4">
@@ -45,7 +45,7 @@
 <div class="position-fixed bottom-0 right-0 p-3" style="z-index: 9999999; right: 0; bottom: 0;" id="bottom_toast">
 </div>
  <!--Upload Images, Edit, Delete AJAX CALL NEW -->
- <script src="{{ asset('js/uploadimagesajax.js') }}" defer></script>
+ <script src="{{ asset('js/uploadfilesajax.js') }}" defer></script>
 
 <div class="card-body">
     @if (session('status'))

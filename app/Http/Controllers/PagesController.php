@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\UploadImages;
 use App\page_images;
+use App\fileshandler;
 
 class PagesController extends Controller
 {
@@ -375,7 +376,7 @@ class PagesController extends Controller
         }
 
         $images = UploadImages::orderBy('id', 'DESC')->paginate(12);
-
+        $fetch_files = fileshandler::orderBy('id', 'DESC')->get();
 
         return view('admin.modules.Pages.edit', [
             'permalink' => $slug_uri,
@@ -383,7 +384,8 @@ class PagesController extends Controller
             'pages' => $page_list,
             'homepageCount' => $homepage_count,
             'mod_name' => "Images",
-            'images' => $images
+            'images' => $images,
+            'files' => $fetch_files
         ]);
     }
     /**
@@ -451,7 +453,7 @@ class PagesController extends Controller
 
      public function DetachImageFromPage(Request $request, page_images $page_images){
          $response_messages = [];
-         
+
          //Check if image is in the table
          $check = $page_images->where("upload_images_id", $request->image_id)->where("pages_id", $request->page_id)->count();
          if($check > 0){

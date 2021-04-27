@@ -135,7 +135,7 @@
                                     <input type="text" name="slug" id="slug" class="form-control" placeholder="Page URI"
                                         aria-describedby="helpId" @if ($editview->slug != null) value="{{ $editview->slug->slug }}"
                                 @else
-                                                                                                                                                                                                                                                                                                    value="" @endif>
+                                                                                                                                                                                                                                                                                                        value="" @endif>
                                     <small id="helpId" class="text-muted">This will be used for the link in the
                                         front
                                         end. i.e. www.donain.com/about-us</small>
@@ -181,7 +181,7 @@
                                     <input type="checkbox" name="is_homepage" id="is_homepage" class=""
                                         aria-describedby="helpId" @if ($editview->is_homepage == 1) value="1" checked
                                         @else
-                                                                                                                                                                                                                                                                value="null" @endif @if ($homepageCount != 0 && $editview->is_homepage != 1)
+                                                                                                                                                                                                                                                                    value="null" @endif @if ($homepageCount != 0 && $editview->is_homepage != 1)
                                     disabled
                                     @endif
                                     >
@@ -210,8 +210,8 @@
                                 </div>
                                 <!--Images Modal-->
                                 <!-- Modal -->
-                                <div class="modal fade" id="showeditpageimages"  data-keyboard="false"
-                                    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal fade" id="showeditpageimages" data-keyboard="false" tabindex="-1"
+                                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -269,11 +269,11 @@
                                                     image_data: image_data
                                                 },
                                                 success: function(data) {
-                                                     $('#attached_images').html(data.view);
+                                                    $('#attached_images').html(data.view);
                                                     $.each(image_data.split("&"), function(index,
                                                         value) {
                                                         var images_ids = value.split("=");
-                                                       // console.log(images_ids[1]);
+                                                        // console.log(images_ids[1]);
                                                         $("#" + images_ids[1] +
                                                             " .imgCheckbox0").removeClass(
                                                             "imgChked");
@@ -377,13 +377,64 @@
                                     });
 
                                 </script>
-                                    <!--Attached Images section-->
-                                    <div  id="attached_images">
-                                        @include('admin.layouts.partials.editpageatachedimages')
-                                     </div>
-                                    <!--Attached Images section-->
+                                <!--Attached Images section-->
+                                <div id="attached_images">
+                                    @include('admin.layouts.partials.editpageatachedimages')
+                                </div>
+                                <!--Attached Images section-->
                                 <!--End Images model-->
                                 <!---END IMAGES SECTION-->
+
+
+
+
+
+                                <!--Files selection Section-->
+
+                                <!---Files Section-->
+                                <p>Files: <i>(Select files for this page)</i></p>
+                                <!--TODO: selecting images first from media manager -->
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-outline-info" data-toggle="modal"
+                                        data-target="#showeditpagefiles">Select Files for
+                                        this page</button>
+                                </div>
+                                <!--Files Modal-->
+                                <!-- Modal -->
+                                <div class="modal fade" id="showeditpagefiles" data-keyboard="false" tabindex="-1"
+                                    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="staticBackdropLabel">Files (themes)</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                    <input type="hidden" value="{{ $editview->id }}"
+                                                        id="page_id_images" />
+                                                    <input type="hidden" id="pagination_page"
+                                                        value="{{ $images->nextPageUrl() }}" />
+                                                </button>
+                                            </div>
+                                            <div class="modal-body" id="images_modal">
+
+                                                @include('admin.layouts.partials.showpagefiles')
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-outline-secondary"
+                                                    id="attach_image_to_page"><i
+                                                        class="bi bi-paperclip"></i>&nbsp;Attach</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--End of Files selection section-->
+
+
+
+
                                 <div class="form-group">
                                     <label for="">Page Content</label>
                                     <textarea name="description" id="editor" cols="30"
@@ -486,73 +537,73 @@
     <div class="position-fixed bottom-0 right-0 p-3" style="z-index: 9999999; right: 0; bottom: 0;" id="bottom_toast">
     </div>
     <script>
+        function DetachImagesFromPage(page_id, image_id) {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $(
+                            'meta[name="csrf-token"]')
+                        .attr(
+                            'content')
+                }
 
-function DetachImagesFromPage(page_id, image_id) {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $(
-                        'meta[name="csrf-token"]')
-                    .attr(
-                        'content')
-            }
+            }); //End of ajax setup
+            $.ajax({
+                url: '/admin/pages/edit/detachimage',
+                method: "post",
+                //cache: false,
+                data: {
+                    image_id: image_id,
+                    page_id: page_id,
+                },
+                success: function(data) {
+                    var delay = 2300;
+                    color = "green";
+                    //
+                    var toast =
 
-        }); //End of ajax setup
-        $.ajax({
-            url: '/admin/pages/edit/detachimage',
-            method: "post",
-            //cache: false,
-            data: {
-                image_id: image_id,
-                page_id: page_id,
-            },
-            success: function(data) {
-                var delay = 2300;
-                color = "green";
-              // 
-                var toast =
+                        '<div id="detach_toast_id_' + image_id +
+                        '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
+                        delay + '" >' +
+                        '<div class="toast-header" style="background-color: ' +
+                        color +
+                        ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
+                        '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
+                        '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+                        '<div class="toast-body" id="toast_id_body' +
+                        image_id + '">' + data.response.success +
+                        '</div> </div> </div>';
+                    $("#bottom_toast").append(toast);
+                    $('#detach_toast_id_' + image_id).toast("show");
+                    console.log(image_id);
+                    $('#attached_image_modal_' + image_id).modal('hide');
 
-                    '<div id="detach_toast_id_' + image_id +
-                    '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
-                    delay + '" >' +
-                    '<div class="toast-header" style="background-color: ' +
-                    color +
-                    ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
-                    '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
-                    '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
-                    '<div class="toast-body" id="toast_id_body' +
-                    image_id + '">' + data.response.success +
-                    '</div> </div> </div>';
-                $("#bottom_toast").append(toast);
-                $('#detach_toast_id_' + image_id).toast("show");
-                console.log(image_id);
-               $('#attached_image_modal_'+ image_id).modal('hide');
-               
-                setTimeout(function() {
-                    $('#detach_toast_id_' + image_id)
-                        .remove();
-                       
-                }, delay+600);
-                setTimeout(function() {
+                    setTimeout(function() {
+                        $('#detach_toast_id_' + image_id)
+                            .remove();
+
+                    }, delay + 600);
+                    setTimeout(function() {
                         $('#attached_images').html(data.view);
-                }, 400);
+                    }, 400);
 
-            }, //end of success
-            error: function(error) {
+                }, //end of success
+                error: function(error) {
 
-                $("#ajaxactioncallimages").attr('class', "alert alert-danger");
-                $.each(error.responseJSON.errors, function(index, val) {
-                    $("#ajaxactioncallimages #e_message").html(
-                        "<img src='/storage/ajax-loader-red.gif'/>" + val);
-                    //   $('#ajaxactioncallimages').fadeOut(2500);
-                    // console.log(index, val);
-                });
+                    $("#ajaxactioncallimages").attr('class', "alert alert-danger");
+                    $.each(error.responseJSON.errors, function(index, val) {
+                        $("#ajaxactioncallimages #e_message").html(
+                            "<img src='/storage/ajax-loader-red.gif'/>" + val);
+                        //   $('#ajaxactioncallimages').fadeOut(2500);
+                        // console.log(index, val);
+                    });
 
-                // console.log(error);
+                    // console.log(error);
 
 
-            } //end of error
-        }); //end of ajax
-    } //end of DetachImagesFromPage()
+                } //end of error
+            }); //end of ajax
+        } //end of DetachImagesFromPage()
+
     </script>
     <!--EDIT PAGE SECTION-->
     <script src="{{ asset('js/editpageajax.js') }}" defer></script>

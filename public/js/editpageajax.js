@@ -247,7 +247,8 @@ function UpdatePage(id) {
     var PageSubTitle = $('#subtitle').val();
     var PageParent = $('select#page_parent').val();
     var PageOwner = $('#owner').val();
-    var PageDesription = CKEDITOR.instances.editor.getData();
+    //var PageDesription = CKEDITOR.instances.editor.getData(); //CKEDITOR
+    var PageDesription = tinyMCE.get('editor').getContent(); //Tinymce
     var slug = $('#slug').val();
     $.ajaxSetup({
         headers: {

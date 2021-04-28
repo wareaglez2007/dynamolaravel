@@ -20,7 +20,7 @@ class CreateNewPagesTable extends Migration
             $table->string('subtitle', 200)->nullable();
             $table->string('owner', 200)->nullable();
             // your generated model and form include a description field, to get you started, but feel free to get rid of it if you don't need it
-            $table->text('content')->nullable();
+            $table->longText('content')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->foreign('parent_id')->references('id')->on('pages');
             $table->boolean('active')->default(0);

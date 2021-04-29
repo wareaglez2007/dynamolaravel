@@ -13,7 +13,7 @@ class CreatePageFileshandlersTable extends Migration
      */
     public function up()
     {
-        Schema::create('page_fileshandlers', function (Blueprint $table) {
+        Schema::create('page_files', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
         });

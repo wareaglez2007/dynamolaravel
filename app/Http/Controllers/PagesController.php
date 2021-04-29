@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use App\UploadImages;
 use App\page_images;
 use App\fileshandler;
+use App\page_files;
 
 class PagesController extends Controller
 {
@@ -376,7 +377,7 @@ class PagesController extends Controller
         }
 
         $images = UploadImages::orderBy('id', 'DESC')->paginate(12);
-        $fetch_files = fileshandler::orderBy('id', 'DESC')->get();
+        $fetch_files = fileshandler::orderBy('id', 'DESC')->paginate(12);
 
         return view('admin.modules.Pages.edit', [
             'permalink' => $slug_uri,
@@ -401,6 +402,21 @@ class PagesController extends Controller
             ]);
         }
     }
+    /**
+     * Edit page Files pagination
+     */
+    public function PageFilesPagination(Request $request, pages $pages, $id)
+    {
+        $fetch_files = fileshandler::orderBy('id', 'DESC')->paginate(12);
+        $edit_view = $pages->with('slug')->find($id);
+        if ($request->ajax()) {
+            return response()->json([
+                'view' => view('admin.layouts.partials.showpagefiles')->with(['files' => $fetch_files, 'editview' => $edit_view])->render()
+            ]);
+        }
+    }
+
+
     /**
      * Attaching Images to Pages
      *
@@ -451,21 +467,22 @@ class PagesController extends Controller
      * DetachImageFromPage
      */
 
-     public function DetachImageFromPage(Request $request, page_images $page_images){
-         $response_messages = [];
+    public function DetachImageFromPage(Request $request, page_images $page_images)
+    {
+        $response_messages = [];
 
-         //Check if image is in the table
-         $check = $page_images->where("upload_images_id", $request->image_id)->where("pages_id", $request->page_id)->count();
-         if($check > 0){
-             //lets delete that row from table
-             $page_images->where("upload_images_id", $request->image_id)->where("pages_id", $request->page_id)->forceDelete();
-             $response_messages['success'] = "Image has been detached from page.";
-             $edit_view =  pages::with('slug')->with('imageforpages')->find($request->page_id);
-         }else{
+        //Check if image is in the table
+        $check = $page_images->where("upload_images_id", $request->image_id)->where("pages_id", $request->page_id)->count();
+        if ($check > 0) {
+            //lets delete that row from table
+            $page_images->where("upload_images_id", $request->image_id)->where("pages_id", $request->page_id)->forceDelete();
+            $response_messages['success'] = "Image has been detached from page.";
+            $edit_view =  pages::with('slug')->with('imageforpages')->find($request->page_id);
+        } else {
             $response_messages['error'] = "An error has occured during this query request.";
-         }
+        }
 
-         if ($request->ajax()) {
+        if ($request->ajax()) {
             return response()->json([
                 "response" => $response_messages,
                 'view' => view('admin.layouts.partials.editpageatachedimages')->with([
@@ -473,8 +490,82 @@ class PagesController extends Controller
                 ])->render()
             ]);
         }
+    }
 
-     }
+    /**
+     * Attaching Files to Pages
+     *
+     */
+    public function DoAttachFiles(Request $request, pages $pages, fileshandler $fileshandler)
+    {
+        $params = [];
+        $response_messages = [];
+        parse_str($request->files_data, $params);
+        $html_count = 0;
+
+        $htmls = $pages->with('fileforpages')->find($request->id);
+
+        foreach ($params as $key => $value) {
+            $check_html_per_page = fileshandler::find($value);
+
+            if ($check_html_per_page->extension == "html") {
+                $html_count++;
+            }
+        }
+        if ($html_count > 1) {
+            $response_messages['errors'][$key] = "There can be only one html file per page.";
+        } else {
+            foreach ($params as $key => $value) {
+                $file_data = $fileshandler->find($value);
+                $check_duplicate_file = page_files::where("fileshandlers_id", $value)->where("pages_id", $request->id)->count();
+
+                if ($check_duplicate_file > 0) {
+                    $response_messages['errors'][$key] = "File: <b>" . $file_data->file_name . "</b> already been assigned to this page!";
+                } else {
+                    $hc = 0;
+                    foreach ($htmls->fileforpages as $check_extensions) {
+                        if ($check_extensions->extension == "html") {
+                            $hc++;
+                        }
+                    }
+                    if ($hc > 1) {
+                        $response_messages['errors'][$key] = "There is an HTML page already assigned.";
+                    } else {
+                        $page_files = new page_files();
+                        $page_files->fileshandlers_id = $value;
+                        $page_files->pages_id = $request->id;
+                        $page_files->save();
+                        $response_messages['success'][$key] = "File: <b>" . $file_data->file_name . "</b> has been assigned to this page successfully!";
+                    }
+                }
+            }
+        }
+
+
+        $edit_view =  pages::with('slug')->with('fileforpages')->find($request->id);
+        $files = fileshandler::orderBy('id', 'DESC')->paginate(12);
+        $page_list = $pages->select('id', 'title')->where('id', "!=", $request->id)->get();
+        $homepage_count = $pages->where("is_homepage", 1)->count();
+
+        //Create the URI
+        $par = $this->array_values_recursive($edit_view->parent_id);
+        $count_parents = count($par);
+        $slug_uri  = "";
+        for ($i = 0; $i < $count_parents; $i++) {
+            $slug_uri .= "/" . $par[$i]->slug->slug;
+        }
+
+        if ($request->ajax()) {
+            return response()->json([
+                "response" => $response_messages,
+                'view' => view('admin.layouts.partials.editpageatachedfiles')->with([
+                    "editview" => $edit_view
+                ])->render()
+            ]);
+        }
+    }
+
+
 
     /**
      * Update the specified resource in storage.

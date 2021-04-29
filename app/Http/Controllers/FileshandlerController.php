@@ -112,38 +112,39 @@ class FileshandlerController extends Controller
                 } else {
                     $upload_messages[$key] = "File " . $file->getClientOriginalName() . " has been uploaded.";
                     $filename = time() . '-' . $file->getClientOriginalName();
-                    //   dd($this->pdfpath.$filename);
+
                     //Check file extension
-                    if ($file->extension() == "css") {
+                    if ($file->getClientOriginalExtension() == "css") {
+
                         $file->storeAs($this->csspath, $filename);
                         $storedURL =  Storage::url($this->csspath . $filename);
                     }
-                    if ($file->extension() == "js") {
+                    if ($file->getClientOriginalExtension() == "js") {
                         $file->storeAs($this->jspath, $filename);
                         $storedURL =  Storage::url($this->jspath . $filename);
                     }
-                    if ($file->extension() == "html") {
+                    if ($file->getClientOriginalExtension() == "html") {
                         $file->storeAs($this->htmlpath, $filename);
                         $storedURL =  Storage::url($this->htmlpath . $filename);
                     }
-                    if ($file->extension() == "xml") {
+                    if ($file->getClientOriginalExtension() == "xml") {
                         $file->storeAs($this->xmlpath, $filename);
                         $storedURL =  Storage::url($this->xmlpath . $filename);
                     }
-                    if ($file->extension() == "csv") {
+                    if ($file->getClientOriginalExtension() == "csv") {
                         $file->storeAs($this->csvpath, $filename);
                         $storedURL =  Storage::url($this->csvpath . $filename);
                     }
-                    if ($file->extension() == "pdf") {
+                    if ($file->getClientOriginalExtension() == "pdf") {
                         $file->storeAs($this->pdfpath, $filename);
                         $storedURL =  Storage::url($this->pdfpath . $filename);
                     }
-                    if ($file->extension() == "txt") {
+                    if ($file->getClientOriginalExtension() == "txt") {
                         $file->storeAs($this->txtpath, $filename);
                         $storedURL =  Storage::url($this->txtpath . $filename);
                     }
 
-                    $file_extension = $file->extension();
+                    $file_extension = $file->getClientOriginalExtension();
 
                     // save original image
                     // $file->storeAs('/public/uploads/' , $imageName);

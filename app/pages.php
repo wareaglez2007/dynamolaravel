@@ -54,4 +54,8 @@ class pages extends Model
     public function imageforpages(){
         return $this->belongsToMany('App\UploadImages', 'App\page_images', 'pages_id', 'upload_images_id');
     }
+
+    public function fileforpages(){
+        return $this->belongsToMany('App\fileshandler', 'App\page_files', 'pages_id', 'fileshandlers_id');
+    }
 }

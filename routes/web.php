@@ -66,11 +66,18 @@ Route::get('/admin/pages/edit/{id}', 'PagesController@edit')->name('admin.pages.
 //Edit page image view pagination
 Route::get('/admin/pages/editpagepaginations/{id}', 'PagesController@PageImagesPagination');
 
+//Edit page file view pagination
+Route::get('/admin/pages/editpagepaginations/files/{id}', 'PagesController@PageFilesPagination');
+
 Route::post('/admin/pages/update', 'PagesController@update');
 
 //Atach Image to Page
 //DoAttachImages
 Route::post('/admin/pages/edit/attachimages', 'PagesController@DoAttachImages');
+
+//Atach Files to Page
+//DoAttachFiles
+Route::post('/admin/pages/edit/attachfiles', 'PagesController@DoAttachFiles');
 
 Route::post('/admin/pages/delete', 'PagesController@destroy')->name('Backend.Pages.destroy');
 

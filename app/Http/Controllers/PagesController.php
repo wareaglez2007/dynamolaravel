@@ -12,6 +12,7 @@ use App\UploadImages;
 use App\page_images;
 use App\fileshandler;
 use App\page_files;
+use Countable;
 
 class PagesController extends Controller
 {
@@ -494,7 +495,7 @@ class PagesController extends Controller
 
     /**
      * Attaching Files to Pages
-     *
+     * parms
      */
     public function DoAttachFiles(Request $request, pages $pages, fileshandler $fileshandler)
     {
@@ -503,43 +504,56 @@ class PagesController extends Controller
         parse_str($request->files_data, $params);
         $html_count = 0;
 
-        $htmls = $pages->with('fileforpages')->find($request->id);
 
+
+
+        $htmls = page_files::with('getFiles')->where('pages_id', $request->id)->get();
+        dd($htmls);
+        foreach($htmls as $ht){
+            dd($ht->getFiles->file_name);
+           // if ($ht > 1) {
+             //   $response_messages['errors'][$key] = "There is an HTML page already attached to this page. (1 html per page).";
+        }
+
+
+
+        //I can either use Laravel's validator to seeif that is a unique file or not
         foreach ($params as $key => $value) {
             $check_html_per_page = fileshandler::find($value);
-
+           
+           // dd($htmls);
+            //2.if file is duplicate
+            $file_data = $fileshandler->find($value);
+            $check_duplicate_file = page_files::where("fileshandlers_id", $value)->where("pages_id", $request->id)->count();
+            //1. if user selects more than one html file give error
             if ($check_html_per_page->extension == "html") {
                 $html_count++;
             }
-        }
-        if ($html_count > 1) {
-            $response_messages['errors'][$key] = "There can be only one html file per page.";
-        } else {
-            foreach ($params as $key => $value) {
-                $file_data = $fileshandler->find($value);
-                $check_duplicate_file = page_files::where("fileshandlers_id", $value)->where("pages_id", $request->id)->count();
+            if ($html_count > 1) {
+                $response_messages['errors'][$key] = "There can be only one html file per page.";
+            
+            
+            } else if ($check_duplicate_file > 0) {
+                $response_messages['errors'][$key] = "File: <b>" . $file_data->file_name . "</b> already been assigned to this page!";
+            } else {
 
-                if ($check_duplicate_file > 0) {
-                    $response_messages['errors'][$key] = "File: <b>" . $file_data->file_name . "</b> already been assigned to this page!";
-                } else {
-                    $hc = 0;
-                    foreach ($htmls->fileforpages as $check_extensions) {
-                        if ($check_extensions->extension == "html") {
-                            $hc++;
-                        }
-                    }
-                    if ($hc > 1) {
-                        $response_messages['errors'][$key] = "There is an HTML page already assigned.";
-                    } else {
-                        $page_files = new page_files();
-                        $page_files->fileshandlers_id = $value;
-                        $page_files->pages_id = $request->id;
-                        $page_files->save();
-                        $response_messages['success'][$key] = "File: <b>" . $file_data->file_name . "</b> has been assigned to this page successfully!";
-                    }
-                }
+
+
+                
+
+
+
+
+
+
+                $page_files = new page_files();
+                $page_files->fileshandlers_id = $value;
+                $page_files->pages_id = $request->id;
+                $page_files->save();
+                $response_messages['success'][$key] = "File: <b>" . $file_data->file_name . "</b> has been assigned to this page successfully!";
             }
         }
+
 
 
         $edit_view =  pages::with('slug')->with('fileforpages')->find($request->id);

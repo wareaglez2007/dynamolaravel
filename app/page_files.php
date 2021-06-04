@@ -23,6 +23,6 @@ class page_files extends Model
     }
 
     public function getFiles(){
-        return $this->belongsTo( 'App\fileshandler', 'fileshandlers_id');
+        return $this->belongsTo( 'App\fileshandler', 'fileshandlers_id')->where('extension','html');
     }
 }

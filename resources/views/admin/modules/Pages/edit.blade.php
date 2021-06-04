@@ -454,6 +454,7 @@
                                                     files_data: files_data
                                                 },
                                                 success: function(data) {
+                                                    console.log(data);
                                                     $('#attached_files').html(data.view);
                                                     $.each(files_data.split("&"), function(index,
                                                         value) {

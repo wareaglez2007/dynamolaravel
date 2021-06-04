@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Laravel</title>
+    <title>{{ config('app.front_end_name') }}</title>
     <!-- Scripts -->
 
     <script src="{{ asset('js/app.js') }}" defer></script>

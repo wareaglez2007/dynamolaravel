@@ -13,7 +13,16 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'DynamoElectricCMS'),
+    'name' => env('APP_NAME', 'DynamoElectricIncCMS'),
+    /*
+    |-------------------------------------------------------------------
+    |Application Front End name
+    |-------------------------------------------------------------------
+    |
+    |To use this in the front end use: config('app.front_end_name')
+    |  ** Make sure you add APP_NAME_FRONTEND constant in .env file
+    */
+    'front_end_name' => env('APP_NAME_FRONTEND', 'DynamoElectric-Inc'),
 
     /*
     |--------------------------------------------------------------------------

@@ -58,4 +58,13 @@ class pages extends Model
     public function fileforpages(){
         return $this->belongsToMany('App\fileshandler', 'App\page_files', 'pages_id', 'fileshandlers_id');
     }
+
+
+    //$publish_page_count = $pages->where('active', 1)->count();
+    /**
+     * This function will return the count of published pages
+     */
+    public function GetPublishedPagesCount(){
+        return $this->where('active', 1)->count();
+    }
 }

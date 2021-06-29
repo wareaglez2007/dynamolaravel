@@ -1,7 +1,18 @@
 @extends('frontend.layouts.header')
+@section('head')
+    @if (is_countable($files->fileforpages) && count($files->fileforpages) > 0)
+        @foreach ($files->fileforpages as $file)
+            @if ($file->extension == 'css')
+                <link rel="stylesheet" href=" {{ asset(substr($file->storage_path, 1)) }}">
 
+            @endif
+        @endforeach
+    @else
+
+    @endif
+@endsection
 @section('content')
-<!--Breadcrumb-->
+    <!--Breadcrumb-->
     @if (request()->path() != '/')
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -25,7 +36,7 @@
             </ol>
         </nav>
     @endif
-<!--End of Breadcrumb-->
+    <!--End of Breadcrumb-->
 
 
 
@@ -36,7 +47,7 @@
 
     @endforeach
     <br />
-    {!!$page_children->content !!}
+    {!! $page_children->content !!}
 
 
 @endsection

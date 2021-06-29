@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\pages;
 use App\slugs;
+use App\UploadImages;
+use App\page_images;
+use App\fileshandler;
+use App\page_files;
 
 class FrontendController extends Controller
 {
@@ -17,12 +21,14 @@ class FrontendController extends Controller
         $pages_info = $slugs->with('pages')->where('slug', $slug)->get();
         foreach ($pages_info as $info) {
             $is_active = pages::where('active', 1)->find($info->pages->id);
+            $file_view = $pages->with('slug')->with('fileforpages')->find($info->pages->id);
             if($is_active != null){
                 $pages_children = $pages->with('childItems')->orderBy('position', 'ASC')->find($info->pages->id);
                 $tree = pages::whereNull('parent_id')->with('childItems')->with('slug')->whereNull('parent_id')->where('active', 1)->orderBy('position', 'ASC')->get();
 
                 return view('frontend.welcome', [
                     'page_data' => $pages_info,
+                    'files' => $file_view,
                     'page_children' => $pages_children,
                     'items' => $tree,
                     'nav_style' => $this->nav_style
@@ -37,10 +43,11 @@ class FrontendController extends Controller
     public function SingleSlug(pages $pages, slugs $slugs, $slug)
     {
         $pages_info = $slugs->with('pages')->where('slug', $slug)->get();
-
+       
         if (count($pages_info) > 0) {
             foreach ($pages_info as $info) {
                 $is_active = pages::where('active', 1)->find($info->pages->id);
+                $file_view = $pages->with('slug')->with('fileforpages')->find($info->pages->id);
                 if($is_active != null){
                     $pages_children = $pages->with('childItems')->orderBy('position', 'ASC')->find($info->pages->id);
 
@@ -54,6 +61,7 @@ class FrontendController extends Controller
 
                     return view('frontend.welcome', [
                         'page_data' => $pages_info,
+                        'files' => $file_view,
                         'page_children' => $pages_children,
                         'items' => $tree,
                         'nav_style' => $this->nav_style,
@@ -82,6 +90,7 @@ class FrontendController extends Controller
             if (count($pages_info) > 0) {
                 foreach ($pages_info as $info) {
                     $is_active = pages::where('active', 1)->find($info->pages->id);
+                    $file_view = $pages->with('slug')->with('fileforpages')->find($info->pages->id);
                     if($is_active != null){
                         $pages_children = $pages->with('childItems')->find($info->pages->id);
                         $breadCrumb = $this->array_values_recursive($info->pages->id);
@@ -95,6 +104,7 @@ class FrontendController extends Controller
 
                         return view('frontend.welcome', [
                             'page_data' => $pages_info,
+                            'files' => $file_view,
                             'page_children' => $pages_children,
                             'items' => $tree,
                             'nav_style' => $this->nav_style,
@@ -120,6 +130,7 @@ class FrontendController extends Controller
             foreach ($pages_info as $info) {
 
                 $is_active = pages::where('active', 1)->find($info->pages->id);
+                $file_view = pages::with('slug')->with('fileforpages')->find($info->pages->id);
                 if($is_active != null){
                     $pages_children = pages::with('childItems')->orderBy('position', 'ASC')->find($info->pages->id);
 
@@ -134,6 +145,7 @@ class FrontendController extends Controller
 
                     return view('frontend.welcome', [
                         'page_data' => $pages_info,
+                        'files' => $file_view,
                         'page_children' => $pages_children,
                         'items' => $tree,
                         'nav_style' => $this->nav_style,

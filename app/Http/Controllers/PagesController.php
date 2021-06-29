@@ -365,7 +365,9 @@ class PagesController extends Controller
      */
     public function edit(pages $pages, $id)
     {
-        $edit_view = $pages->with('slug')->find($id);
+        $edit_view = $pages->with('slug')->with('fileforpages')->find($id);
+        $stored_html_files = page_files::with('getFiles')->where('pages_id', $id)->get();
+       // dd($stored_html_files->getFiles);
         $page_list = $pages->select('id', 'title')->where('id', "!=", $id)->get();
         $homepage_count = $pages->where("is_homepage", 1)->count();
 
@@ -387,7 +389,8 @@ class PagesController extends Controller
             'homepageCount' => $homepage_count,
             'mod_name' => "Images",
             'images' => $images,
-            'files' => $fetch_files
+            'files' => $fetch_files,
+            'html_file' =>  $stored_html_files
         ]);
     }
     /**

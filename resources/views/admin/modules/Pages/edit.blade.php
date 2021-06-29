@@ -135,7 +135,7 @@
                                     <input type="text" name="slug" id="slug" class="form-control" placeholder="Page URI"
                                         aria-describedby="helpId" @if ($editview->slug != null) value="{{ $editview->slug->slug }}"
                                 @else
-                                                                                                                                                                                                                                                                                                                                value="" @endif>
+                                                                                                                                                                                                                                                                                                                                            value="" @endif>
                                     <small id="helpId" class="text-muted">This will be used for the link in the
                                         front
                                         end. i.e. www.donain.com/about-us</small>
@@ -181,7 +181,7 @@
                                     <input type="checkbox" name="is_homepage" id="is_homepage" class=""
                                         aria-describedby="helpId" @if ($editview->is_homepage == 1) value="1" checked
                                         @else
-                                                                                                                                                                                                                                                                                            value="null" @endif @if ($homepageCount != 0 && $editview->is_homepage != 1)
+                                                                                                                                                                                                                                                                                                        value="null" @endif @if ($homepageCount != 0 && $editview->is_homepage != 1)
                                     disabled
                                     @endif
                                     >
@@ -404,8 +404,7 @@
                                                 <h5 class="modal-title" id="staticBackdropLabel">Files (themes)</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
-                                                    <input type="hidden" value="{{ $editview->id }}"
-                                                        id="page_id_file" />
+                                                    <input type="hidden" value="{{ $editview->id }}" id="page_id_file" />
                                                     <input type="hidden" id="pagination_page"
                                                         value="{{ $files->nextPageUrl() }}" />
                                                 </button>
@@ -564,37 +563,55 @@
 
                                 </script>
 
-                                     <!--Attached Files section-->
-                                     <div id="attached_files">
-                                        @include('admin.layouts.partials.editpageatachedfiles')
-                                    </div>
-                                    <!--Attached FILES section-->
+
+                                
+
+                                <!--Attached Files section-->
+                                <div id="attached_files">
+                                    @include('admin.layouts.partials.editpageatachedfiles')
+                                </div>
+                                <!--Attached FILES section-->
                                 <!--End of Files selection section-->
 
 
 
 
-                               <!-- <div class="form-group">
-                                    <label for="">Page Content</label>
-                                    <textarea name="description" id="editor1" cols="30"
-                                        rows="10">/**$editview->content**/ </textarea>
-                                    <script>
-                                        CKEDITOR.replace('editor1');
-                                        CKEDITOR.config.allowedContent = true;
+                                <!-- <div class="form-group">
+                                                <label for="">Page Content</label>
+                                                <textarea name="description" id="editor1" cols="30"
+                                                    rows="10">/**$editview->content**/ </textarea>
+                                                <script>
+                                                    CKEDITOR.replace('editor1');
+                                                    CKEDITOR.config.allowedContent = true;
 
-                                    </script>
-                                </div>-->
-
+                                                </script>
+                                            </div>-->
 
                                 <div class="form-group">
                                     <label for="">Page Content</label>
-                                    <textarea name="description" id="editor" cols="30"
-                                        rows="10">{{ $editview->content }}</textarea>
+                                    <textarea name="description" id="editor" cols="30" rows="10">
+
+                                                @if (is_countable($editview->fileforpages) && count($editview->fileforpages) > 0)
+                                                    @foreach ($editview->fileforpages as $file)
+                                                        @if ($file->extension == 'html')
+                                                        {{ file_get_contents(substr($file->storage_path, 1)) }}
+                                                        @endif
+                                                    @endforeach
+                                            @else
+                                                    {{ $editview->content }}
+                                                @endif
+
+
+
+                                                </textarea>
                                     <script>
                                         tinymce.init({
                                             selector: 'textarea#editor',
                                             height: 500,
                                             menubar: false,
+                                            element_format: 'html',
+                                            apply_source_formatting: false, //added option
+                                            verify_html: false, //added option
                                             plugins: [
                                                 'advlist autolink lists link image charmap print preview anchor',
                                                 'searchreplace visualblocks code fullscreen',
@@ -607,6 +624,11 @@
                                             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
                                             paste_merge_formats: false,
                                             powerpaste_allow_local_images: true,
+                                            valid_elements: '*[*],html[*],body[*],link[*]',
+                                            extended_valid_elements: '*[*]',
+                                            allow_unsafe_link_target: true,
+                                            entity_encoding: 'raw',
+                                            schema: 'html5'
                                         });
 
                                     </script>

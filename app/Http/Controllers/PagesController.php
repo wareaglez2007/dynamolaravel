@@ -39,53 +39,39 @@ class PagesController extends Controller
      */
     public function index(Request $request, pages $pages)
     {
-
-        $publish_page_count = $pages->where('active', 1)->count();
-        $trashed_page_count = $pages->onlyTrashed()->count();
-        $draft_pages_count = $pages->where('pages.active', 0)->count();
-        $all_pages_count = $pages->withTrashed()->count();
         return view('admin.modules.Pages.pages', [
             'request' => $request,
-            'publishcount' => $publish_page_count,
-            'draftcount' => $draft_pages_count,
-            'trashed' => $trashed_page_count,
-            'allcount' => $all_pages_count
+            'publishcount' => $pages->GetPublishedPagesCount(),
+            'draftcount' => $pages->GetDraftPagesCount(),
+            'trashed' => $pages->GetTrashedPagesCount(),
+            'allcount' => $pages->GetCountForAllPages()
         ]);
     }
 
 
     public function AjaxPublishedPages(Request $request, pages $pages)
     {
-        $pageslist = $pages->with('slug')->where('pages.active', 1)->orderBy('position', 'ASC')->paginate(7); //Active pages
-        $draft_pages = $pages->with('slug')->where('active', 0)->orderBy('position', 'ASC')->paginate(7); //Draft pages
-        $deleted_pages =  $pages->with('slug')->onlyTrashed()->orderBy('position', 'ASC')->paginate(7); // Trashed pages
-        $publish_page_count = $pages->where('active', 1)->count();
-        $trashed_page_count = $pages->onlyTrashed()->count();
 
-
-
-        $draft_pages_count = $pages->where('pages.active', 0)->count();
-        $all_pages_count = $pages->withTrashed()->count();
         if ($request->ajax()) {
             return view('admin.layouts.partials.page', [
-                'pageslist' => $pageslist,
-                'deleted_pages' => $deleted_pages,
-                'publishcount' => $publish_page_count,
-                'draftcount' => $draft_pages_count,
-                'trashed' => $trashed_page_count,
-                'draftpages' => $draft_pages,
-                'allcount' => $all_pages_count,
+                'pageslist' => $pages->GetPublishedPagesPaginated(7, 'ASC'),
+                'deleted_pages' => $pages->GetTrashedPagesPaginated(7, 'ASC'),
+                'publishcount' => $pages->GetPublishedPagesCount(),
+                'draftcount' => $pages->GetDraftPagesCount(),
+                'trashed' => $pages->GetTrashedPagesCount(),
+                'draftpages' => $pages->GetDraftPagesPaginated(7, 'ASC'),
+                'allcount' => $pages->GetCountForAllPages(),
                 'request' => $request
             ])->render();
         } else {
             return view('admin.modules.Pages.pages', [
-                'pageslist' => $pageslist,
-                'deleted_pages' => $deleted_pages,
-                'publishcount' => $publish_page_count,
-                'draftcount' => $draft_pages_count,
-                'trashed' => $trashed_page_count,
-                'draftpages' => $draft_pages,
-                'allcount' => $all_pages_count,
+                'pageslist' => $pages->GetPublishedPagesPaginated(7, 'ASC'),
+                'deleted_pages' => $pages->GetTrashedPagesPaginated(7, 'ASC'),
+                'publishcount' => $pages->GetPublishedPagesCount(),
+                'draftcount' => $pages->GetDraftPagesCount(),
+                'trashed' => $pages->GetTrashedPagesCount(),
+                'draftpages' => $pages->GetDraftPagesPaginated(7, 'ASC'),
+                'allcount' => $pages->GetCountForAllPages(),
                 'request' => $request
             ]);
         }
@@ -93,59 +79,47 @@ class PagesController extends Controller
 
     public function AjaxDraftPages(Request $request, pages $pages)
     {
-        $draft_pages = $pages->with('slug')->where('active', 0)->orderBy('position', 'ASC')->paginate(7);
-        $draft_pages_count = $pages->where('pages.active', 0)->count();
-        $all_pages_count = $pages->withTrashed()->count();
-        $publish_page_count = $pages->where('active', 1)->count();
-        $trashed_page_count = $pages->onlyTrashed()->count();
-
         if ($request->ajax()) {
 
             return view('admin.layouts.partials.page', [
 
-                'publishcount' => $publish_page_count,
-                'draftcount' => $draft_pages_count,
-                'trashed' => $trashed_page_count,
-                'draftpages' => $draft_pages,
-                'allcount' => $all_pages_count
+                'publishcount' => $pages->GetPublishedPagesCount(),
+                'draftcount' => $pages->GetDraftPagesCount(),
+                'trashed' => $pages->GetTrashedPagesCount(),
+                'draftpages' => $pages->GetDraftPagesPaginated(7, 'ASC'),
+                'allcount' => $pages->GetCountForAllPages()
             ])->render();
         } else {
             return view('admin.modules.Pages.pages', [
 
-                'publishcount' => $publish_page_count,
-                'draftcount' => $draft_pages_count,
-                'trashed' => $trashed_page_count,
-                'draftpages' => $draft_pages,
-                'allcount' => $all_pages_count
+                'publishcount' => $pages->GetPublishedPagesCount(),
+                'draftcount' => $pages->GetDraftPagesCount(),
+                'trashed' => $pages->GetTrashedPagesCount(),
+                'draftpages' => $pages->GetDraftPagesPaginated(7, 'ASC'),
+                'allcount' => $pages->GetCountForAllPages()
             ]);
         }
     }
     public function AjaxTrashedPages(Request $request, pages $pages)
     {
-        $deleted_pages = $pages->onlyTrashed()->orderBy('position', 'ASC')->paginate(7);
-        $draft_pages_count = $pages->where('pages.active', 0)->count();
-        $all_pages_count = $pages->withTrashed()->count();
-        $publish_page_count = $pages->where('active', 1)->count();
-        $trashed_page_count = $pages->onlyTrashed()->count();
-
         if ($request->ajax()) {
 
             return view('admin.layouts.partials.page', [
 
-                'publishcount' => $publish_page_count,
-                'draftcount' => $draft_pages_count,
-                'trashed' => $trashed_page_count,
-                'deleted_pages' => $deleted_pages,
-                'allcount' => $all_pages_count
+                'publishcount' => $pages->GetPublishedPagesCount(),
+                'draftcount' => $pages->GetDraftPagesCount(),
+                'trashed' => $pages->GetTrashedPagesCount(),
+                'deleted_pages' =>  $pages->GetTrashedPagesPaginated(7, 'ASC'),
+                'allcount' => $pages->GetCountForAllPages()
             ])->render();
         } else {
             return view('admin.modules.Pages.pages', [
 
-                'publishcount' => $publish_page_count,
-                'draftcount' => $draft_pages_count,
-                'trashed' => $trashed_page_count,
-                'deleted_pages' => $deleted_pages,
-                'allcount' => $all_pages_count
+                'publishcount' => $pages->GetPublishedPagesCount(),
+                'draftcount' => $pages->GetDraftPagesCount(),
+                'trashed' => $pages->GetTrashedPagesCount(),
+                'deleted_pages' =>  $pages->GetTrashedPagesPaginated(7, 'ASC'),
+                'allcount' => $pages->GetCountForAllPages()
             ]);
         }
     }
@@ -367,7 +341,7 @@ class PagesController extends Controller
     {
         $edit_view = $pages->with('slug')->with('fileforpages')->find($id);
         $stored_html_files = page_files::with('getFiles')->where('pages_id', $id)->get();
-       // dd($stored_html_files->getFiles);
+        // dd($stored_html_files->getFiles);
         $page_list = $pages->select('id', 'title')->where('id', "!=", $id)->get();
         $homepage_count = $pages->where("is_homepage", 1)->count();
 

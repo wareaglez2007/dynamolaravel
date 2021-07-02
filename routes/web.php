@@ -87,6 +87,7 @@ Route::put('/admin/pages/restore', 'PagesController@restore')->name('Backend.Pag
 Route::post('/admin/pages/publish', 'PagesController@publish')->name('Backend.Pages.publish');
 Route::post('/admin/pages/edit/addimages', 'PagesController@AppendImageToPage')->name('Backend.Pages.doaddimages');
 Route::post('/admin/pages/edit/detachimage', 'PagesController@DetachImageFromPage');
+Route::post('/admin/pages/edit/detachfile', 'PagesController@DetachFilesFromPage');
 
 Route::post('/admin/pages/update/updateposition', 'PagesController@UpdatePosition');
 Route::post('/admin/pages/bulkunpublish', 'PagesController@BulkUnpublish');

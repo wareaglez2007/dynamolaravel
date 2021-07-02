@@ -62,7 +62,7 @@
                                     onclick="EditAttachedImageprops({{ $file->id }})">Save
                                     changes</button>
                                 <button type="button" class="btn btn-outline-danger"
-                                    onclick="DetachImagesFromPage({{ $editview->id }},{{ $file->id }});"><i
+                                    onclick="DetachFileFromPage({{ $editview->id }},{{ $file->id }});"><i
                                         class="bi bi-x-square"></i> Detach Image</button>
                             </form>
                         </div>

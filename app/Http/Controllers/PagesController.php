@@ -552,6 +552,37 @@ class PagesController extends Controller
     }
 
 
+  /**
+     * DetachFilesFromPage
+     */
+
+    public function DetachFilesFromPage(Request $request, page_files $page_files)
+    {
+        $response_messages = [];
+        //Check if image is in the table
+
+        $check = page_files::where("fileshandlers_id", $request->file_id)->where("pages_id", $request->page_id)->count();
+
+        if ($check > 0) {
+            //lets delete that row from table
+            $page_files->where("fileshandlers_id", $request->file_id)->where("pages_id", $request->page_id)->forceDelete();
+            $response_messages['success'] = "File has been detached from page.";
+            $edit_view =  pages::with('slug')->with('fileforpages')->find($request->page_id);
+        } else {
+            $response_messages['error'] = "An error has occured during this query request.";
+        }
+
+        if ($request->ajax()) {
+            return response()->json([
+                "response" => $response_messages,
+                'view' => view('admin.layouts.partials.editpageatachedfiles')->with([
+                    "editview" => $edit_view
+                ])->render()
+            ]);
+        }
+    }
+
+
 
     /**
      * Update the specified resource in storage.

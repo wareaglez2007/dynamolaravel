@@ -305,3 +305,516 @@ function UpdatePage(id) {
 
 
 }
+/**
+ * Attach Images to apage AJAX scripts
+ * Moved here on 07/06/2021
+ * From edit.blade.php
+ */
+$("#attach_image_to_page").on('click', function (e) {
+    e.preventDefault();
+    var ischecked = $(" span.imgCheckbox0").hasClass("imgChked");
+    if (ischecked) {
+        var id = $("#page_id").val();
+
+        //AJAX to attach Image to page
+        var image_data = $("#image_page_attachment").serialize();
+        //URL ='/admin/pages/edit/attachimages'
+        // console.log(image_data);
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $(
+                    'meta[name="csrf-token"]')
+                    .attr(
+                        'content')
+            }
+
+        }); //End of ajax setup
+        $.ajax({
+            url: '/admin/pages/edit/attachimages',
+            method: "post",
+            cache: false,
+            data: {
+                id: id,
+                image_data: image_data
+            },
+            success: function (data) {
+                $('#attached_images').html(data.view);
+                $.each(image_data.split("&"), function (index,
+                    value) {
+                    var images_ids = value.split("=");
+                    // console.log(images_ids[1]);
+                    $("#" + images_ids[1] +
+                        " .imgCheckbox0").removeClass(
+                            "imgChked");
+                    $("#image_id_" + images_ids[1])
+                        .remove();
+                });
+
+
+                var color = "";
+                var elem = "";
+                var index = 0;
+                var current = 0;
+
+
+                //For errors
+                $.each(data.response.errors, function (index, elem) {
+                    current++;
+                    var mult = current * 300;
+                    var delay = 2500 + mult;
+                    color = "red";
+                    var toast =
+
+                        '<div id="toast_id_' + index +
+                        '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
+                        delay + '">' +
+                        '<div class="toast-header" style="background-color: ' +
+                        color +
+                        ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
+                        '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
+                        '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+                        '<div class="toast-body" id="toast_id_body' +
+                        index + '">' + elem +
+                        '</div> </div> </div>';
+                    $("#bottom_toast").append(toast);
+                    $('#toast_id_' + index).toast("show");
+                    setTimeout(function () {
+                        $('#toast_id_' + index)
+                            .remove();
+                    }, delay + 500);
+
+
+                });
+                //for success
+                $.each(data.response.success, function (index,
+                    elem) {
+                    current++;
+                    var mult = current * 300;
+                    var delay = 2300 + mult;
+                    color = "green";
+
+                    var toast =
+
+                        '<div id="toast_id_' + index +
+                        '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
+                        delay + '" >' +
+                        '<div class="toast-header" style="background-color: ' +
+                        color +
+                        ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
+                        '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
+                        '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+                        '<div class="toast-body" id="toast_id_body' +
+                        index + '">' + elem +
+                        '</div> </div> </div>';
+                    $("#bottom_toast").append(toast);
+                    $('#toast_id_' + index).toast("show");
+                    setTimeout(function () {
+                        $('#toast_id_' + index)
+                            .remove();
+                    }, delay + 500);
+
+                });
+
+
+            }, //end of success
+            error: function (error) {
+
+                $("#ajaxactioncallimages").attr('class',
+                    "alert alert-danger");
+                $.each(error.responseJSON.errors, function (index,
+                    val) {
+                    $("#ajaxactioncallimages #e_message")
+                        .html(
+                            "<img src='/storage/ajax-loader-red.gif'/>" +
+                            val);
+                    //   $('#ajaxactioncallimages').fadeOut(2500);
+                    // console.log(index, val);
+                });
+
+                // console.log(error);
+
+
+            } //end of error
+        }); //end of ajax
+
+
+
+
+    }
+
+
+});
+//END OF ATTACH IMAGES SCRIP FOR EDIT PAGES
+
+/**
+ * Attach Files to Edit pages
+ * moved on: 07/06/2021
+ * From: edit.blade.php
+ */
+
+$("#attach_file_to_page").on('click', function (e) {
+    e.preventDefault();
+    var ischecked = $(" span.imgCheckbox0").hasClass("imgChked");
+    if (ischecked) {
+        var id = $("#page_id").val();
+
+        //AJAX to attach file to page
+        var files_data = $("#file_page_attachment").serialize();
+        //URL ='/admin/pages/edit/attachimages'
+        // console.log(image_data);
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $(
+                    'meta[name="csrf-token"]')
+                    .attr(
+                        'content')
+            }
+
+        }); //End of ajax setup
+        $.ajax({
+            url: '/admin/pages/edit/attachfiles',
+            method: "post",
+            cache: false,
+            data: {
+                id: id,
+                files_data: files_data
+            },
+            success: function (data) {
+                console.log(data);
+                $('#attached_files').html(data.view);
+                $.each(files_data.split("&"), function (index,
+                    value) {
+                    var file_ids = value.split("=");
+                    // console.log(images_ids[1]);
+                    $("#" + file_ids[1] +
+                        " .imgCheckbox0").removeClass(
+                            "imgChked");
+                    $("#file_id_" + file_ids[1])
+                        .remove();
+                });
+
+
+                var color = "";
+                var elem = "";
+                var index = 0;
+                var current = 0;
+
+
+                //For errors
+                $.each(data.response.errors, function (index, elem) {
+                    current++;
+                    var mult = current * 300;
+                    var delay = 2500 + mult;
+                    color = "red";
+                    var toast =
+
+                        '<div id="toast_id_' + index +
+                        '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
+                        delay + '">' +
+                        '<div class="toast-header" style="background-color: ' +
+                        color +
+                        ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
+                        '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
+                        '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+                        '<div class="toast-body" id="toast_id_body' +
+                        index + '">' + elem +
+                        '</div> </div> </div>';
+                    $("#bottom_toast").append(toast);
+                    $('#toast_id_' + index).toast("show");
+                    setTimeout(function () {
+                        $('#toast_id_' + index)
+                            .remove();
+                    }, delay + 500);
+
+
+                });
+                //for success
+                $.each(data.response.success, function (index,
+                    elem) {
+                    current++;
+                    var mult = current * 300;
+                    var delay = 2300 + mult;
+                    color = "green";
+
+                    var toast =
+
+                        '<div id="toast_id_' + index +
+                        '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
+                        delay + '" >' +
+                        '<div class="toast-header" style="background-color: ' +
+                        color +
+                        ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
+                        '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
+                        '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+                        '<div class="toast-body" id="toast_id_body' +
+                        index + '">' + elem +
+                        '</div> </div> </div>';
+                    $("#bottom_toast").append(toast);
+                    $('#toast_id_' + index).toast("show");
+                    setTimeout(function () {
+                        $('#toast_id_' + index)
+                            .remove();
+                    }, delay + 500);
+
+                });
+
+
+            }, //end of success
+            error: function (error) {
+
+                $("#ajaxactioncallimages").attr('class',
+                    "alert alert-danger");
+                $.each(error.responseJSON.errors, function (index,
+                    val) {
+                    $("#ajaxactioncallimages #e_message")
+                        .html(
+                            "<img src='/storage/ajax-loader-red.gif'/>" +
+                            val);
+                    //   $('#ajaxactioncallimages').fadeOut(2500);
+                    // console.log(index, val);
+                });
+
+                // console.log(error);
+
+
+            } //end of error
+        }); //end of ajax
+
+
+
+
+    }
+
+
+});
+//END OF ATTACH FILES SCRIP FOR EDIT PAGES
+
+
+/**
+ * Remove Images from Pages
+ * Moved on: 07/06/2021
+ * From: edit.blade.php
+ */
+function DetachImagesFromPage(page_id, image_id) {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $(
+                'meta[name="csrf-token"]')
+                .attr(
+                    'content')
+        }
+
+    }); //End of ajax setup
+    $.ajax({
+        url: '/admin/pages/edit/detachimage',
+        method: "post",
+        //cache: false,
+        data: {
+            image_id: image_id,
+            page_id: page_id,
+        },
+        success: function (data) {
+            var delay = 2300;
+            color = "green";
+            //
+            var toast =
+
+                '<div id="detach_toast_id_' + image_id +
+                '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
+                delay + '" >' +
+                '<div class="toast-header" style="background-color: ' +
+                color +
+                ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
+                '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
+                '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+                '<div class="toast-body" id="toast_id_body' +
+                image_id + '">' + data.response.success +
+                '</div> </div> </div>';
+            $("#bottom_toast").append(toast);
+            $('#detach_toast_id_' + image_id).toast("show");
+            console.log(image_id);
+            $('#attached_image_modal_' + image_id).modal('hide');
+
+            setTimeout(function () {
+                $('#detach_toast_id_' + image_id)
+                    .remove();
+
+            }, delay + 600);
+            setTimeout(function () {
+                $('#attached_images').html(data.view);
+            }, 400);
+
+        }, //end of success
+        error: function (error) {
+
+            $("#ajaxactioncallimages").attr('class', "alert alert-danger");
+            $.each(error.responseJSON.errors, function (index, val) {
+                $("#ajaxactioncallimages #e_message").html(
+                    "<img src='/storage/ajax-loader-red.gif'/>" + val);
+                //   $('#ajaxactioncallimages').fadeOut(2500);
+                // console.log(index, val);
+            });
+
+            // console.log(error);
+
+
+        } //end of error
+    }); //end of ajax
+} //***** end of DetachImagesFromPage()
+
+/**
+ * Detach Files from pages
+ * @param {*} page_id
+ * @param {*} file_id
+ */
+///Delete file from pages-------
+function DetachFileFromPage(page_id, file_id) {
+    console.log(page_id + " " + file_id);
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $(
+                'meta[name="csrf-token"]')
+                .attr(
+                    'content')
+        }
+
+    }); //End of ajax setup
+    $.ajax({
+        url: '/admin/pages/edit/detachfile',
+        method: "post",
+        //cache: false,
+        data: {
+            file_id: file_id,
+            page_id: page_id,
+        },
+        success: function (data) {
+            var delay = 2300;
+            color = "green";
+            //
+            var toast =
+
+                '<div id="detach_toast_id_' + file_id +
+                '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
+                delay + '" >' +
+                '<div class="toast-header" style="background-color: ' +
+                color +
+                ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
+                '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
+                '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+                '<div class="toast-body" id="toast_id_body' +
+                file_id + '">' + data.response.success +
+                '</div> </div> </div>';
+            $("#bottom_toast").append(toast);
+            $('#detach_toast_id_' + file_id).toast("show");
+            console.log(file_id);
+            $('#attached_image_modal_' + file_id).modal('hide');
+
+            setTimeout(function () {
+                $('#detach_toast_id_' + file_id)
+                    .remove();
+
+            }, delay + 600);
+            setTimeout(function () {
+                $('#attached_files').html(data.view);
+            }, 400);
+
+        }, //end of success
+        error: function (error) {
+
+            $("#ajaxactioncallimages").attr('class', "alert alert-danger");
+            $.each(error.responseJSON.errors, function (index, val) {
+                $("#ajaxactioncallimages #e_message").html(
+                    "<img src='/storage/ajax-loader-red.gif'/>" + val);
+                //   $('#ajaxactioncallimages').fadeOut(2500);
+                // console.log(index, val);
+            });
+
+            // console.log(error);
+
+
+        } //end of error
+    }); //end of ajax
+} //end of DetachFileFromPage()
+
+
+//Delete file from page ends----
+
+
+
+/**
+ * Edit Images proprties
+ * Moved on: 07/06/2021
+ * From: editpageatchedimages.blade.php
+ * @param {*} id
+ */
+    function EditAttachedImageprops(id) {
+
+        var image_name = $("#title_" + id).val();
+        var image_alt_text = $("#alt_" + id).val();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $(
+                        'meta[name="csrf-token"]')
+                    .attr(
+                        'content')
+            }
+
+        }); //End of ajax setup
+        $.ajax({
+            url: "/admin/Images/updateimagesinfo",
+            method: "post",
+            //cache: false,
+            data: {
+                id: id,
+                image_name: image_name,
+                image_alt_text: image_alt_text,
+            },
+            success: function(data) {
+                var delay = 2300;
+                color = "green";
+
+                var toast =
+
+                    '<div id="attached_toast_id_' + id +
+                    '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
+                    delay + '" >' +
+                    '<div class="toast-header" style="background-color: ' +
+                    color +
+                    ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
+                    '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
+                    '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+                    '<div class="toast-body" id="toast_id_body' +
+                    id + '">' + data.success +
+                    '</div> </div> </div>';
+                $("#bottom_toast").append(toast);
+                $('#attached_toast_id_' + id).toast("show");
+                setTimeout(function() {
+                    $('#attached_toast_id_' + id)
+                        .remove();
+                }, delay + 500);
+
+            }, //end of success
+            error: function(error) {
+
+                $("#ajaxactioncallimages").attr('class', "alert alert-danger");
+                $.each(error.responseJSON.errors, function(index, val) {
+                    $("#ajaxactioncallimages #e_message").html(
+                        "<img src='/storage/ajax-loader-red.gif'/>" + val);
+                    //   $('#ajaxactioncallimages').fadeOut(2500);
+                    // console.log(index, val);
+                });
+
+                // console.log(error);
+
+
+            } //end of error
+        }); //end of ajax
+        //Edit title
+        //Edit size
+        //Edit alt text
+
+    } //end of EditAttachedImageprops
+
+
+
+

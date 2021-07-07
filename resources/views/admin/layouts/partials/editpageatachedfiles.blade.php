@@ -73,78 +73,7 @@
     </div>
 @else
     <div class="col-md-12">
-        <p>There are currently no images uploaded.</p>
+        <p>There are currently no files attached to this page.</p>
     </div>
 @endif
-<script>
-    function EditAttachedImageprops(id) {
 
-        var image_name = $("#title_" + id).val();
-        var image_alt_text = $("#alt_" + id).val();
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $(
-                        'meta[name="csrf-token"]')
-                    .attr(
-                        'content')
-            }
-
-        }); //End of ajax setup
-        $.ajax({
-            url: "/admin/Images/updateimagesinfo",
-            method: "post",
-            //cache: false,
-            data: {
-                id: id,
-                image_name: image_name,
-                image_alt_text: image_alt_text,
-            },
-            success: function(data) {
-                var delay = 2300;
-                color = "green";
-
-                var toast =
-
-                    '<div id="attached_toast_id_' + id +
-                    '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
-                    delay + '" >' +
-                    '<div class="toast-header" style="background-color: ' +
-                    color +
-                    ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
-                    '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
-                    '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
-                    '<div class="toast-body" id="toast_id_body' +
-                    id + '">' + data.success +
-                    '</div> </div> </div>';
-                $("#bottom_toast").append(toast);
-                $('#attached_toast_id_' + id).toast("show");
-                setTimeout(function() {
-                    $('#attached_toast_id_' + id)
-                        .remove();
-                }, delay + 500);
-
-            }, //end of success
-            error: function(error) {
-
-                $("#ajaxactioncallimages").attr('class', "alert alert-danger");
-                $.each(error.responseJSON.errors, function(index, val) {
-                    $("#ajaxactioncallimages #e_message").html(
-                        "<img src='/storage/ajax-loader-red.gif'/>" + val);
-                    //   $('#ajaxactioncallimages').fadeOut(2500);
-                    // console.log(index, val);
-                });
-
-                // console.log(error);
-
-
-            } //end of error
-        }); //end of ajax
-        //Edit title
-        //Edit size
-        //Edit alt text
-
-    } //end of EditAttachedImageprops
-
-
-
-</script>

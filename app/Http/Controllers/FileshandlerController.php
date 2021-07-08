@@ -150,7 +150,7 @@ class FileshandlerController extends Controller
                     // $file->storeAs('/public/uploads/' , $imageName);
 
                     $file_size = filesize($file);
-
+                    // $this->readFileIn($file);
 
 
                     $upload = new fileshandler();
@@ -215,5 +215,23 @@ class FileshandlerController extends Controller
     public function destroy(fileshandler $fileshandler)
     {
         //
+    }
+    /**
+     *
+     */
+    public function readFileIn( $file)
+    {
+        //read the file
+        //if file extension is HTML
+        //Search for the <html> <body> tags
+        $fn = fopen($file, "r");
+
+        while (!feof($fn)) {
+            $result = fgets($fn);
+
+            echo $result;
+        }
+
+        fclose($fn);
     }
 }

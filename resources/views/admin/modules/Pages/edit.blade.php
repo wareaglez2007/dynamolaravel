@@ -135,7 +135,7 @@
                                     <input type="text" name="slug" id="slug" class="form-control" placeholder="Page URI"
                                         aria-describedby="helpId" @if ($editview->slug != null) value="{{ $editview->slug->slug }}"
                                 @else
-                                                                                                                                                                                                                                                                                                                                            value="" @endif>
+                                                                                                                                                                                                                                                                                                                                                    value="" @endif>
                                     <small id="helpId" class="text-muted">This will be used for the link in the
                                         front
                                         end. i.e. www.donain.com/about-us</small>
@@ -181,7 +181,7 @@
                                     <input type="checkbox" name="is_homepage" id="is_homepage" class=""
                                         aria-describedby="helpId" @if ($editview->is_homepage == 1) value="1" checked
                                         @else
-                                                                                                                                                                                                                                                                                                        value="null" @endif @if ($homepageCount != 0 && $editview->is_homepage != 1)
+                                                                                                                                                                                                                                                                                                                value="null" @endif @if ($homepageCount != 0 && $editview->is_homepage != 1)
                                     disabled
                                     @endif
                                     >
@@ -298,34 +298,42 @@
 
 
 
-                                <!-- <div class="form-group">
-                                                <label for="">Page Content</label>
-                                                <textarea name="description" id="editor1" cols="30"
-                                                    rows="10">/**$editview->content**/ </textarea>
-                                                <script>
-                                                    CKEDITOR.replace('editor1');
-                                                    CKEDITOR.config.allowedContent = true;
-
-                                                </script>
-                                            </div>-->
+                                {{-- <div class="form-group">
+                                    <label for="">Page Content</label>
+                                    <textarea name="description" id="editor1" cols="30" rows="10">
+                                                        @if (is_countable($editview->fileforpages) && count($editview->fileforpages) > 0)
+                                                            @foreach ($editview->fileforpages as $file)
+                                                                @if ($file->extension == 'html')
+                                                                {{ file_get_contents(substr($file->storage_path, 1)) }}
+                                                                @endif
+                                                            @endforeach
+                                                        @else
+                                                            {{ $editview->content }}
+                                                        @endif
+                                                        </textarea>
+                                    <script>
+                                        CKEDITOR.replace('editor1');
+                                        CKEDITOR.config.allowedContent = true;
+                                    </script>
+                                </div> --}}
 
                                 <div class="form-group">
                                     <label for="">Page Content</label>
                                     <textarea name="description" id="editor" cols="30" rows="10">
 
-                                                @if (is_countable($editview->fileforpages) && count($editview->fileforpages) > 0)
-                                                    @foreach ($editview->fileforpages as $file)
-                                                        @if ($file->extension == 'html')
-                                                        {{ file_get_contents(substr($file->storage_path, 1)) }}
-                                                        @endif
-                                                    @endforeach
+                                                        @if (is_countable($editview->fileforpages) && count($editview->fileforpages) > 0)
+                                                            @foreach ($editview->fileforpages as $file)
+                                                                @if ($file->extension == 'html')
+                                                                {{ file_get_contents(substr($file->storage_path, 1)) }}
+                                                                @endif
+                                                            @endforeach
                                             @else
-                                                    {{ $editview->content }}
-                                                @endif
+                                                            {{ $editview->content }}
+                                                        @endif
 
 
 
-                                                </textarea>
+                                                        </textarea>
                                     <script>
                                         tinymce.init({
                                             selector: 'textarea#editor',
@@ -352,7 +360,6 @@
                                             entity_encoding: 'raw',
                                             schema: 'html5'
                                         });
-
                                     </script>
                                 </div>
 

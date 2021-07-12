@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
+use KubAT\PhpSimple\HtmlDomParser;
+
 
 class FileshandlerController extends Controller
 {
@@ -150,7 +152,7 @@ class FileshandlerController extends Controller
                     // $file->storeAs('/public/uploads/' , $imageName);
 
                     $file_size = filesize($file);
-                    // $this->readFileIn($file);
+                    $this->readFileIn($file);
 
 
                     $upload = new fileshandler();
@@ -219,19 +221,40 @@ class FileshandlerController extends Controller
     /**
      *
      */
-    public function readFileIn( $file)
+    public function readFileIn($file)
     {
         //read the file
-        //if file extension is HTML
-        //Search for the <html> <body> tags
-        $fn = fopen($file, "r");
+        // Create DOM from URL or file
+        $html = HtmlDomParser::file_get_html( $file);
 
-        while (!feof($fn)) {
-            $result = fgets($fn);
+        /**
+         * How do you want to implement this?
+         * if someone wants to add html into the page.
+         *  Header file
+         *      -should copy over the head (<head></head>)
+         *  Navigation
+         *      -should copy over the nav tag (<nav></nav>)
+         *  body
+         *      -should be everything after nav and stop where footer is (<div>)
+         *  footer
+         *      -should start from footer to the footer closing (<footer></footer>)
+         *
+         */
 
-            echo $result;
-        }
 
-        fclose($fn);
+        // Find all head
+        // foreach ($html->find('head') as $element){
+        //     echo $element. '<br>';
+        // }
+
+
+        // Find all body
+         foreach ($html->find('body') as $element){
+             foreach($element->find('nav') as $nav){
+                echo $nav->class. '<br>';
+             }
+
+         }
+
     }
 }

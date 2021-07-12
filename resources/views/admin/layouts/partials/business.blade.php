@@ -30,7 +30,9 @@
                         </div>
                     </div>
                     <div class="row">
-                        <h5>Business Address:</h5>
+                        <div class="col-md-12">
+                            <h5>Business Address:</h5>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
@@ -48,6 +50,31 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">City:</label>
+                                <input type="text" name="" id="" class="form-control" placeholder="LoS Angeles"
+                                    aria-describedby="helpId">
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">State:</label>
+                                <input type="text" name="" id="" class="form-control" placeholder="CA"
+                                    aria-describedby="helpId">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">Zip/Postal Code:</label>
+                                <input type="text" name="" id="" class="form-control" placeholder="91234"
+                                    aria-describedby="helpId">
+                            </div>
+                        </div>
+                    </div>
+
                     <!--Business address ends-->
                 </div>
                 <div class="modal-footer">
@@ -58,4 +85,6 @@
         </div>
     </div>
 </div>
-
+    <!--EDIT PAGE SECTION-->
+    <script src="{{ asset('js/locationajax.js') }}" defer></script>
+    <!---END OF AJAX JS-->

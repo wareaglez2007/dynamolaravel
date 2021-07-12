@@ -134,7 +134,7 @@ Route::get('/admin/social-media', 'SocialMediaController@index')->name('admin.so
  * Business Information Manager
  */
 
-Route::get('/admin/business-info', 'BusinessController@index')->name('admin.business');
+Route::get('/admin/business-info', 'LocationsController@index')->name('admin.business');
 
 /**
  * Forms Creat/Edit/Delete Manager

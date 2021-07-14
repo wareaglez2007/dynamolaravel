@@ -23,8 +23,8 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="">Business Name:</label>
-                                <input type="text" name="" id="" class="form-control" placeholder="full business name"
-                                    aria-describedby="helpId">
+                                <input type="text" name="bus_name" id="bus_name" class="form-control"
+                                    placeholder="full business name" aria-describedby="helpId">
                                 <small id="helpId" class="text-muted">i.e. Dynamoelectric inc</small>
                             </div>
                         </div>
@@ -38,14 +38,14 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Address 1:<label>
-                                        <input type="text" name="addr1" id="add1" class="form-control"
+                                        <input type="text" name="addr1" id="addr1" class="form-control"
                                             placeholder="123 cicrle st." aria-describedby="helpId">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Address 2:<label>
-                                        <input type="text" name="addr2" id="add2" class="form-control"
+                                        <input type="text" name="addr2" id="addr2" class="form-control"
                                             placeholder="Apt,Suite#" aria-describedby="helpId">
                             </div>
                         </div>
@@ -54,7 +54,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="">City:</label>
-                                <input type="text" name="" id="" class="form-control" placeholder="LoS Angeles"
+                                <input type="text" name="city" id="city" class="form-control" placeholder="Los Angeles"
                                     aria-describedby="helpId">
                             </div>
 
@@ -62,14 +62,14 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="">State:</label>
-                                <input type="text" name="" id="" class="form-control" placeholder="CA"
+                                <input type="text" name="state" id="state" class="form-control" placeholder="CA"
                                     aria-describedby="helpId">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="">Zip/Postal Code:</label>
-                                <input type="text" name="" id="" class="form-control" placeholder="91234"
+                                <input type="text" name="postal" id="postal" class="form-control" placeholder="91234"
                                     aria-describedby="helpId">
                             </div>
                         </div>
@@ -79,12 +79,22 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-success" onclick="savelocations()">Save</button>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
-    <!--EDIT PAGE SECTION-->
-    <script src="{{ asset('js/locationajax.js') }}" defer></script>
-    <!---END OF AJAX JS-->
+
+    <!--Locations section-->
+    <div class="col-md-12" id="locations_div">
+        @include('admin.layouts.partials.Mods.Locations.locations')
+
+    </div>
+
+<div class="position-fixed bottom-0 right-0 p-3" style="z-index: 9999999; right: 0; bottom: 0;" id="bottom_toast">
+</div>
+<!--EDIT PAGE SECTION-->
+<script src="{{ asset('js/locationajax.js') }}" defer></script>
+<!---END OF AJAX JS-->

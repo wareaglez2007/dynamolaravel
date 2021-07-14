@@ -51,7 +51,7 @@ class LocationsController extends Controller
         //Data Validation
 
         $validatedData = $request->validate([
-            'location_name' => ['required','unique:locations'],
+            'location_name' => ['required', 'unique:locations'],
             'addr1' => ['required'],
             'postal' => ['required'],
             'city' => ['required'],
@@ -71,7 +71,7 @@ class LocationsController extends Controller
         $locations->added_by = Auth::user()->id;
         $locations->save();
 
-        $response_messages['success'] = $request->location_name." has been added.";
+        $response_messages['success'] = $request->location_name . " has been added.";
         $response_messages['locationid'] = $locations->id;
 
         $locations_data = $locations->orderBy('id', 'ASC')->get();
@@ -128,11 +128,26 @@ class LocationsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, locations $locations)
     {
-        //
-    }
+        $response_messages = [];
+        //Check to see if id exists in db
+        $check_id = $locations->find($request->id);
 
+        $locations->find($request->id)->forceDelete();
+        $response_messages['success'] = $check_id->location_name . " has been deleted.";
+
+        $locations_data = $locations->orderBy('id', 'ASC')->get();
+        if ($request->ajax()) {
+            return response()->json([
+                "response" => $response_messages,
+                'mod_name' => 'Business Information Manager',
+                'view' => view('admin.layouts.partials.Mods.Locations.locations')->with([
+                    "locations" => $locations_data
+                ])->render()
+            ]);
+        }
+    }
 
 
     /**

@@ -18,63 +18,64 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!---Business information section--->
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="">Business Name:</label>
-                                <input type="text" name="bus_name" id="bus_name" class="form-control"
-                                    placeholder="full business name" aria-describedby="helpId">
-                                <small id="helpId" class="text-muted">i.e. Dynamoelectric inc</small>
+                    <form method="POST">
+                        <!---Business information section--->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="">Business Name:</label>
+                                    <input type="text" name="bus_name" id="bus_name" class="form-control"
+                                        placeholder="full business name" aria-describedby="helpId">
+                                    <small id="helpId" class="text-muted">i.e. Dynamoelectric inc</small>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h5>Business Address:</h5>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Address 1:<label>
-                                        <input type="text" name="addr1" id="addr1" class="form-control"
-                                            placeholder="123 cicrle st." aria-describedby="helpId">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5>Business Address:</h5>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Address 2:<label>
-                                        <input type="text" name="addr2" id="addr2" class="form-control"
-                                            placeholder="Apt,Suite#" aria-describedby="helpId">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Address 1:<label>
+                                            <input type="text" name="addr1" id="addr1" class="form-control"
+                                                placeholder="123 cicrle st." aria-describedby="helpId">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Address 2:<label>
+                                            <input type="text" name="addr2" id="addr2" class="form-control"
+                                                placeholder="Apt,Suite#" aria-describedby="helpId">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="">City:</label>
-                                <input type="text" name="city" id="city" class="form-control" placeholder="Los Angeles"
-                                    aria-describedby="helpId">
-                            </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">City:</label>
+                                    <input type="text" name="city" id="city" class="form-control"
+                                        placeholder="Los Angeles" aria-describedby="helpId">
+                                </div>
 
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="">State:</label>
-                                <input type="text" name="state" id="state" class="form-control" placeholder="CA"
-                                    aria-describedby="helpId">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">State:</label>
+                                    <input type="text" name="state" id="state" class="form-control" placeholder="CA"
+                                        aria-describedby="helpId">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">Zip/Postal Code:</label>
+                                    <input type="text" name="postal" id="postal" class="form-control"
+                                        placeholder="91234" aria-describedby="helpId">
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="">Zip/Postal Code:</label>
-                                <input type="text" name="postal" id="postal" class="form-control" placeholder="91234"
-                                    aria-describedby="helpId">
-                            </div>
-                        </div>
-                    </div>
-
+                    </form>
                     <!--Business address ends-->
                 </div>
                 <div class="modal-footer">
@@ -87,11 +88,11 @@
 
 </div>
 
-    <!--Locations section-->
-    <div class="col-md-12" id="locations_div">
-        @include('admin.layouts.partials.Mods.Locations.locations')
+<!--Locations section-->
+<div class="col-md-12" id="locations_div">
+    @include('admin.layouts.partials.Mods.Locations.locations')
 
-    </div>
+</div>
 
 <div class="position-fixed bottom-0 right-0 p-3" style="z-index: 9999999; right: 0; bottom: 0;" id="bottom_toast">
 </div>

@@ -8,6 +8,7 @@
                 <th scope="col">City</th>
                 <th scope="col">State</th>
                 <th scope="col">Zip</th>
+                <th scope="col">Delete</th>
             </tr>
         </thead>
         <tbody>
@@ -20,6 +21,7 @@
                     <td>{{ $location->city }}</td>
                     <td>{{ $location->state }}</td>
                     <td>{{ $location->postal }}</td>
+                    <td><a href="#" onclick="DeleteLocation({{ $location->id }});"><i class="bi bi-trash-fill text-danger"></i></a></td>
                 </tr>
 
             @endforeach

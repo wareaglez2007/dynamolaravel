@@ -136,6 +136,7 @@ Route::get('/admin/social-media', 'SocialMediaController@index')->name('admin.so
 
 Route::get('/admin/business-info', 'LocationsController@index')->name('admin.business');
 Route::post('/admin/locations/store', 'LocationsController@store')->name('admin.location.add');
+Route::post('/admin/locations/update', 'LocationsController@update')->name('admin.location.add');
 Route::post('/admin/locations/destroy', 'LocationsController@destroy')->name('admin.location.del');
 
 /**

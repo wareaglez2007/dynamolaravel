@@ -59,12 +59,11 @@ class LocationsController extends Controller
 
         ]);
 
-        $street_address = $request->addr1 . " " . $request->addr2;
-
 
         $count = $locations->get()->count();
         $locations->location_name = $request->location_name;
-        $locations->street = $street_address;
+        $locations->street = $request->addr1;
+        $locations->street2 = $request->addr2;
         $locations->city = $request->city;
         $locations->state = $request->state;
         $locations->postal = $request->postal;
@@ -117,9 +116,53 @@ class LocationsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, locations $locations)
     {
-        //
+        $response_messages = [];
+        //Data Validation
+
+        $validatedData = $request->validate([
+            'location_name' => ['required'],
+            'addr1' => ['required'],
+            'postal' => ['required'],
+            'city' => ['required'],
+            'state' => ['required'],
+
+        ]);
+        //Check to see if id exists in db
+        $check_id = $locations->find($request->id)->count();
+        // location_name: bus_name,
+        // addr1: addr1,
+        // addr2: addr2,
+        // city: city,
+        // postal: postal,
+        // state: state
+        if($check_id > 0){
+            $full_street = $request->addr1 . " " . $request->addr2;
+
+            $locations->find($request->id)->update([
+                'location_name' => $request->location_name,
+                'street' => $request->addr1,
+                'street2' =>$request->addr2,
+                'city' => $request->city,
+                'state' => $request->state,
+                'postal' => $request->postal
+
+            ]);
+
+            $response_messages['success'] = $request->location_name." has been updated.";
+        }
+        $locations_data = $locations->orderBy('id', 'ASC')->get();
+        if ($request->ajax()) {
+            return response()->json([
+                "response" => $response_messages,
+                'mod_name' => 'Business Information Manager',
+                'view' => view('admin.layouts.partials.Mods.Locations.locations')->with([
+                    "locations" => $locations_data
+                ])->render()
+            ]);
+        }
+
     }
 
     /**

@@ -70,7 +70,6 @@ function savelocations() {
         }, //end of success
         error: function (error) {
             $.each(error.responseJSON.errors, function (index, val) {
-                console.log(val);
                 var delay = 2300;
                 color = "red";
                 var toast =
@@ -101,6 +100,108 @@ function savelocations() {
 } //end of savelocations
 
 
+/**
+ * EditLocation(id)
+ * @param {*} id
+ */
+
+function EditLocation(id) {
+    //Business name
+    var bus_name = $("#bus_name_"+id).val();
+    //address 1
+    var addr1 = $("#addr1_"+id).val();
+    //address 2
+    var addr2 = $("#addr2_"+id).val();
+    //city
+    var city = $("#city_"+id).val();
+    //state
+    var state = $("#state_"+id).val();
+    //postal
+    var postal = $("#postal_"+id).val();
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $(
+                'meta[name="csrf-token"]')
+                .attr(
+                    'content')
+        }
+
+    }); //End of ajax setup
+    $.ajax({
+        url: '/admin/locations/update',
+        method: "post",
+        //cache: false,
+        data: {
+            id: id,
+            location_name: bus_name,
+            addr1: addr1,
+            addr2: addr2,
+            city: city,
+            postal: postal,
+            state: state
+        },
+        success: function (data) {
+            var delay = 2300;
+            color = "green";
+            var toast =
+
+                '<div id="location_delete_toast_' + id +
+                '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
+                delay + '" >' +
+                '<div class="toast-header" style="background-color: ' +
+                color +
+                ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
+                '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
+                '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+                '<div class="toast-body" id="toast_id_body' +
+                id + '">' + data.response.success +
+                '</div> </div> </div>';
+            $("#bottom_toast").append(toast);
+            $('#location_delete_toast_' + id).toast("show");
+            $('#locationeditmodal_' + id).modal('hide');
+
+            setTimeout(function () {
+                $('#location_delete_toast_' + id)
+                    .remove();
+
+            }, delay + 600);
+            setTimeout(function () {
+                $('#locations_div').html(data.view);
+            }, 400);
+
+        }, //end of success
+        error: function (error) {
+            $.each(error.responseJSON.errors, function (index, val) {
+                var delay = 2300;
+                color = "red";
+                var toast =
+                    '<div id="location_toast_' + index +
+                    '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
+                    delay + '" >' +
+                    '<div class="toast-header" style="background-color: ' +
+                    color +
+                    ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
+                    '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
+                    '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+                    '<div class="toast-body" id="toast_id_body' +
+                    index + '">' + val +
+                    '</div> </div> </div>';
+                $("#bottom_toast").append(toast);
+                $('#location_toast_' + index).toast("show");
+                setTimeout(function () {
+                    $('#location_toast_' + index)
+                        .remove();
+
+                }, delay + 600);
+
+            });
+
+
+        } //end of error
+    }); //end of ajax
+} //end of savelocations
+
+//End Edit location
 
 /**
  * Delete Location
@@ -156,7 +257,6 @@ function DeleteLocation(id) {
         }, //end of success
         error: function (error) {
             $.each(error.responseJSON.errors, function (index, val) {
-                console.log(val);
                 var delay = 2300;
                 color = "red";
                 var toast =

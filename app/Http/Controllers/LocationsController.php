@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\hoursdays;
 use App\locations;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationData;
 use Auth;
+
+use function GuzzleHttp\json_decode;
 
 class LocationsController extends Controller
 {
@@ -21,10 +24,20 @@ class LocationsController extends Controller
      */
     public function index()
     {
-        $locations_data = locations::orderBy('id', 'ASC')->get();
+        $locations_data = locations::orderBy('id', 'ASC')->with('location_hours')->get();
+        $daysData = hoursdays::getDays();
+        foreach($daysData as $days){
+            $weekdays = json_decode($days->week_days, true);
+        }
+        $hoursData = hoursdays::getHours();
+        foreach($hoursData as $hours){
+            $hours = json_decode($hours->hours, true);
+        }
         return view('admin.modules.general', [
             'mod_name' => 'Business Information Manager',
-            'locations' => $locations_data
+            'locations' => $locations_data,
+            'days' => $weekdays,
+            'hours' => $hours
         ]);
     }
 

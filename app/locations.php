@@ -18,6 +18,9 @@ class locations extends Model
         'postal'
 
     ];
-
+    public function location_hours()
+    {
+        return $this->hasMany('App\location_hours');
+    }
 }
 

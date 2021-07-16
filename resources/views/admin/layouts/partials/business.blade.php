@@ -1,7 +1,6 @@
 <div class="card-header">{{ $mod_name }}</div>
 <div class="card-body">
 
-
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#modelId">
         <i class="bi bi-journal-plus"></i> Add New Info
@@ -74,6 +73,41 @@
                                         placeholder="91234" aria-describedby="helpId">
                                 </div>
                             </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">Days:</label>
+                                    <select class="form-control" name="" id="">
+                                        @foreach ($days as $i => $day)
+                                            <option value="{{ $i }}">{{ $day }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">Hours From:</label>
+                                    <select class="form-control" name="" id="">
+                                        @foreach ($hours as $x => $hour)
+                                            <option value="{{ $x }}">{{ $hour }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">Hours To:</label>
+                                    <select class="form-control" name="" id="">
+                                        @foreach ($hours as $x => $hour)
+                                            <option value="{{ $x }}">{{ $hour }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+
                         </div>
                     </form>
                     <!--Business address ends-->

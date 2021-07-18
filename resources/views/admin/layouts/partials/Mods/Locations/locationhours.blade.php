@@ -8,7 +8,7 @@
 
     </div>
 </div>
-<div class="row" id="location_hours_div_1" style="display: none;">
+<div class="row" id="location_hours_div" style="display: none;">
     <div class="col-md-3">
         <div class="form-group">
             <label for="">Days:</label>

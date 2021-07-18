@@ -107,17 +107,17 @@ function savelocations() {
 
 function EditLocation(id) {
     //Business name
-    var bus_name = $("#bus_name_"+id).val();
+    var bus_name = $("#bus_name_" + id).val();
     //address 1
-    var addr1 = $("#addr1_"+id).val();
+    var addr1 = $("#addr1_" + id).val();
     //address 2
-    var addr2 = $("#addr2_"+id).val();
+    var addr2 = $("#addr2_" + id).val();
     //city
-    var city = $("#city_"+id).val();
+    var city = $("#city_" + id).val();
     //state
-    var state = $("#state_"+id).val();
+    var state = $("#state_" + id).val();
     //postal
-    var postal = $("#postal_"+id).val();
+    var postal = $("#postal_" + id).val();
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $(
@@ -285,3 +285,66 @@ function DeleteLocation(id) {
         } //end of error
     }); //end of ajax
 } //end of savelocations
+
+
+/**
+ * These additions are made only with JQuery for the location modal.
+ * Date: 07/17/2021
+ * Author: Rostom Sahakian
+ * This script should control the days and hours portion of the page
+ * It should:
+ * 1. Add new row (div) for user to add additional days and hours
+ * 2. it should keep track of each row and auto ajax save the data into database
+ **/
+
+var counter = 0; //Global Counter DO NOT remove
+//Add more rows
+$(function () {
+
+    $("#location_hours_div_1").hide();
+    $("#add_hours_btn").on("click", function () {
+
+        $("#location_hours_div_1").show();
+        var days_hours = $("#location_hours_div_1").clone();
+        counter++;
+        days_hours.attr("id", "location_hours_div_" + counter);
+        days_hours.find("#day_1").attr("id", "day_" + counter);
+        days_hours.find("#hours_from_1").attr("id", "hours_from_" + counter);
+        days_hours.find("#hours_to_1").attr("id", "hours_to_" + counter);
+        days_hours.find("#clearday_1").attr("id", "clearday_" + counter);
+        days_hours.find("#clearday_" + counter).attr("onclick", "ClearDayRow(" + counter + ")"); //Change counter value on function
+        //IF counter is bigger than 1 and less than 8 (that will give me max of 7 rows for days of the week)
+        if (counter > 1 && counter < 8) {
+            $("#additional").each(function () {
+                $("#additional").append(days_hours);
+            });
+        }
+        if(counter == 7){
+            $("#add_hours_btn").addClass("disabled");
+        }
+    }); //End of add_hour_btn
+
+
+});
+/**
+ * Removes the Day Row from the modal
+ * Date: 07/17/2021
+ * Author: Rostom Sahakian
+ * @param {*} id
+ */
+function ClearDayRow(id) {
+    if (id != 1) {
+        //Remove that clicked row
+        $("#location_hours_div_" + id).remove();
+
+    }
+    //Hide the 1st instance of the row (do not remove it from the DOM!)
+    if (id == 1) {
+        $("#location_hours_div_1").hide();
+    }
+    if(id < 8){ //If a row is removed then enable the button
+        $("#add_hours_btn").removeClass("disabled");
+    }
+    counter--; //Decriment by one everytime a row is removed.
+
+}

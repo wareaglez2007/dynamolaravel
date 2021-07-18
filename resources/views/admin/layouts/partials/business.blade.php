@@ -74,38 +74,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="">Days:</label>
-                                    <select class="form-control" name="" id="">
-                                        @foreach ($days as $i => $day)
-                                            <option value="{{ $i }}">{{ $day }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="">Hours From:</label>
-                                    <select class="form-control" name="" id="">
-                                        @foreach ($hours as $x => $hour)
-                                            <option value="{{ $x }}">{{ $hour }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="">Hours To:</label>
-                                    <select class="form-control" name="" id="">
-                                        @foreach ($hours as $x => $hour)
-                                            <option value="{{ $x }}">{{ $hour }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                        <!---Location Hours -->
+                        @include('admin.layouts.partials.Mods.Locations.locationhours')
+                        <!--End Location Hours-->
+
                         <div class="row">
 
                         </div>

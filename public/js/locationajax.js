@@ -332,7 +332,11 @@ $(function () {
  */
 function ClearDayRow(id) {
     //Remove that clicked row
-    $("#location_hours_div_" + id).remove();
+    $("#location_hours_div_" + id).slideUp();
+    setTimeout(function () {
+        $("#location_hours_div_" + id).remove();
+
+    }, 600);
     if (numRows < 8) { //If a row is removed then enable the button
         $("#add_hours_btn").removeClass("disabled");
     }

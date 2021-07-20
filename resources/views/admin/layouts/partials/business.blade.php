@@ -136,7 +136,7 @@
             </div>
             <div class="col-md-1">
                 <div class="form-check">
-                    <a href="#" onclick="ClearDayRow(1)" id="clearday_1"><i
+                    <a href="#" onclick="ClearDayRow(1)" id="clearday"><i
                             class="bi bi-dash-circle text-danger"></i></a>
                 </div>
             </div>

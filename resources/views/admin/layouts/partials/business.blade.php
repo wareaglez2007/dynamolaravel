@@ -17,7 +17,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="POST">
+                    <form method="POST" id="business_info">
                         <!---Business information section--->
                         <div class="row">
                             <div class="col-md-12">
@@ -86,7 +86,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" onclick="savelocations()">Save</button>
+                    <button type="button" class="btn btn-success" id="location_save_btn"
+                        onclick="savelocations()">Save</button>
                 </div>
             </div>
         </div>
@@ -99,7 +100,51 @@
     @include('admin.layouts.partials.Mods.Locations.locations')
 
 </div>
+<!--Days & Hours will be cloned from here -->
+<div class="row" id="location_hours_div" style="display: none;">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="">Days:</label>
+            <select class="form-control form-control-sm" name="day" id="day">
+                @foreach ($days as $i => $day)
+                    <option value="{{ $day }}">{{ $day }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="form-row align-items-center">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="">Hours From:</label>
+                    <select class="form-control form-control-sm" name="hours_from" id="hours_from">
+                        @foreach ($hours as $x => $hour)
+                            <option value="{{ $hour }}">{{ $hour }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="">Hours To:</label>
+                    <select class="form-control form-control-sm" name="hours_to" id="hours_to">
+                        @foreach ($hours as $x => $hour)
+                            <option value="{{ $hour }}">{{ $hour }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <div class="form-check">
+                    <a href="#" onclick="ClearDayRow(1)" id="clearday_1"><i
+                            class="bi bi-dash-circle text-danger"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
 
+</div>
+<!--- end of days & hours original copy -->
 <div class="position-fixed bottom-0 right-0 p-3" style="z-index: 9999999; right: 0; bottom: 0;" id="bottom_toast">
 </div>
 <!--EDIT PAGE SECTION-->

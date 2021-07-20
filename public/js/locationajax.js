@@ -4,6 +4,7 @@
  */
 
 function savelocations() {
+
     //Business name
     var bus_name = $("#bus_name").val();
     //address 1
@@ -16,6 +17,23 @@ function savelocations() {
     var state = $("#state").val();
     //postal
     var postal = $("#postal").val();
+
+    var dayshoursArray = {};
+    for(var i=1; i<= numRows; i++){
+        var days = $('#day_'+i).val();
+        var hoursfrom = $('#hours_from_'+i).val();
+        var hoursto = $('#hours_to_'+i).val();
+
+        dayshoursArray['day_'+i]=days;
+        dayshoursArray['hours_from_'+i]=hoursfrom;
+        dayshoursArray['hours_to_'+i]=hoursto;
+    }
+
+
+
+    //use the global var numRows to get the count of business hours.
+
+
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $(
@@ -28,16 +46,21 @@ function savelocations() {
     $.ajax({
         url: '/admin/locations/store',
         method: "post",
-        //cache: false,
+        // cache: false,
+        // processData: false,
+        // contentType: false,
         data: {
             location_name: bus_name,
             addr1: addr1,
             addr2: addr2,
             city: city,
             postal: postal,
-            state: state
+            state: state,
+            days: dayshoursArray,
+            rowcount: numRows
         },
         success: function (data) {
+
             var delay = 2300;
             color = "green";
             var toast =
@@ -306,16 +329,17 @@ $(function () {
         counter++;
         numRows++;
         days_hours.attr("id", "location_hours_div_" + counter);
-        days_hours.show();
-        days_hours.find("#day_1").attr("id", "day_" + counter);
-        days_hours.find("#hours_from_1").attr("id", "hours_from_" + counter);
-        days_hours.find("#hours_to_1").attr("id", "hours_to_" + counter);
-        days_hours.find("#clearday_1").attr("id", "clearday_" + counter);
+
+        days_hours.find("#day").attr("id", "day_" + counter);
+        days_hours.find("#hours_from").attr("id", "hours_from_" + counter);
+        days_hours.find("#hours_to").attr("id", "hours_to_" + counter);
+        days_hours.find("#clearday").attr("id", "clearday_" + counter);
         days_hours.find("#clearday_" + counter).attr("onclick", "ClearDayRow(" + counter + ")"); //Change counter value on function
 
         $("#additional").each(function () {
             $("#additional").append(days_hours);
         });
+        days_hours.slideDown('slow'); //Call the slide down after the div has been appended! 07/19/2021
         //If counter is equal to 7 (that will give me max of 7 rows for days of the week)
         if (numRows == 7) {
             $("#add_hours_btn").addClass("disabled");
@@ -332,7 +356,7 @@ $(function () {
  */
 function ClearDayRow(id) {
     //Remove that clicked row
-    $("#location_hours_div_" + id).slideUp();
+    $("#location_hours_div_" + id).slideUp('slow');
     setTimeout(function () {
         $("#location_hours_div_" + id).remove();
 
@@ -343,3 +367,4 @@ function ClearDayRow(id) {
     numRows--;//Decriment by one everytime a row is removed.
 
 }
+

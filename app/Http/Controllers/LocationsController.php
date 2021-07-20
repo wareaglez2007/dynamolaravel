@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\hoursdays;
+use App\location_hours;
 use App\locations;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationData;
@@ -24,13 +25,13 @@ class LocationsController extends Controller
      */
     public function index()
     {
-        $locations_data = locations::orderBy('id', 'ASC')->with('location_hours')->get();
+        $locations_data = locations::with('location_hours')->orderBy('id', 'ASC')->with('location_hours')->get();
         $daysData = hoursdays::getDays();
-        foreach($daysData as $days){
+        foreach ($daysData as $days) {
             $weekdays = json_decode($days->week_days, true);
         }
         $hoursData = hoursdays::getHours();
-        foreach($hoursData as $hours){
+        foreach ($hoursData as $hours) {
             $hours = json_decode($hours->hours, true);
         }
         return view('admin.modules.general', [
@@ -56,10 +57,12 @@ class LocationsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, locations $locations)
+    public function store(Request $request, locations $locations, location_hours $location_hours)
     {
         //Save data into locations
         $response_messages = [];
+        // var_dump($request->days);
+
 
         //Data Validation
 
@@ -83,16 +86,30 @@ class LocationsController extends Controller
         $locations->added_by = Auth::user()->id;
         $locations->save();
 
+        for($i=1; $i <= $request->rowcount; $i++){
+
+            $location_hours = new location_hours();
+            $location_hours->days = $request->days['day_'.$i];
+            $location_hours->hours_from = $request->days['hours_from_'.$i];
+            $location_hours->hours_to = $request->days['hours_to_'.$i];
+            $location_hours->locations_id = $locations->id;
+            $locations->location_hours()->save($location_hours);
+        }
+
+
         $response_messages['success'] = $request->location_name . " has been added.";
         $response_messages['locationid'] = $locations->id;
 
-        $locations_data = $locations->orderBy('id', 'ASC')->get();
+
+
+        $locations_data = $locations->with('location_hours')->orderBy('id', 'ASC')->get();
 
 
         if ($request->ajax()) {
             return response()->json([
                 "response" => $response_messages,
                 'mod_name' => 'Business Information Manager',
+                'request' => $request,
                 'view' => view('admin.layouts.partials.Mods.Locations.locations')->with([
                     "locations" => $locations_data
                 ])->render()
@@ -150,20 +167,20 @@ class LocationsController extends Controller
         // city: city,
         // postal: postal,
         // state: state
-        if($check_id > 0){
+        if ($check_id > 0) {
             $full_street = $request->addr1 . " " . $request->addr2;
 
             $locations->find($request->id)->update([
                 'location_name' => $request->location_name,
                 'street' => $request->addr1,
-                'street2' =>$request->addr2,
+                'street2' => $request->addr2,
                 'city' => $request->city,
                 'state' => $request->state,
                 'postal' => $request->postal
 
             ]);
 
-            $response_messages['success'] = $request->location_name." has been updated.";
+            $response_messages['success'] = $request->location_name . " has been updated.";
         }
         $locations_data = $locations->orderBy('id', 'ASC')->get();
         if ($request->ajax()) {
@@ -175,7 +192,6 @@ class LocationsController extends Controller
                 ])->render()
             ]);
         }
-
     }
 
     /**

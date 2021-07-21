@@ -183,6 +183,10 @@ function EditLocation(id) {
             $('#location_delete_toast_' + id).toast("show");
             $('#locationeditmodal_' + id).modal('hide');
 
+            $('#locationeditmodal_' + id).modal({
+                backdrop: false
+              })
+
             setTimeout(function () {
                 $('#location_delete_toast_' + id)
                     .remove();
@@ -368,3 +372,51 @@ function ClearDayRow(id) {
 
 }
 
+var edit_counter = 0; //Global Counter DO NOT remove
+var edit_numRows = 0;
+//Add more rows
+//$(function () {
+    $("#add_hours_btn_edit").on("click", function () {
+        console.log("clicked");
+        var days_hours = $("#location_hours_div").clone();
+        edit_counter++;
+        edit_numRows++;
+        days_hours.attr("id", "location_hours_div_edit" + edit_counter);
+
+        days_hours.find("#day").attr("id", "day_edit" + edit_counter);
+        days_hours.find("#hours_from").attr("id", "hours_from_edit" + edit_counter);
+        days_hours.find("#hours_to").attr("id", "hours_to_edit" + edit_counter);
+        days_hours.find("#clearday").attr("id", "clearday_edit" + edit_counter);
+        days_hours.find("#clearday_edit" + edit_counter).attr("onclick", "ClearEditDayRow(" + edit_counter + ")"); //Change counter value on function
+
+        $("#additional_edit").each(function () {
+            $("#additional_edit").append(days_hours);
+        });
+        days_hours.slideDown('slow'); //Call the slide down after the div has been appended! 07/19/2021
+        //If counter is equal to 7 (that will give me max of 7 rows for days of the week)
+        if (edit_numRows == 7) {
+            $("#add_hours_btn_edit").addClass("disabled");
+        }
+    }); //End of add_hour_btn
+
+
+//);
+/**
+ * Removes the Day Row from the modal
+ * Date: 07/17/2021
+ * Author: Rostom Sahakian
+ * @param {*} id
+ */
+function ClearEditDayRow(id) {
+    //Remove that clicked row
+    $("#location_hours_div_edit" + id).slideUp('slow');
+    setTimeout(function () {
+        $("#location_hours_div_edit" + id).remove();
+
+    }, 600);
+    if (edit_numRows < 8) { //If a row is removed then enable the button
+        $("#add_hours_btn_edit").removeClass("disabled");
+    }
+    edit_numRows--;//Decriment by one everytime a row is removed.
+
+}

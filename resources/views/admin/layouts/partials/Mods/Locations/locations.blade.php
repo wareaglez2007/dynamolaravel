@@ -120,11 +120,57 @@
                                     </div>
                                 </div>
                             </div>
+                            @if (is_countable($location->location_hours) && count($location->location_hours) > 0)
+                                <div class="row">
+                                    <div class="col-md-12 table-responsive">
+                                        <table class="table table-hover table-inverse">
+                                            <thead class="thead-inverse">
+                                                <tr>
+                                                    <th>Days</th>
+                                                    <th>Open from</th>
+                                                    <th>Open to</th>
+                                                    <th>Edit</th>
+                                                    <th>Remove</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($location->location_hours as $dayshours)
+                                                    <tr>
+                                                        <td scope="row">{{ $dayshours->days }}</td>
+                                                        <td>{{ $dayshours->hours_from }}</td>
+                                                        <td>{{ $dayshours->hours_to }}</td>
+                                                        <td><i class="bi bi-pen-fill text-info"></i></td>
+                                                        <td><i class="bi bi-node-minus text-danger"></i></td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="row" style="padding-bottom: 15px !important;">
+                                    <div class="col-md-4">
+                                        <!--The add button should be here-->
+                                        <a class="btn btn-success btn-sm" id="add_hours_btn_edit" href="#">
+                                            <i class="bi bi-calendar2-plus-fill"></i>
+                                            &nbsp; Add Store hours
+                                        </a>
+
+                                    </div>
+                                </div>
+
+                                <!--Clone Day & Hours Div rows here -->
+                                <div id="additional_edit">
+
+                                </div>
+                                <!-- End of clones days & hours row -->
+
+                            @endif
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary"
+                        <button type="button" class="btn btn-primary" id="location_editor"
                             onclick="EditLocation({{ $location->id }})">Edit</button>
                     </div>
                 </div>

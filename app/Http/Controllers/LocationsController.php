@@ -85,16 +85,18 @@ class LocationsController extends Controller
         $locations->postal = $request->postal;
         $locations->added_by = Auth::user()->id;
         $locations->save();
+        if (is_countable($request->rowcount) && count($request->rowcount) > 0) {
+            foreach ($request->rowcount as $i) {
 
-        for($i=1; $i <= $request->rowcount; $i++){
-
-            $location_hours = new location_hours();
-            $location_hours->days = $request->days['day_'.$i];
-            $location_hours->hours_from = $request->days['hours_from_'.$i];
-            $location_hours->hours_to = $request->days['hours_to_'.$i];
-            $location_hours->locations_id = $locations->id;
-            $locations->location_hours()->save($location_hours);
+                $location_hours = new location_hours();
+                $location_hours->days = $request->days['day_' . $i];
+                $location_hours->hours_from = $request->days['hours_from_' . $i];
+                $location_hours->hours_to = $request->days['hours_to_' . $i];
+                $location_hours->locations_id = $locations->id;
+                $locations->location_hours()->save($location_hours);
+            }
         }
+
 
 
         $response_messages['success'] = $request->location_name . " has been added.";
@@ -103,7 +105,14 @@ class LocationsController extends Controller
 
 
         $locations_data = $locations->with('location_hours')->orderBy('id', 'ASC')->get();
-
+        $daysData = hoursdays::getDays();
+        foreach ($daysData as $days) {
+            $weekdays = json_decode($days->week_days, true);
+        }
+        $hoursData = hoursdays::getHours();
+        foreach ($hoursData as $hours) {
+            $hours = json_decode($hours->hours, true);
+        }
 
         if ($request->ajax()) {
             return response()->json([
@@ -111,7 +120,9 @@ class LocationsController extends Controller
                 'mod_name' => 'Business Information Manager',
                 'request' => $request,
                 'view' => view('admin.layouts.partials.Mods.Locations.locations')->with([
-                    "locations" => $locations_data
+                    "locations" => $locations_data,
+                    'days' => $weekdays,
+                    'hours' => $hours
                 ])->render()
             ]);
         }
@@ -179,16 +190,47 @@ class LocationsController extends Controller
                 'postal' => $request->postal
 
             ]);
+            $check_locations = location_hours::where("locations_id", $request->id)->count();
+            //var_dump($request->id);
+            if ($check_locations > 0) {
+                //Update
+
+            } else {
+                //Save
+                if (is_countable($request->numrows) && count($request->numrows) > 0) {
+                    foreach ($request->numrows as $i) {
+
+                        $location_hours = new location_hours();
+                        $location_hours->days = $request->days['day_edit_' . $i];
+                        $location_hours->hours_from = $request->days['hours_from_edit_' . $i];
+                        $location_hours->hours_to = $request->days['hours_to_edit_' . $i];
+                        $location_hours->locations_id = $request->id;
+                        $location_hours->save();
+                        //$locations->location_hours()->save($location_hours);
+                    }
+                }
+            }
+
 
             $response_messages['success'] = $request->location_name . " has been updated.";
         }
-        $locations_data = $locations->orderBy('id', 'ASC')->get();
+        $daysData = hoursdays::getDays();
+        foreach ($daysData as $days) {
+            $weekdays = json_decode($days->week_days, true);
+        }
+        $hoursData = hoursdays::getHours();
+        foreach ($hoursData as $hours) {
+            $hours = json_decode($hours->hours, true);
+        }
+        $locations_data = $locations->with('location_hours')->orderBy('id', 'ASC')->get();
         if ($request->ajax()) {
             return response()->json([
                 "response" => $response_messages,
                 'mod_name' => 'Business Information Manager',
                 'view' => view('admin.layouts.partials.Mods.Locations.locations')->with([
-                    "locations" => $locations_data
+                    "locations" => $locations_data,
+                    'days' => $weekdays,
+                    'hours' => $hours
                 ])->render()
             ]);
         }
@@ -209,18 +251,72 @@ class LocationsController extends Controller
         $locations->find($request->id)->forceDelete();
         $response_messages['success'] = $check_id->location_name . " has been deleted.";
 
-        $locations_data = $locations->orderBy('id', 'ASC')->get();
+        $daysData = hoursdays::getDays();
+        foreach ($daysData as $days) {
+            $weekdays = json_decode($days->week_days, true);
+        }
+        $hoursData = hoursdays::getHours();
+        foreach ($hoursData as $hours) {
+            $hours = json_decode($hours->hours, true);
+        }
+
+        $locations_data = $locations->with('location_hours')->orderBy('id', 'ASC')->get();
         if ($request->ajax()) {
             return response()->json([
                 "response" => $response_messages,
                 'mod_name' => 'Business Information Manager',
                 'view' => view('admin.layouts.partials.Mods.Locations.locations')->with([
-                    "locations" => $locations_data
+                    "locations" => $locations_data,
+                    'days' => $weekdays,
+                    'hours' => $hours
                 ])->render()
             ]);
         }
     }
 
+
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroylocations(Request $request, location_hours $location_hours, locations $locations)
+    {
+        $response_messages = [];
+        //Check to see if id exists in db
+        $check_id = $location_hours->find($request->id);
+        $location_id = $locations->find($check_id->locations_id);
+
+        $location_hours->find($request->id)->forceDelete();
+        $response_messages['success'] = $check_id->days . " has been deleted.";
+
+        $daysData = hoursdays::getDays();
+        foreach ($daysData as $days) {
+            $weekdays = json_decode($days->week_days, true);
+        }
+        $hoursData = hoursdays::getHours();
+        foreach ($hoursData as $hours) {
+            $hours = json_decode($hours->hours, true);
+        }
+        //resources/views/admin/layouts/partials/business.blade.php
+        $locations_data = $locations->with('location_hours')->orderBy('id', 'ASC')->find($check_id->locations_id);
+        if ($request->ajax()) {
+            return response()->json([
+                "response" => $response_messages,
+                'location_id' => $location_id,
+                'mod_name' => 'Business Information Manager',
+                'view' => view('admin.layouts.partials.Mods.Locations.locationsmodal')->with([
+                    "location" => $locations_data,
+                    'days' => $weekdays,
+                    'hours' => $hours,
+                    'show' => "show"
+
+                ])->render()
+            ]);
+        }
+    }
 
     /**
      * Business Controller needs:

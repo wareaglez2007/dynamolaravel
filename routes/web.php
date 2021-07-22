@@ -138,6 +138,8 @@ Route::get('/admin/business-info', 'LocationsController@index')->name('admin.bus
 Route::post('/admin/locations/store', 'LocationsController@store')->name('admin.location.add');
 Route::post('/admin/locations/update', 'LocationsController@update')->name('admin.location.add');
 Route::post('/admin/locations/destroy', 'LocationsController@destroy')->name('admin.location.del');
+//'/admin/locations_hours/destroy'
+Route::post('/admin/location_hours/destroy', 'LocationsController@destroylocations')->name('admin.location.del.location');
 
 /**
  * Forms Creat/Edit/Delete Manager

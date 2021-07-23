@@ -147,14 +147,14 @@ function EditLocation(id) {
 
     var dayshoursArray = {};
 
-    $.each(edit_idtracker, function (key, i) {
-        var days = $('#day_edit_' + i).val();
-        var hoursfrom = $('#hours_from_edit_' + i).val();
-        var hoursto = $('#hours_to_edit_' + i).val();
+    $.each(edit_uids, function (key, i) {
+        var days = $('#day_edit_for_' + id + "_" + i).val();
+        var hoursfrom = $('#hours_from_edit_for_' + id + "_" + i).val();
+        var hoursto = $('#hours_to_edit_for_' + id + "_" + i).val();
         //Set the array values
-        dayshoursArray['day_edit_' + i] = days;
-        dayshoursArray['hours_from_edit_' + i] = hoursfrom;
-        dayshoursArray['hours_to_edit_' + i] = hoursto;
+        dayshoursArray['day_edit_for_' + id + "_" + i] = days;
+        dayshoursArray['hours_from_edit_for_' + id + "_" + i] = hoursfrom;
+        dayshoursArray['hours_to_edit_for_' + id + "_" + i] = hoursto;
     });
 
     $.ajaxSetup({
@@ -179,7 +179,7 @@ function EditLocation(id) {
             postal: postal,
             state: state,
             days: dayshoursArray,
-            numrows: edit_idtracker
+            numrows: edit_uids
         },
         success: function (data) {
             var delay = 2300;
@@ -359,7 +359,6 @@ $(function () {
         days_hours.find("#clearday_" + counter).attr("onclick", "ClearDayRow(" + counter + ")"); //Change counter value on function
 
         idtracker.push(counter);
-        console.log(idtracker);
         $("#additional").each(function () {
             $("#additional").append(days_hours);
         });
@@ -389,78 +388,98 @@ function ClearDayRow(id) {
     idtracker = jQuery.grep(idtracker, function (value) {
         return value != id;
     });
-
-
-    console.log(idtracker)
-    console.log("After:")
     if (numRows < 8) { //If a row is removed then enable the button
         $("#add_hours_btn").removeClass("disabled");
     }
     numRows--;//Decriment by one everytime a row is removed.
 
 }
-
-var edit_counter = 0; //Global Counter DO NOT remove
+/**
+ * *************************
+ * GLOBAL VARS
+ * DO NOT REMOVE
+ * *************************
+ */
+var edit_counter = 0;
 var edit_numRows = 0;
 var edit_idtracker = [];
+var edit_uids = [];
 /**
- * Used inside the modal for editing locations
- * updated on 07/21/2021
+ ***************************
+ * @param {*} id (location id)
+ * @param {*} count (starts from 0 to 7)
+ * finished on 07/23/2021
  */
-function addHourstoEdit() {
-    console.log("clicked");
-    var days_hours = $("#location_hours_div").clone();
+function addHourstoEdit(id, count) {
+    edit_numRows = count;
     edit_counter++;
     edit_numRows++;
-    days_hours.attr("id", "location_hours_div_edit" + edit_counter);
-
-    days_hours.find("#day").attr("id", "day_edit_" + edit_counter);
-    days_hours.find("#hours_from").attr("id", "hours_from_edit_" + edit_counter);
-    days_hours.find("#hours_to").attr("id", "hours_to_edit_" + edit_counter);
-    days_hours.find("#clearday").attr("id", "clearday_edit_" + edit_counter);
-    days_hours.find("#clearday_edit_" + edit_counter).attr("onclick", "ClearEditDayRow(" + edit_counter + ")"); //Change counter value on function
-    edit_idtracker.push(edit_counter);
-    console.log(edit_idtracker);
-
-    $("#additional_edit").each(function () {
-        $("#additional_edit").append(days_hours);
-    });
-    days_hours.slideDown('slow'); //Call the slide down after the div has been appended! 07/19/2021
-    //If counter is equal to 7 (that will give me max of 7 rows for days of the week)
+    //Clone
+    var days_hours = $("#location_hours_div").clone();
+    //Change the cloned div's id names
+    days_hours.attr("id", "location_hours_div_edit_for_" + id + "_" + edit_counter);
+    days_hours.find("#day").attr("id", "day_edit_for_" + id + "_" + edit_counter);
+    days_hours.find("#hours_from").attr("id", "hours_from_edit_for_" + id + "_" + edit_counter);
+    days_hours.find("#hours_to").attr("id", "hours_to_edit_for_" + id + "_" + edit_counter);
+    days_hours.find("#clearday").attr("id", "clearday_edit_for_" + id + "_" + edit_counter);
+    days_hours.find("#clearday_edit_for_" + id + "_" + edit_counter).attr("onclick", "ClearEditDayRow(" + edit_counter + ", " + id + ")"); //Change counter value on function
+    //Append to div
+    $("#additional_edit_" + id).append(days_hours);
+    days_hours.slideDown('slow');
+    //pass the count value back to the original function thru html
+    $("#add_hours_btn_edit_" + id).attr("onclick", "addHourstoEdit(" + id + ", " + edit_numRows + ")");
+    //if count is 7 then disable the add hours button
     if (edit_numRows == 7) {
-        $("#add_hours_btn_edit").addClass("disabled");
+        $("#add_hours_btn_edit_" + id).addClass("disabled");
     }
+    //push the id and value of incremented counts into array (key = id (location id), value = counter value)
+    edit_idtracker.push({
+        key: id,
+        value: edit_counter
+    });
+    //go through the array and check if the location id is the same as the key in array, then push them together.
+    var obj = [];
+    $.each(edit_idtracker, function (k, v) {
+        if (edit_idtracker[k].key == id) {
+            obj.push(edit_idtracker[k].value);
+        }
+    });
+    //set the newly created array to the glodal array (accessable outside the function)
+    edit_uids = obj;
 }
 
+
 /**
+ * ************************************
  * Removes the Day Row from the modal
  * Date: 07/17/2021
  * Author: Rostom Sahakian
- * @param {*} id
+ * @param {*} id (unique id generated by edit_counter)
+ * @param {*} loc_id (location id)
+ * ************************************
  */
-function ClearEditDayRow(id) {
+function ClearEditDayRow(id, loc_id) {
     //Remove that clicked row
-    $("#location_hours_div_edit" + id).slideUp('slow');
+    $("#location_hours_div_edit_for_" + loc_id + "_" + id).slideUp('slow');
     setTimeout(function () {
-        $("#location_hours_div_edit" + id).remove();
+        $("#location_hours_div_edit_for_" + loc_id + "_" + id).remove();
 
     }, 600);
-    edit_idtracker = jQuery.grep(edit_idtracker, function (value) {
+    edit_uids = jQuery.grep(edit_uids, function (value) {
         return value != id;
     });
-    console.log(edit_idtracker);
     if (edit_numRows < 8) { //If a row is removed then enable the button
-        $("#add_hours_btn_edit").removeClass("disabled");
+        $("#add_hours_btn_edit_" + loc_id).removeClass("disabled");
+
     }
     edit_numRows--;//Decriment by one everytime a row is removed.
-
+    $("#add_hours_btn_edit_" + loc_id).attr("onclick", "addHourstoEdit(" + loc_id + ", " + edit_numRows + ")");
 }
 /**
  * Edit hours row in the location edit modal
  * @param {*} id
  */
 function editHoursRow(id) {
-    console.log($("#do_edit_day_" + id).attr('disabled'));
     //Toggle between disabled and enabled
     if ($("#do_edit_day_" + id).attr('disabled') == 'disabled' || $("#do_edit_hours_from_" + id).attr('disabled') == 'disabled' || $("#do_edit_hours_to_" + id).attr('disabled') == 'disabled') {
 
@@ -472,7 +491,7 @@ function editHoursRow(id) {
         $("#do_edit_hours_from_" + id).attr('disabled', true);
         $("#do_edit_hours_to_" + id).attr('disabled', true);
     }
-    //$("#do_edit_day_"+id).attr('disabled', false);
+
 
 }
 
@@ -500,7 +519,6 @@ function deleteHoursRow(id) {
             id: id
         },
         success: function (data) {
-            console.log(data);
             var delay = 2300;
             color = "green";
             var toast =
@@ -518,21 +536,8 @@ function deleteHoursRow(id) {
                 '</div> </div> </div>';
             $("#bottom_toast").append(toast);
             $('#location_hour_delete_toast_' + id).toast("show");
-            //$('#locationeditmodal_' + data.location_id.id).remove();
 
-            // setTimeout(function () {
-            //     $('#location_delete_toast_' + id)
-            //         .remove();
-
-            // }, delay + 600);
-            // $('#hours_to_edit-div #hours_row_'+id).remove();
-            //
-            //   setTimeout(function () {
-            //$('#locations_modal_holder').remove();
             $('#modal_body_for_days_' + data.location_id.id).replaceWith(data.view).slideUp('slow');
-
-
-            //  }, 1000);
 
         }, //end of success
         error: function (error) {

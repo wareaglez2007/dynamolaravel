@@ -201,9 +201,9 @@ class LocationsController extends Controller
                     foreach ($request->numrows as $i) {
 
                         $location_hours = new location_hours();
-                        $location_hours->days = $request->days['day_edit_' . $i];
-                        $location_hours->hours_from = $request->days['hours_from_edit_' . $i];
-                        $location_hours->hours_to = $request->days['hours_to_edit_' . $i];
+                        $location_hours->days = $request->days['day_edit_for_'.$request->id."_". $i];
+                        $location_hours->hours_from = $request->days['hours_from_edit_for_'.$request->id."_". $i];
+                        $location_hours->hours_to = $request->days['hours_to_edit_for_'.$request->id."_". $i];
                         $location_hours->locations_id = $request->id;
                         $location_hours->save();
                         //$locations->location_hours()->save($location_hours);

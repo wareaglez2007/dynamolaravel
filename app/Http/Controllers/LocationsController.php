@@ -34,6 +34,7 @@ class LocationsController extends Controller
         foreach ($hoursData as $hours) {
             $hours = json_decode($hours->hours, true);
         }
+
         return view('admin.modules.general', [
             'mod_name' => 'Business Information Manager',
             'locations' => $locations_data,
@@ -190,22 +191,34 @@ class LocationsController extends Controller
                 'postal' => $request->postal
 
             ]);
-            $check_locations = location_hours::where("locations_id", $request->id)->count();
+            $check_locations = location_hours::where("locations_id", $request->id)->get();
+            //var_dump($request->numrows);
             //var_dump($request->id);
-            if ($check_locations > 0) {
+            if (count($check_locations) > 0 || (is_countable($request->numrows) && count($request->numrows) > 0)) {
                 //Update
+                if (is_countable($request->editing_days) && count($request->editing_days) > 0) {
+                    foreach ($request->editing_days as $cur_store_hours) {
+                        location_hours::where('id', $cur_store_hours)->where('locations_id', $request->id)->update([
+                            'days' => $request->editing_days_values['old_days_' . $cur_store_hours],
+                            'hours_from' => $request->editing_days_values['old_hours_from_' . $cur_store_hours],
+                            'hours_to' => $request->editing_days_values['old_hours_to_' . $cur_store_hours],
+                        ]);
+                    }
+                }
 
-            } else {
+
                 //Save
                 if (is_countable($request->numrows) && count($request->numrows) > 0) {
                     foreach ($request->numrows as $i) {
+                        if ($request->days['day_edit_for_' . $request->id . "_" . $i] != null) {
+                            $location_hours = new location_hours();
+                            $location_hours->days = $request->days['day_edit_for_' . $request->id . "_" . $i];
+                            $location_hours->hours_from = $request->days['hours_from_edit_for_' . $request->id . "_" . $i];
+                            $location_hours->hours_to = $request->days['hours_to_edit_for_' . $request->id . "_" . $i];
+                            $location_hours->locations_id = $request->id;
+                            $location_hours->save();
+                        }
 
-                        $location_hours = new location_hours();
-                        $location_hours->days = $request->days['day_edit_for_'.$request->id."_". $i];
-                        $location_hours->hours_from = $request->days['hours_from_edit_for_'.$request->id."_". $i];
-                        $location_hours->hours_to = $request->days['hours_to_edit_for_'.$request->id."_". $i];
-                        $location_hours->locations_id = $request->id;
-                        $location_hours->save();
                         //$locations->location_hours()->save($location_hours);
                     }
                 }

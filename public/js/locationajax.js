@@ -143,9 +143,22 @@ function EditLocation(id) {
     var state = $("#state_" + id).val();
     //postal
     var postal = $("#postal_" + id).val();
-
+    var old_dayshoursArray = {};
+    if (typeof current_location_days !== 'undefined') {
+        $.each(current_location_days, function (k, v) {
+            var old_days = $("#do_edit_day_" + v).val();
+            var old_hour_from = $("#do_edit_hours_from_" + v).val();
+            var old_hour_to = $("#do_edit_hours_to_" + v).val();
+            old_dayshoursArray['old_days_' + v] = old_days;
+            old_dayshoursArray['old_hours_from_' + v] = old_hour_from;
+            old_dayshoursArray['old_hours_to_' + v] = old_hour_to;
+        });
+    }
 
     var dayshoursArray = {};
+    //console.log(edit_uids);
+
+
 
     $.each(edit_uids, function (key, i) {
         var days = $('#day_edit_for_' + id + "_" + i).val();
@@ -179,7 +192,10 @@ function EditLocation(id) {
             postal: postal,
             state: state,
             days: dayshoursArray,
-            numrows: edit_uids
+            numrows: edit_uids,
+            editing_days: current_location_days,
+            editing_days_values: old_dayshoursArray
+
         },
         success: function (data) {
             var delay = 2300;
@@ -204,6 +220,10 @@ function EditLocation(id) {
             edit_counter = 0; //Global Counter DO NOT remove
             edit_numRows = 0;
             edit_idtracker = [];
+            edit_uids = [];
+            current_location_days = [];
+            current_locations = [];
+            clickId = [];
             setTimeout(function () {
                 $('#location_delete_toast_' + id)
                     .remove();
@@ -437,17 +457,18 @@ function addHourstoEdit(id, count) {
         key: id,
         value: edit_counter
     });
+    //console.log(edit_idtracker);
     //go through the array and check if the location id is the same as the key in array, then push them together.
     var obj = [];
+
     $.each(edit_idtracker, function (k, v) {
-        if (edit_idtracker[k].key == id) {
+        if (edit_idtracker[k].key === id) {
             obj.push(edit_idtracker[k].value);
         }
     });
     //set the newly created array to the glodal array (accessable outside the function)
     edit_uids = obj;
 }
-
 
 /**
  * ************************************
@@ -479,7 +500,11 @@ function ClearEditDayRow(id, loc_id) {
  * Edit hours row in the location edit modal
  * @param {*} id
  */
-function editHoursRow(id) {
+var current_location_days = [];
+var current_locations = [];
+var clickId = [];
+
+function editHoursRow(id, location_id) {
     //Toggle between disabled and enabled
     if ($("#do_edit_day_" + id).attr('disabled') == 'disabled' || $("#do_edit_hours_from_" + id).attr('disabled') == 'disabled' || $("#do_edit_hours_to_" + id).attr('disabled') == 'disabled') {
 
@@ -491,8 +516,24 @@ function editHoursRow(id) {
         $("#do_edit_hours_from_" + id).attr('disabled', true);
         $("#do_edit_hours_to_" + id).attr('disabled', true);
     }
+    obj = {};
+    obj.location_id = location_id;
+    obj.dayshoursid = id;
+    current_locations.push(obj);
 
+    $.each(current_locations, function (index, value) {
 
+        //  console.log(current_location_days[index].dayshoursid);
+        if (clickId.indexOf(value.dayshoursid) === -1) {
+            clickId.push(value.dayshoursid);
+        }
+        //console.log(value.location_id !== location_id);
+        if (value.location_id !== location_id) {
+            clickId = [];
+        }
+    });
+    current_location_days = clickId;
+    //console.log(current_location_days);
 }
 
 /**
@@ -536,8 +577,16 @@ function deleteHoursRow(id) {
                 '</div> </div> </div>';
             $("#bottom_toast").append(toast);
             $('#location_hour_delete_toast_' + id).toast("show");
+            current_location_days = jQuery.grep(clickId, function (value) {
+                return value != id;
+            });
+            current_locations = jQuery.grep(clickId, function (value) {
+                return value != id;
+            });
 
             $('#modal_body_for_days_' + data.location_id.id).replaceWith(data.view).slideUp('slow');
+
+            //console.log(current_location_days);
 
         }, //end of success
         error: function (error) {

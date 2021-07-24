@@ -13,9 +13,9 @@
         </thead>
         <tbody>
             @foreach ($locations as $location)
-                <tr>
+                <tr >
                     <th scope="row"><a href="#" data-toggle="modal"
-                            data-target="#locationeditmodal_{{ $location->id }}"> {{ $location->id }}</a></th>
+                            data-target="#locationeditmodal_{{ $location->id }}" > {{ $location->id }}</a></th>
                     <td><a href="#" data-toggle="modal"
                             data-target="#locationeditmodal_{{ $location->id }}">{{ $location->location_name }}</a>
                     </td>

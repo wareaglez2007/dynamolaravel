@@ -21,7 +21,8 @@ class CreateLocationHoursTable extends Migration
             $table->foreign('locations_id')->references('id')->on('locations')
                 ->onDelete('cascade');
             $table->string("days")->nullable();
-            $table->string("hours")->nullable();
+            $table->string("hours_from")->nullable();
+            $table->string("hours_to")->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

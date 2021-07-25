@@ -215,7 +215,7 @@ function EditLocation(id) {
                 '</div> </div> </div>';
             $("#bottom_toast").append(toast);
             $('#location_delete_toast_' + id).toast("show");
-            $('#locationeditmodal_' + id).modal('hide');
+            //$('#locationeditmodal_' + id).modal('hide');
 
             edit_counter = 0; //Global Counter DO NOT remove
             edit_numRows = 0;
@@ -229,9 +229,8 @@ function EditLocation(id) {
                     .remove();
 
             }, delay + 600);
-            setTimeout(function () {
-                $('#locations_div').html(data.view);
-            }, 400);
+
+            $('#modal_body_for_days_' + data.location_id.id).replaceWith(data.view);
 
         }, //end of success
         error: function (error) {

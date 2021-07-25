@@ -173,13 +173,14 @@ class LocationsController extends Controller
         ]);
         //Check to see if id exists in db
         $check_id = $locations->find($request->id)->count();
+        $location_id = $locations->find($request->id);
         // location_name: bus_name,
         // addr1: addr1,
         // addr2: addr2,
         // city: city,
         // postal: postal,
         // state: state
-        if ($check_id > 0) {
+        if ($check_id  > 0) {
             $full_street = $request->addr1 . " " . $request->addr2;
 
             $locations->find($request->id)->update([
@@ -235,13 +236,14 @@ class LocationsController extends Controller
         foreach ($hoursData as $hours) {
             $hours = json_decode($hours->hours, true);
         }
-        $locations_data = $locations->with('location_hours')->orderBy('id', 'ASC')->get();
+        $locations_data = $locations->with('location_hours')->orderBy('id', 'ASC')->find($location_id->id);
         if ($request->ajax()) {
             return response()->json([
                 "response" => $response_messages,
                 'mod_name' => 'Business Information Manager',
-                'view' => view('admin.layouts.partials.Mods.Locations.locations')->with([
-                    "locations" => $locations_data,
+                'location_id' => $location_id,
+                'view' => view('admin.layouts.partials.Mods.Locations.locationsmodal')->with([
+                    "location" => $locations_data,
                     'days' => $weekdays,
                     'hours' => $hours
                 ])->render()

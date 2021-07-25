@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\hoursdays;
 use App\location_hours;
 use App\locations;
+use App\locationContacts;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationData;
 use Auth;
@@ -25,7 +26,7 @@ class LocationsController extends Controller
      */
     public function index()
     {
-        $locations_data = locations::with('location_hours')->orderBy('id', 'ASC')->with('location_hours')->get();
+        $locations_data = locations::orderBy('id', 'ASC')->with('location_hours')->with('location_contacts')->get();
         $daysData = hoursdays::getDays();
         foreach ($daysData as $days) {
             $weekdays = json_decode($days->week_days, true);

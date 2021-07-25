@@ -22,5 +22,10 @@ class locations extends Model
     {
         return $this->hasMany('App\location_hours');
     }
+
+    public function location_contacts()
+    {
+        return $this->hasMany('App\locationContacts');
+    }
 }
 

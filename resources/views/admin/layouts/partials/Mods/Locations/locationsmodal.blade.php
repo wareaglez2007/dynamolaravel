@@ -58,6 +58,80 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h5>Business Contact Information:</h5>
+            </div>
+        </div>
+
+        @if (is_countable($location->location_contacts) && count($location->location_contacts) > 0)
+            <!--Locations contact information-->
+            @foreach ($location->location_contacts as $contact_info)
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Phone:</label>
+                            <input type="text" name="phone" id="phone_{{ $location->id }}" class="form-control"
+                                placeholder="800-996-9009" aria-describedby="helpId"
+                                value="{{ $contact_info->phone }}">
+                        </div>
+
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Email:</label>
+                            <input type="email" name="email" id="email_{{ $location->id }}" class="form-control"
+                                placeholder="yourside@yourdomain.com" aria-describedby="helpId"
+                                value="{{ $contact_info->email }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Fax:</label>
+                            <input type="text" name="fax" id="fax_{{ $location->id }}" class="form-control"
+                                placeholder="google maps url" aria-describedby="helpId"
+                                value="{{ $contact_info->fax }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Maps URL:</label>
+                            <input type="text" name="maps" id="maps_{{ $location->id }}" class="form-control"
+                                placeholder="google maps url" aria-describedby="helpId"
+                                value="{{ $contact_info->maps_url }}">
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        @else
+        <div class="row" style="padding-bottom: 15px !important;">
+            <div class="col-md-12">
+                <!--The add button should be here-->
+                @php
+                    if (count($location->location_contacts) == 1) {
+                        $disabled = 'disabled';
+                    } else {
+                        $disabled = '';
+                    }
+                @endphp
+
+                <a class="btn btn-primary btn-sm {{ $disabled }}" id="add_contacts_btn_edit_{{ $location->id }}"
+                    href="#"
+                    onclick="addContactstoEdit({{ $location->id }}, {{ count($location->location_contacts) }});">
+                    <i class="bi bi-phone-vibrate"></i>
+                    &nbsp; Add Contact Info
+                </a>
+
+            </div>
+        </div>
+        @endif
+        <div class="row">
+            <div class="col-md-12">
+                <h5>Business Days & Hours Information:</h5>
+            </div>
+        </div>
         <div class="row" style="padding-bottom: 15px !important;">
             <div class="col-md-4">
                 <!--The add button should be here-->
@@ -146,7 +220,8 @@
                                             @endforeach
                                         </select>
                                     </td>
-                                    <td><a href="#" onclick="editHoursRow({{ $dayshours->id }}, {{ $location->id }})"><i
+                                    <td><a href="#"
+                                            onclick="editHoursRow({{ $dayshours->id }}, {{ $location->id }})"><i
                                                 class="bi bi-pen-fill text-info"></i></a></td>
                                     <td><a href="#" onclick="deleteHoursRow({{ $dayshours->id }})"><i
                                                 class="bi bi-node-minus text-danger"></i></a>

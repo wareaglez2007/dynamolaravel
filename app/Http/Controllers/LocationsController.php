@@ -195,7 +195,7 @@ class LocationsController extends Controller
                 'postal' => $request->postal
 
             ]);
-
+            //DOUBLE CHECK THIS 07-26-2021
             if ($request->filled('phone') || $request->filled('email')) {
 
                 if ($request->maps_url != "" || $request->maps_url != null) {

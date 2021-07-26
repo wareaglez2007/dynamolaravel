@@ -140,7 +140,8 @@ Route::post('/admin/locations/update', 'LocationsController@update')->name('admi
 Route::post('/admin/locations/destroy', 'LocationsController@destroy')->name('admin.location.del');
 //'/admin/locations_hours/destroy'
 Route::post('/admin/location_hours/destroy', 'LocationsController@destroylocations')->name('admin.location.del.location');
-
+//'/admin/locations/contacts/add'
+Route::post('/admin/locations/contacts/add', 'LocationsController@addContactSection')->name('admin.location.contact');
 /**
  * Forms Creat/Edit/Delete Manager
  */

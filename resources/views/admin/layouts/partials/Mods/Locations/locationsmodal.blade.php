@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
-                    <label for="">Business Name:</label>
+                    <label for="">Business Name:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
                     <input type="text" name="bus_name" id="bus_name_{{ $location->id }}" class="form-control"
                         placeholder="full business name" aria-describedby="helpId"
                         value="{{ $location->location_name }}">
@@ -20,7 +20,7 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Address 1:<label>
+                    <label>Address 1:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i><label>
                             <input type="text" name="addr1" id="addr1_{{ $location->id }}" class="form-control"
                                 placeholder="123 cicrle st." aria-describedby="helpId"
                                 value="{{ $location->street }}">
@@ -37,7 +37,7 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
-                    <label for="">City:</label>
+                    <label for="">City:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
                     <input type="text" name="city" id="city_{{ $location->id }}" class="form-control"
                         placeholder="Los Angeles" aria-describedby="helpId" value="{{ $location->city }}">
                 </div>
@@ -45,14 +45,14 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label for="">State:</label>
+                    <label for="">State:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
                     <input type="text" name="state" id="state_{{ $location->id }}" class="form-control"
                         placeholder="CA" aria-describedby="helpId" value="{{ $location->state }}">
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label for="">Zip/Postal Code:</label>
+                    <label for="">Zip/Postal Code:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
                     <input type="text" name="postal" id="postal_{{ $location->id }}" class="form-control"
                         placeholder="91234" aria-describedby="helpId" value="{{ $location->postal }}">
                 </div>
@@ -70,19 +70,29 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="">Phone:</label>
-                            <input type="text" name="phone" id="phone_{{ $location->id }}" class="form-control"
-                                placeholder="800-996-9009" aria-describedby="helpId"
-                                value="{{ $contact_info->phone }}">
+                            <label for="">Phone:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text"><i class="bi bi-telephone-inbound"></i></div>
+                                </div>
+                                <input type="phone" name="phone" id="phone_{{ $location->id }}" class="form-control"
+                                    placeholder="800-996-9009" aria-describedby="helpId"
+                                    value="{{ $contact_info->phone }}">
+                            </div>
                         </div>
 
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="">Email:</label>
-                            <input type="email" name="email" id="email_{{ $location->id }}" class="form-control"
-                                placeholder="yourside@yourdomain.com" aria-describedby="helpId"
-                                value="{{ $contact_info->email }}">
+                            <label for="">Email:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">@</div>
+                                </div>
+                                <input type="email" name="email" id="email_{{ $location->id }}"
+                                    class="form-control required" placeholder="yourside@yourdomain.com"
+                                    aria-describedby="helpId" value="{{ $contact_info->email }}">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -90,42 +100,54 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="">Fax:</label>
-                            <input type="text" name="fax" id="fax_{{ $location->id }}" class="form-control"
-                                placeholder="google maps url" aria-describedby="helpId"
-                                value="{{ $contact_info->fax }}">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text"><i class="bi bi-printer"></i></div>
+                                </div>
+                                <input type="text" name="fax" id="fax_{{ $location->id }}" class="form-control"
+                                    placeholder="fax" aria-describedby="helpId"
+                                    value="{{ $contact_info->fax }}">
+                            </div>
                         </div>
                     </div>
+
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="">Maps URL:</label>
-                            <input type="text" name="maps" id="maps_{{ $location->id }}" class="form-control"
-                                placeholder="google maps url" aria-describedby="helpId"
-                                value="{{ $contact_info->maps_url }}">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text"><i class="bi bi-pin"></i></div>
+                                </div>
+                                <input type="text" name="maps" id="maps_{{ $location->id }}" class="form-control"
+                                    placeholder="google maps url" aria-describedby="helpId"
+                                    value="{{ $contact_info->maps_url }}">
+                            </div>
                         </div>
                     </div>
                 </div>
             @endforeach
         @else
-        <div class="row" style="padding-bottom: 15px !important;">
-            <div class="col-md-12">
-                <!--The add button should be here-->
-                @php
-                    if (count($location->location_contacts) == 1) {
-                        $disabled = 'disabled';
-                    } else {
-                        $disabled = '';
-                    }
-                @endphp
+            <div class="row" style="padding-bottom: 15px !important;"
+                id="locations_contacts_div_{{ $location->id }}">
+                <div class="col-md-12">
+                    <!--The add button should be here-->
+                    @php
+                        if (count($location->location_contacts) == 1) {
+                            $disabled = 'disabled';
+                        } else {
+                            $disabled = '';
+                        }
+                    @endphp
 
-                <a class="btn btn-primary btn-sm {{ $disabled }}" id="add_contacts_btn_edit_{{ $location->id }}"
-                    href="#"
-                    onclick="addContactstoEdit({{ $location->id }}, {{ count($location->location_contacts) }});">
-                    <i class="bi bi-phone-vibrate"></i>
-                    &nbsp; Add Contact Info
-                </a>
+                    <a class="btn btn-primary btn-sm {{ $disabled }}"
+                        id="add_contacts_btn_edit_{{ $location->id }}" href="#"
+                        onclick="addContactstoEdit({{ $location->id }}, {{ count($location->location_contacts) }});">
+                        <i class="bi bi-phone-vibrate"></i>
+                        &nbsp; Add Contact Info
+                    </a>
 
+                </div>
             </div>
-        </div>
         @endif
         <div class="row">
             <div class="col-md-12">

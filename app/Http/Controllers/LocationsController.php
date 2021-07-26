@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationData;
 use Auth;
 
+
 use function GuzzleHttp\json_decode;
 
 class LocationsController extends Controller
@@ -169,7 +170,8 @@ class LocationsController extends Controller
             'addr1' => ['required'],
             'postal' => ['required'],
             'city' => ['required'],
-            'state' => ['required'],
+            'state' => ['required']
+
 
         ]);
         //Check to see if id exists in db
@@ -193,6 +195,45 @@ class LocationsController extends Controller
                 'postal' => $request->postal
 
             ]);
+
+            if ($request->filled('phone') || $request->filled('email')) {
+
+                if ($request->maps_url != "" || $request->maps_url != null) {
+                    $validatedData = $request->validate([
+                        'maps_url' => 'url'
+                    ]);
+                }
+                if ($request->fax != "" || $request->fax != null) {
+                    $validatedData = $request->validate([
+                        'fax' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10'
+                    ]);
+                }
+                $validatedData = $request->validate([
+                    'email' => 'required|email:rfc,dns',
+                    'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
+
+                ]);
+                //Check if this is an update
+                $check_contacts = locationContacts::where('locations_id', $request->id)->count();
+                if ($check_contacts > 0) {
+                    //update
+                    locationContacts::where('locations_id', $request->id)->update([
+                        'phone' => $request->phone,
+                        'email' => $request->email,
+                        'fax' => $request->fax,
+                        'maps_url' => $request->maps_url
+                    ]);
+                } else {
+                    //save
+                    $location_contacts = new locationContacts();
+                    $location_contacts->locations_id = $request->id;
+                    $location_contacts->phone = $request->phone;
+                    $location_contacts->email = $request->email;
+                    $location_contacts->fax = $request->fax;
+                    $location_contacts->maps_url = $request->maps_url;
+                    $location_contacts->save();
+                }
+            }
             $check_locations = location_hours::where("locations_id", $request->id)->get();
             //var_dump($request->numrows);
             //var_dump($request->id);
@@ -207,8 +248,6 @@ class LocationsController extends Controller
                         ]);
                     }
                 }
-
-
                 //Save
                 if (is_countable($request->numrows) && count($request->numrows) > 0) {
                     foreach ($request->numrows as $i) {
@@ -327,6 +366,26 @@ class LocationsController extends Controller
                     "location" => $locations_data,
                     'days' => $weekdays,
                     'hours' => $hours,
+                    'show' => "show"
+
+                ])->render()
+            ]);
+        }
+    }
+
+    public function addContactSection(Request $request, locations $locations)
+    {
+
+        $response_messages = [];
+        $location_id = $locations->find($request->id);
+        $locations_data = $locations->with('location_hours')->orderBy('id', 'ASC')->find($request->id);
+        if ($request->ajax()) {
+            return response()->json([
+                "response" => $response_messages,
+                'location_id' => $location_id,
+                'mod_name' => 'Business Information Manager',
+                'view' => view('admin.layouts.partials.Mods.Locations.locationcontacts')->with([
+                    "location" => $locations_data,
                     'show' => "show"
 
                 ])->render()

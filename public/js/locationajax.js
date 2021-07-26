@@ -143,6 +143,14 @@ function EditLocation(id) {
     var state = $("#state_" + id).val();
     //postal
     var postal = $("#postal_" + id).val();
+
+    //Contacts Section//
+    var phone = $("#phone_"+id).val();
+    var email = $("#email_"+id).val();
+    var fax = $("#fax_"+id).val();
+    var maps_url = $("#maps_"+id).val();
+
+
     var old_dayshoursArray = {};
     if (typeof current_location_days !== 'undefined') {
         $.each(current_location_days, function (k, v) {
@@ -194,7 +202,11 @@ function EditLocation(id) {
             days: dayshoursArray,
             numrows: edit_uids,
             editing_days: current_location_days,
-            editing_days_values: old_dayshoursArray
+            editing_days_values: old_dayshoursArray,
+            phone: phone,
+            email: email,
+            fax: fax,
+            maps_url: maps_url
 
         },
         success: function (data) {
@@ -618,3 +630,46 @@ function deleteHoursRow(id) {
         } //end of error
     }); //end of ajax
 } //end of savelocations
+
+
+/**
+ * 
+ * @param {*} loc_id 
+ * @param {*} contact_count 
+ */
+
+function addContactstoEdit(loc_id, contact_count) {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $(
+                'meta[name="csrf-token"]')
+                .attr(
+                    'content')
+        }
+
+    }); //End of ajax setup
+    $.ajax({
+        url: '/admin/locations/contacts/add',
+        method: "post",
+        //cache: false,
+        data: {
+            id: loc_id,
+            
+         
+        },
+        success: function (data) {
+          
+
+            $('#locations_contacts_div_' + data.location_id.id).replaceWith(data.view);
+
+        }, //end of success
+        error: function (error) {
+            $.each(error.responseJSON.errors, function (index, val) {
+                
+
+            });
+
+
+        } //end of error
+    }); //end of ajax
+}

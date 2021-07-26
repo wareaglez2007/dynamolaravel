@@ -258,7 +258,7 @@ class PagesController extends Controller
      */
     public function updatePageSlug(Request $request, slugs $slug)
     {
-
+        //Needs work
         if (request('slug') == "") {
             $error_message = ['error_message' => "Slug for this page cannot be empty!", 'slug' => request('old_slug')];
             return response()->json($error_message,  422);

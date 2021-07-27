@@ -6,6 +6,7 @@ use App\hoursdays;
 use App\location_hours;
 use App\locations;
 use App\locationContacts;
+use App\us_states;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationData;
 use Auth;
@@ -29,6 +30,7 @@ class LocationsController extends Controller
     {
         $locations_data = locations::orderBy('id', 'ASC')->with('location_hours')->with('location_contacts')->get();
         $daysData = hoursdays::getDays();
+        $states = us_states::getStates();
         foreach ($daysData as $days) {
             $weekdays = json_decode($days->week_days, true);
         }
@@ -41,7 +43,8 @@ class LocationsController extends Controller
             'mod_name' => 'Business Information Manager',
             'locations' => $locations_data,
             'days' => $weekdays,
-            'hours' => $hours
+            'hours' => $hours,
+            'states' => $states
         ]);
     }
 
@@ -72,7 +75,7 @@ class LocationsController extends Controller
         $validatedData = $request->validate([
             'location_name' => ['required', 'unique:locations'],
             'addr1' => ['required'],
-            'postal' => ['required'],
+            'postal' => 'required|regex:/^[0-9]{3,7}$/',
             'city' => ['required'],
             'state' => ['required'],
 
@@ -106,7 +109,7 @@ class LocationsController extends Controller
         $response_messages['locationid'] = $locations->id;
 
 
-
+        $states = us_states::getStates();
         $locations_data = $locations->with('location_hours')->orderBy('id', 'ASC')->get();
         $daysData = hoursdays::getDays();
         foreach ($daysData as $days) {
@@ -125,7 +128,8 @@ class LocationsController extends Controller
                 'view' => view('admin.layouts.partials.Mods.Locations.locations')->with([
                     "locations" => $locations_data,
                     'days' => $weekdays,
-                    'hours' => $hours
+                    'hours' => $hours,
+                    'states' => $states
                 ])->render()
             ]);
         }
@@ -168,12 +172,12 @@ class LocationsController extends Controller
         $validatedData = $request->validate([
             'location_name' => ['required'],
             'addr1' => ['required'],
-            'postal' => ['required'],
+            'postal' => 'required|regex:/^[0-9]{3,7}$/',
             'city' => ['required'],
-            'state' => ['required']
-
+            'state' => ['required'],
 
         ]);
+
         //Check to see if id exists in db
         $check_id = $locations->find($request->id)->count();
         $location_id = $locations->find($request->id);
@@ -268,6 +272,7 @@ class LocationsController extends Controller
 
             $response_messages['success'] = $request->location_name . " has been updated.";
         }
+        $states = us_states::getStates();
         $daysData = hoursdays::getDays();
         foreach ($daysData as $days) {
             $weekdays = json_decode($days->week_days, true);
@@ -276,16 +281,17 @@ class LocationsController extends Controller
         foreach ($hoursData as $hours) {
             $hours = json_decode($hours->hours, true);
         }
-        $locations_data = $locations->with('location_hours')->orderBy('id', 'ASC')->find($location_id->id);
+        $locations_data = $locations->with('location_hours')->orderBy('id', 'ASC')->get();
         if ($request->ajax()) {
             return response()->json([
                 "response" => $response_messages,
                 'mod_name' => 'Business Information Manager',
                 'location_id' => $location_id,
-                'view' => view('admin.layouts.partials.Mods.Locations.locationsmodal')->with([
-                    "location" => $locations_data,
+                'view' => view('admin.layouts.partials.Mods.Locations.locations')->with([
+                    "locations" => $locations_data,
                     'days' => $weekdays,
-                    'hours' => $hours
+                    'hours' => $hours,
+                    'states' => $states
                 ])->render()
             ]);
         }
@@ -306,6 +312,7 @@ class LocationsController extends Controller
         $locations->find($request->id)->forceDelete();
         $response_messages['success'] = $check_id->location_name . " has been deleted.";
 
+        $states = us_states::getStates();
         $daysData = hoursdays::getDays();
         foreach ($daysData as $days) {
             $weekdays = json_decode($days->week_days, true);
@@ -323,7 +330,8 @@ class LocationsController extends Controller
                 'view' => view('admin.layouts.partials.Mods.Locations.locations')->with([
                     "locations" => $locations_data,
                     'days' => $weekdays,
-                    'hours' => $hours
+                    'hours' => $hours,
+                    'states' => $states
                 ])->render()
             ]);
         }
@@ -347,6 +355,7 @@ class LocationsController extends Controller
         $location_hours->find($request->id)->forceDelete();
         $response_messages['success'] = $check_id->days . " has been deleted.";
 
+        $states = us_states::getStates();
         $daysData = hoursdays::getDays();
         foreach ($daysData as $days) {
             $weekdays = json_decode($days->week_days, true);
@@ -366,6 +375,7 @@ class LocationsController extends Controller
                     "location" => $locations_data,
                     'days' => $weekdays,
                     'hours' => $hours,
+                    'states' => $states,
                     'show' => "show"
 
                 ])->render()

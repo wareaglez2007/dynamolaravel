@@ -22,7 +22,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="">Business Name:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
+                                    <label for="">Business Name:<i class="bi bi-asterisk text-danger"
+                                            style="font-size: 8px;vertical-align: top;"></i></label>
                                     <input type="text" name="bus_name" id="bus_name" class="form-control"
                                         placeholder="full business name" aria-describedby="helpId">
                                     <small id="helpId" class="text-muted">i.e. Dynamoelectric inc</small>
@@ -37,7 +38,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Address 1:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i><label>
+                                    <label>Address 1:<i class="bi bi-asterisk text-danger"
+                                            style="font-size: 8px;vertical-align: top;"></i><label>
                                             <input type="text" name="addr1" id="addr1" class="form-control"
                                                 placeholder="123 cicrle st." aria-describedby="helpId">
                                 </div>
@@ -53,7 +55,8 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="">City:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
+                                    <label for="">City:<i class="bi bi-asterisk text-danger"
+                                            style="font-size: 8px;vertical-align: top;"></i></label>
                                     <input type="text" name="city" id="city" class="form-control"
                                         placeholder="Los Angeles" aria-describedby="helpId">
                                 </div>
@@ -61,14 +64,21 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="">State:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
-                                    <input type="text" name="state" id="state" class="form-control" placeholder="CA"
-                                        aria-describedby="helpId">
+                                    <label for="">State:<i class="bi bi-asterisk text-danger"
+                                            style="font-size: 8px;vertical-align: top;"></i></label>
+
+                                    <select class="form-control" name="state" id="state">
+                                        @foreach ($states as $state)
+                                            <option value="{{ $state->state }}">{{ $state->state_name }}</option>
+                                        @endforeach
+                                    </select>
+
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="">Zip/Postal Code:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
+                                    <label for="">Zip/Postal Code:<i class="bi bi-asterisk text-danger"
+                                            style="font-size: 8px;vertical-align: top;"></i></label>
                                     <input type="text" name="postal" id="postal" class="form-control"
                                         placeholder="91234" aria-describedby="helpId">
                                 </div>
@@ -136,14 +146,14 @@
             </div>
             <div class="col-md-1">
                 <div class="form-check">
-                    <a href="#" onclick="ClearDayRow(1)" id="clearday"><i
-                            class="bi bi-dash-circle text-danger"></i></a>
+                    <a href="#" onclick="ClearDayRow(1)" id="clearday"><i class="bi bi-dash-circle text-danger"></i></a>
                 </div>
             </div>
         </div>
     </div>
 
 </div>
+
 <!--- end of days & hours original copy -->
 <div class="position-fixed bottom-0 right-0 p-3" style="z-index: 9999999; right: 0; bottom: 0;" id="bottom_toast">
 </div>

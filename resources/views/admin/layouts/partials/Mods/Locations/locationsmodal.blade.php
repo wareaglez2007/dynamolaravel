@@ -4,7 +4,8 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
-                    <label for="">Business Name:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
+                    <label for="">Business Name:<i class="bi bi-asterisk text-danger"
+                            style="font-size: 8px;vertical-align: top;"></i></label>
                     <input type="text" name="bus_name" id="bus_name_{{ $location->id }}" class="form-control"
                         placeholder="full business name" aria-describedby="helpId"
                         value="{{ $location->location_name }}">
@@ -20,7 +21,8 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Address 1:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i><label>
+                    <label>Address 1:<i class="bi bi-asterisk text-danger"
+                            style="font-size: 8px;vertical-align: top;"></i><label>
                             <input type="text" name="addr1" id="addr1_{{ $location->id }}" class="form-control"
                                 placeholder="123 cicrle st." aria-describedby="helpId"
                                 value="{{ $location->street }}">
@@ -37,7 +39,8 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="form-group">
-                    <label for="">City:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
+                    <label for="">City:<i class="bi bi-asterisk text-danger"
+                            style="font-size: 8px;vertical-align: top;"></i></label>
                     <input type="text" name="city" id="city_{{ $location->id }}" class="form-control"
                         placeholder="Los Angeles" aria-describedby="helpId" value="{{ $location->city }}">
                 </div>
@@ -45,14 +48,31 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label for="">State:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
-                    <input type="text" name="state" id="state_{{ $location->id }}" class="form-control"
-                        placeholder="CA" aria-describedby="helpId" value="{{ $location->state }}">
+                    <label for="">State:<i class="bi bi-asterisk text-danger"
+                            style="font-size: 8px;vertical-align: top;"></i></label>
+
+                    <select class="form-control" name="state" id="state_{{ $location->id }}">
+                        @foreach ($states as $state)
+
+                            @php
+                                if ($state->state == $location->state) {
+                                    $selected = 'selected';
+                                } else {
+                                    $selected = '';
+                                }
+                            @endphp
+
+                            <option value="{{ $state->state }}" {{ $selected }}>{{ $state->state_name }}
+                            </option>
+                        @endforeach
+                    </select>
+
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label for="">Zip/Postal Code:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
+                    <label for="">Zip/Postal Code:<i class="bi bi-asterisk text-danger"
+                            style="font-size: 8px;vertical-align: top;"></i></label>
                     <input type="text" name="postal" id="postal_{{ $location->id }}" class="form-control"
                         placeholder="91234" aria-describedby="helpId" value="{{ $location->postal }}">
                 </div>
@@ -70,7 +90,8 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="">Phone:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
+                            <label for="">Phone:<i class="bi bi-asterisk text-danger"
+                                    style="font-size: 8px;vertical-align: top;"></i></label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="bi bi-telephone-inbound"></i></div>
@@ -84,7 +105,8 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="">Email:<i class="bi bi-asterisk text-danger" style="font-size: 8px;vertical-align: top;"></i></label>
+                            <label for="">Email:<i class="bi bi-asterisk text-danger"
+                                    style="font-size: 8px;vertical-align: top;"></i></label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text">@</div>
@@ -105,8 +127,7 @@
                                     <div class="input-group-text"><i class="bi bi-printer"></i></div>
                                 </div>
                                 <input type="text" name="fax" id="fax_{{ $location->id }}" class="form-control"
-                                    placeholder="fax" aria-describedby="helpId"
-                                    value="{{ $contact_info->fax }}">
+                                    placeholder="fax" aria-describedby="helpId" value="{{ $contact_info->fax }}">
                             </div>
                         </div>
                     </div>

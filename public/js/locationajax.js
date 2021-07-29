@@ -145,39 +145,14 @@ function EditLocation(id) {
     var postal = $("#postal_" + id).val();
 
     //Contacts Section//
-    var phone = $("#phone_"+id).val();
-    var email = $("#email_"+id).val();
-    var fax = $("#fax_"+id).val();
-    var maps_url = $("#maps_"+id).val();
-
-
-    var old_dayshoursArray = {};
-    if (typeof current_location_days !== 'undefined') {
-        $.each(current_location_days, function (k, v) {
-            var old_days = $("#do_edit_day_" + v).val();
-            var old_hour_from = $("#do_edit_hours_from_" + v).val();
-            var old_hour_to = $("#do_edit_hours_to_" + v).val();
-            old_dayshoursArray['old_days_' + v] = old_days;
-            old_dayshoursArray['old_hours_from_' + v] = old_hour_from;
-            old_dayshoursArray['old_hours_to_' + v] = old_hour_to;
-        });
-    }
-
-    var dayshoursArray = {};
-    //console.log(edit_uids);
-
-
-
-    $.each(edit_uids, function (key, i) {
-        var days = $('#day_edit_for_' + id + "_" + i).val();
-        var hoursfrom = $('#hours_from_edit_for_' + id + "_" + i).val();
-        var hoursto = $('#hours_to_edit_for_' + id + "_" + i).val();
-        //Set the array values
-        dayshoursArray['day_edit_for_' + id + "_" + i] = days;
-        dayshoursArray['hours_from_edit_for_' + id + "_" + i] = hoursfrom;
-        dayshoursArray['hours_to_edit_for_' + id + "_" + i] = hoursto;
-    });
-
+    var phone = $("#phone_" + id).val();
+    var email = $("#email_" + id).val();
+    var fax = $("#fax_" + id).val();
+    var maps_url = $("#maps_" + id).val();
+    //Days & Hours
+    var daysHours = $("#edit_hours_table_" + id + " select").serialize();
+    
+    //Send data
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $(
@@ -190,7 +165,7 @@ function EditLocation(id) {
     $.ajax({
         url: '/admin/locations/update',
         method: "post",
-        //cache: false,
+        cache: false,
         data: {
             id: id,
             location_name: bus_name,
@@ -199,15 +174,20 @@ function EditLocation(id) {
             city: city,
             postal: postal,
             state: state,
-            days: dayshoursArray,
-            numrows: edit_uids,
-            editing_days: current_location_days,
-            editing_days_values: old_dayshoursArray,
             phone: phone,
             email: email,
             fax: fax,
-            maps_url: maps_url
+            maps_url: maps_url,
+            daysHours: daysHours //serialized
 
+        },
+        beforeSend: function () {
+            $("#location_editor_"+id).text("Saving ");
+            $("#location_editor_"+id).attr("class", "btn btn-success");
+            $("#loader_"+id).clone().appendTo("#location_editor_"+id).show();
+
+           // $("#location_editor_"+id).text("Saving "+$(loader).show());
+            
         },
         success: function (data) {
             var delay = 2300;
@@ -226,25 +206,34 @@ function EditLocation(id) {
                 id + '">' + data.response.success +
                 '</div> </div> </div>';
             $("#bottom_toast").append(toast);
-            $('#location_delete_toast_' + id).toast("show");
-            $('#locationeditmodal_' + id).modal('hide');
+            
 
-            edit_counter = 0; //Global Counter DO NOT remove
-            edit_numRows = 0;
-            edit_idtracker = [];
-            edit_uids = [];
-            current_location_days = [];
-            current_locations = [];
-            clickId = [];
+
+            setTimeout(function () {
+                $('#locationeditmodal_' + id).modal('hide');
+                $("#location_editor_"+id).text("Update");
+                $("#location_editor_"+id).attr("class", "btn btn-primary");
+
+                $("#loader_"+id).hide();
+                $('#location_delete_toast_' + id).toast("show");
+            }, 1000);
+
+
             setTimeout(function () {
                 $('#location_delete_toast_' + id)
                     .remove();
 
-            }, delay + 600);
+
+
+            }, delay + 500);
+            
+        
 
             setTimeout(function () {
+
                 $('#locations_div').html(data.view);
-            }, 400);
+
+            }, 1300);
 
             //$('#modal_body_for_days_' + data.location_id.id).replaceWith(data.view);
 
@@ -268,6 +257,13 @@ function EditLocation(id) {
                 $("#bottom_toast").append(toast);
                 $('#location_toast_' + index).toast("show");
                 setTimeout(function () {
+                    $("#location_editor_"+id).attr("class", "btn btn-primary");
+                    $("#location_editor_"+id).text("Update");
+                }, 900);
+                $("#location_editor_"+id).attr("class", "btn btn-danger");
+
+                $("#location_editor_"+id).text("Unable to Update");
+                setTimeout(function () {
                     $('#location_toast_' + index)
                         .remove();
 
@@ -276,7 +272,8 @@ function EditLocation(id) {
             });
 
 
-        } //end of error
+        }, //end of error
+
     }); //end of ajax
 } //end of savelocations
 
@@ -429,126 +426,63 @@ function ClearDayRow(id) {
     numRows--;//Decriment by one everytime a row is removed.
 
 }
-/**
- * *************************
- * GLOBAL VARS
- * DO NOT REMOVE
- * *************************
- */
-var edit_counter = 0;
-var edit_numRows = 0;
-var edit_idtracker = [];
-var edit_uids = [];
-/**
- ***************************
- * @param {*} id (location id)
- * @param {*} count (starts from 0 to 7)
- * finished on 07/23/2021
- */
-function addHourstoEdit(id, count) {
-    edit_numRows = count;
-    edit_counter++;
-    edit_numRows++;
-    //Clone
-    var days_hours = $("#location_hours_div").clone();
-    //Change the cloned div's id names
-    days_hours.attr("id", "location_hours_div_edit_for_" + id + "_" + edit_counter);
-    days_hours.find("#day").attr("id", "day_edit_for_" + id + "_" + edit_counter);
-    days_hours.find("#hours_from").attr("id", "hours_from_edit_for_" + id + "_" + edit_counter);
-    days_hours.find("#hours_to").attr("id", "hours_to_edit_for_" + id + "_" + edit_counter);
-    days_hours.find("#clearday").attr("id", "clearday_edit_for_" + id + "_" + edit_counter);
-    days_hours.find("#clearday_edit_for_" + id + "_" + edit_counter).attr("onclick", "ClearEditDayRow(" + edit_counter + ", " + id + ")"); //Change counter value on function
-    //Append to div
-    $("#additional_edit_" + id).append(days_hours);
-    days_hours.slideDown('slow');
-    //pass the count value back to the original function thru html
-    $("#add_hours_btn_edit_" + id).attr("onclick", "addHourstoEdit(" + id + ", " + edit_numRows + ")");
-    //if count is 7 then disable the add hours button
-    if (edit_numRows == 7) {
-        $("#add_hours_btn_edit_" + id).addClass("disabled");
-    }
-    //push the id and value of incremented counts into array (key = id (location id), value = counter value)
-    edit_idtracker.push({
-        key: id,
-        value: edit_counter
-    });
-    //console.log(edit_idtracker);
-    //go through the array and check if the location id is the same as the key in array, then push them together.
-    var obj = [];
 
-    $.each(edit_idtracker, function (k, v) {
-        if (edit_idtracker[k].key === id) {
-            obj.push(edit_idtracker[k].value);
+function addHourstoEdit(loc_id, count) {
+    //When the add edit hours button is clicked:
+    //1. call to ajax 
+    //2. add a row to the table.
+    //3. get the id of that row and send it back to the view. 
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $(
+                'meta[name="csrf-token"]')
+                .attr(
+                    'content')
         }
-    });
-    //set the newly created array to the glodal array (accessable outside the function)
-    edit_uids = obj;
-}
 
-/**
- * ************************************
- * Removes the Day Row from the modal
- * Date: 07/17/2021
- * Author: Rostom Sahakian
- * @param {*} id (unique id generated by edit_counter)
- * @param {*} loc_id (location id)
- * ************************************
- */
-function ClearEditDayRow(id, loc_id) {
-    //Remove that clicked row
-    $("#location_hours_div_edit_for_" + loc_id + "_" + id).slideUp('slow');
-    setTimeout(function () {
-        $("#location_hours_div_edit_for_" + loc_id + "_" + id).remove();
+    }); //End of ajax setup
+    $.ajax({
+        url: '/admin/locations/edit/addstorehoursrows',
+        method: "post",
+        //cache: false,
+        data: {
+            loc_id: loc_id,
+            count: count
 
-    }, 600);
-    edit_uids = jQuery.grep(edit_uids, function (value) {
-        return value != id;
-    });
-    if (edit_numRows < 8) { //If a row is removed then enable the button
-        $("#add_hours_btn_edit_" + loc_id).removeClass("disabled");
+        },
+        success: function (data) {
 
-    }
-    edit_numRows--;//Decriment by one everytime a row is removed.
-    $("#add_hours_btn_edit_" + loc_id).attr("onclick", "addHourstoEdit(" + loc_id + ", " + edit_numRows + ")");
-}
-/**
- * Edit hours row in the location edit modal
- * @param {*} id
- */
-var current_location_days = [];
-var current_locations = [];
-var clickId = [];
+            var delay = 2300;
+            color = "green";
+            var toast =
 
-function editHoursRow(id, location_id) {
-    //Toggle between disabled and enabled
-    if ($("#do_edit_day_" + id).attr('disabled') == 'disabled' || $("#do_edit_hours_from_" + id).attr('disabled') == 'disabled' || $("#do_edit_hours_to_" + id).attr('disabled') == 'disabled') {
+                '<div id="location_hour_to_edit_toast_' + loc_id +
+                '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
+                delay + '" >' +
+                '<div class="toast-header" style="background-color: ' +
+                color +
+                ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
+                '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
+                '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+                '<div class="toast-body" id="toast_id_body' +
+                loc_id + '">' + data.response.success +
+                '</div> </div> </div>';
+            $("#bottom_toast").append(toast);
+            $('#location_hour_to_edit_toast_' + loc_id).toast("show");
+            $('#modal_body_for_days_' + data.location_id.id).replaceWith(data.view).slideUp('slow');
 
-        $("#do_edit_day_" + id).attr('disabled', false);
-        $("#do_edit_hours_from_" + id).attr('disabled', false);
-        $("#do_edit_hours_to_" + id).attr('disabled', false);
-    } else {
-        $("#do_edit_day_" + id).attr('disabled', true);
-        $("#do_edit_hours_from_" + id).attr('disabled', true);
-        $("#do_edit_hours_to_" + id).attr('disabled', true);
-    }
-    obj = {};
-    obj.location_id = location_id;
-    obj.dayshoursid = id;
-    current_locations.push(obj);
+        }, //end of success
+        error: function (error) {
+            $.each(error.responseJSON.errors, function (index, val) {
 
-    $.each(current_locations, function (index, value) {
 
-        //  console.log(current_location_days[index].dayshoursid);
-        if (clickId.indexOf(value.dayshoursid) === -1) {
-            clickId.push(value.dayshoursid);
-        }
-        //console.log(value.location_id !== location_id);
-        if (value.location_id !== location_id) {
-            clickId = [];
-        }
-    });
-    current_location_days = clickId;
-    //console.log(current_location_days);
+            });
+
+
+        } //end of error
+    }); //end of ajax
+
 }
 
 /**
@@ -592,13 +526,6 @@ function deleteHoursRow(id) {
                 '</div> </div> </div>';
             $("#bottom_toast").append(toast);
             $('#location_hour_delete_toast_' + id).toast("show");
-            current_location_days = jQuery.grep(clickId, function (value) {
-                return value != id;
-            });
-            current_locations = jQuery.grep(clickId, function (value) {
-                return value != id;
-            });
-
             $('#modal_body_for_days_' + data.location_id.id).replaceWith(data.view).slideUp('slow');
 
             //console.log(current_location_days);
@@ -658,18 +585,18 @@ function addContactstoEdit(loc_id, contact_count) {
         //cache: false,
         data: {
             id: loc_id,
-            
-         
+
+
         },
         success: function (data) {
-          
+
 
             $('#locations_contacts_div_' + data.location_id.id).replaceWith(data.view);
 
         }, //end of success
         error: function (error) {
             $.each(error.responseJSON.errors, function (index, val) {
-                
+
 
             });
 

@@ -205,16 +205,15 @@
                                 <th>Days</th>
                                 <th>Open from</th>
                                 <th>Open to</th>
-                                <th>Edit</th>
                                 <th>Remove</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="edit_hours_table_{{ $location->id }}">
                             @foreach ($location->location_hours as $dayshours)
                                 <tr id="hours_row_{{ $dayshours->id }}">
                                     <td scope="row">
-                                        <select class="form-control form-control-sm" name="day"
-                                            id="do_edit_day_{{ $dayshours->id }}" disabled>
+                                        <select class="form-control form-control-sm" name="day_{{ $dayshours->id }}"
+                                            id="do_edit_day_{{ $dayshours->id }}">
                                             @foreach ($days as $i => $day)
                                                 @if ($day == $dayshours->days)
                                                     {{ $selected = 'selected' }}
@@ -232,8 +231,9 @@
 
                                     </td>
                                     <td>
-                                        <select class="form-control form-control-sm" name="hours_from"
-                                            id="do_edit_hours_from_{{ $dayshours->id }}" disabled>
+                                        <select class="form-control form-control-sm"
+                                            name="hours_from_{{ $dayshours->id }}"
+                                            id="do_edit_hours_from_{{ $dayshours->id }}">
                                             @foreach ($hours as $x => $hour)
                                                 @if ($hour == $dayshours->hours_from)
                                                     {{ $selected = 'selected' }}
@@ -248,8 +248,9 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <select class="form-control form-control-sm" name="hours_to"
-                                            id="do_edit_hours_to_{{ $dayshours->id }}" disabled>
+                                        <select class="form-control form-control-sm"
+                                            name="hours_to_{{ $dayshours->id }}"
+                                            id="do_edit_hours_to_{{ $dayshours->id }}">
                                             @foreach ($hours as $x => $hour)
                                                 @if ($hour == $dayshours->hours_to)
                                                     {{ $selected = 'selected' }}
@@ -263,10 +264,9 @@
                                             @endforeach
                                         </select>
                                     </td>
-                                    <td><a href="#"
-                                            onclick="editHoursRow({{ $dayshours->id }}, {{ $location->id }})"><i
-                                                class="bi bi-pen-fill text-info"></i></a></td>
-                                    <td><a href="#" onclick="deleteHoursRow({{ $dayshours->id }})"><i
+                                    <td>
+                                        
+                                        <a href="#" onclick="deleteHoursRow({{ $dayshours->id }})"><i
                                                 class="bi bi-node-minus text-danger"></i></a>
                                     </td>
                                 </tr>

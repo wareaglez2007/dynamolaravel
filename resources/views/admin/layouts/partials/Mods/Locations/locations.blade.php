@@ -54,8 +54,11 @@
                         @include('admin.layouts.partials.Mods.Locations.locationsmodal')
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="location_editor"
-                                onclick="EditLocation({{ $location->id }})">Edit</button>
+                            <button type="button" class="btn btn-primary" id="location_editor_{{ $location->id }}"
+                                onclick="EditLocation({{ $location->id }})">Update 
+                                   
+                                  </button>
+                                  <img src='{{ asset('public/loading.gif') }}' id='loader_{{ $location->id }}' style='display: none;'>
                         </div>
                     </div>
                 </div>

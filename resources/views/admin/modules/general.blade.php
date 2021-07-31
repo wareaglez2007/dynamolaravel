@@ -43,6 +43,10 @@
         @if (request()->path() == 'admin/business-info')
             @include('admin.layouts.partials.business')
         @endif
+        <!-- Business Information (needs work) -->
+        @if (request()->path() == 'admin/employees')
+            @include('admin.layouts.partials.Mods.Employees.employees')
+        @endif
         <!-- Main Dashboard (after login) (needs work) -->
         @if (request()->path() == 'admin')
             @include('admin.layouts.partials.dashboard')

@@ -9,7 +9,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>  {{ config('app.name') }}</title>
+    <title> {{ config('app.name') }}</title>
 
     <!-- Scripts -->
 
@@ -138,7 +138,7 @@
                                             id="image_page">
 
                                             Upload & Manage Images</a>
-                                            <a href="{{ route('admin.images.report') }}" class="list-group-item nav-link"
+                                        <a href="{{ route('admin.images.report') }}" class="list-group-item nav-link"
                                             id="attached_images_page">
 
                                             Attached Images Report</a>
@@ -154,26 +154,43 @@
                                         <i class="bi bi-file-earmark-code"></i>&nbsp;
                                         File Manager
                                     </a>
-                                    <div class="collapse hide" id="collapsethree" class="" aria-labelledby="headingThree"
-                                        data-parent="#accordionmenuthree">
+                                    <div class="collapse hide" id="collapsethree" class=""
+                                        aria-labelledby="headingThree" data-parent="#accordionmenuthree">
                                         <a href="{{ route('admin.files.upload') }}" class="list-group-item nav-link"
                                             id="files_page">
 
                                             Upload & Manage Files</a>
-                                            <a href="{{ route('admin.files.upload') }}" class="list-group-item nav-link"
+                                        <a href="{{ route('admin.files.upload') }}" class="list-group-item nav-link"
                                             id="attached_files_page">
 
                                             Attached Files Report</a>
                                     </div>
                                 </div>
                             </li>
-
+                            <!--Business Info Manager Starts-->
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.business') }}">
-                                    <i class="bi bi-shop"></i>&nbsp;
-                                    Business Info Manager
-                                </a>
+                                <div class="accordion" id="accordionFour">
+                                    <a class="nav-link" data-toggle="collapse" data-target="#collapseFour"
+                                        aria-expanded="false" aria-controls="collapseFour" href="#">
+                                        <i class="bi bi-shop"></i>&nbsp;Business Manager
+                                    </a>
+                                    <div class="collapse hide" id="collapseFour" class="" aria-labelledby="headingFour"
+                                        data-parent="#accordionFour">
+                                        <a href="{{ route('admin.business') }}"
+                                            class="list-group-item nav-link"><i class="bi bi-book"></i>&nbsp;Address Book</a>
+                                        <a href="{{ route('admin.employee') }}"
+                                            class="list-group-item nav-link"><i class="bi bi-person-badge"></i>&nbsp;Employees</a>
+                                        <a href="{{ route('admin.pages.tree') }}"
+                                            class="list-group-item nav-link"><i class="bi bi-card-list"></i>&nbsp;Policies</a>
+                                        <a href="{{ route('admin.pages.tree') }}"
+                                            class="list-group-item nav-link"><i class="bi bi-credit-card-fill"></i>&nbsp;Payments</a>
+                                            <a href="{{ route('admin.pages.tree') }}"
+                                            class="list-group-item nav-link"><i class="bi bi-megaphone-fill"></i>&nbsp;Jobs</a>
+                                    </div>
+                                </div>
                             </li>
+                            <!--Business info Manager Ends-->
+
                             <li class="nav-item">
                                 <a class="nav-link" href="#">
                                     <i class="bi bi-file-text"></i>&nbsp;

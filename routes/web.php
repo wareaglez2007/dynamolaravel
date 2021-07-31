@@ -19,7 +19,7 @@ use Illuminate\Http\Request;
 
 
 //Route::get('/{slug}', function () {
-  //  return view('frontend.welcome');
+//  return view('frontend.welcome');
 //});
 
 /********************************************************/
@@ -98,14 +98,17 @@ Route::post('/admin/pages/bulkpublish', 'PagesController@BulkPublish');
  * Controller = ImagesController
  */
 Route::get('/admin/Images/uploadimage', 'UploadImagesController@getUploadForm')->name('admin.images.upload');
-Route::get('/admin/Images/uploadimagereport', 'UploadImagesController@ViewImagesReports')->name('admin.images.report'); /****Report***/
-Route::get('/admin/Images/uploadimagereport/pagination', 'UploadImagesController@ImageReportModulePagination');/**Image report pagination */
+Route::get('/admin/Images/uploadimagereport', 'UploadImagesController@ViewImagesReports')->name('admin.images.report');
+/****Report***/
+Route::get('/admin/Images/uploadimagereport/pagination', 'UploadImagesController@ImageReportModulePagination');
+/**Image report pagination */
 Route::post('/admin/Images/uploadimagereport/detachimage', 'UploadImagesController@DetachImageFromPage');
 
 Route::post('/admin/Images/uploadimage', 'UploadImagesController@postUploadForm');
 Route::get('/admin/Images/deleteselectedimage', 'UploadImagesController@DeleteImages');
 Route::get('/admin/Images/getafterdelete', 'UploadImagesController@AfterDelete');
-Route::post('/admin/Images/updateimagesinfo', 'UploadImagesController@UpdateImages'); /****NEW***/
+Route::post('/admin/Images/updateimagesinfo', 'UploadImagesController@UpdateImages');
+/****NEW***/
 ///admin/Images/uploadimage/pagination
 Route::get('/admin/Images/uploadimage/pagination', 'UploadImagesController@ImageModulePagination');
 
@@ -144,6 +147,23 @@ Route::post('/admin/location_hours/destroy', 'LocationsController@destroylocatio
 Route::post('/admin/locations/contacts/add', 'LocationsController@addContactSection')->name('admin.location.contact');
 //'/admin/locations/edit/addstorehoursrows'
 Route::post('/admin/locations/edit/addstorehoursrows', 'LocationsController@addstorehoursrow')->name('admin.location.edit.addhoursrow');
+/**
+ * 07/30/2021
+ * Employee Management (under Business module)
+ * 1. Index to show when clicked
+ * 2. Create new employee and assignments 
+ *  1. Upload employee image & other documents 
+ * 3. Edit Employees information
+ * 4. Delete an employee
+ * 
+ * 
+ */
+
+Route::get('/admin/employees', 'EmployeesController@index')->name('admin.employee');
+
+
+
+
 
 /**
  * Forms Creat/Edit/Delete Manager
@@ -192,7 +212,7 @@ Route::get('/admin/pages/published/count', 'PagesController@getNewPublishedCount
  * Frontend Section routes
  */
 //Route::get('/', function () {
-  //  return view('frontend.welcome');
+//  return view('frontend.welcome');
 //});
 
 Route::get('/', 'FrontendController@index');
@@ -206,6 +226,5 @@ Route::get('/page/{id}/preview', 'FrontendController@ShowWithId')->name('preview
 
 
 Route::prefix('{any}')->group(function () {
-    Route::get('/{slug}', 'FrontendController@MultipleSlugs')->where('slug','^[a-zA-Z0-9-_\/]+$');
+  Route::get('/{slug}', 'FrontendController@MultipleSlugs')->where('slug', '^[a-zA-Z0-9-_\/]+$');
 });
-

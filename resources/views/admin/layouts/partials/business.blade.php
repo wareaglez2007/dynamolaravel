@@ -36,19 +36,22 @@
                             </div>
                         </div>
                         <div class="row">
+
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Address 1:<i class="bi bi-asterisk text-danger"
-                                            style="font-size: 8px;vertical-align: top;"></i><label>
-                                            <input type="text" name="addr1" id="addr1" class="form-control"
-                                                placeholder="123 cicrle st." aria-describedby="helpId">
+                                    <label for="">Address 1:<i class="bi bi-asterisk text-danger"
+                                            style="font-size: 8px;vertical-align: top;"></i></label>
+                                    <input type="text" name="addr1" id="addr1" class="form-control" placeholder=""
+                                        aria-describedby="helpId">
+                                    <small id="helpId" class="text-muted">123 cicrle st. (optional)</small>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Address 2:<label>
-                                            <input type="text" name="addr2" id="addr2" class="form-control"
-                                                placeholder="Apt,Suite#" aria-describedby="helpId">
+                                    <label for="">Address 2:</label>
+                                    <input type="text" name="addr2" id="addr2" class="form-control" placeholder=""
+                                        aria-describedby="helpId">
+                                    <small id="helpId" class="text-muted">Apt,Suite# (optional)</small>
                                 </div>
                             </div>
                         </div>

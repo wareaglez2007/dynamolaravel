@@ -19,7 +19,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Employee Information</h5>
+                <h5 class="modal-title">Employee Basic Information</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -27,13 +27,8 @@
             <div class="modal-body">
                 <div class="container-fluid">
                     <!--Make Sections Here-->
-
                     <!--Basic Information form setion-->
                     @include('admin.layouts.partials.Mods.Employees.employeebasics')
-                    <!---Employee Resume Upload section-->
-                    @include('admin.layouts.partials.Mods.Employees.employeeresume')
-                    <!--Employee Work location -->
-                    @include('admin.layouts.partials.Mods.Employees.employeeworklocations')
                 </div>
             </div>
             <div class="modal-footer">

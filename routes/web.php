@@ -147,6 +147,8 @@ Route::post('/admin/location_hours/destroy', 'LocationsController@destroylocatio
 Route::post('/admin/locations/contacts/add', 'LocationsController@addContactSection')->name('admin.location.contact');
 //'/admin/locations/edit/addstorehoursrows'
 Route::post('/admin/locations/edit/addstorehoursrows', 'LocationsController@addstorehoursrow')->name('admin.location.edit.addhoursrow');
+
+
 /**
  * 07/30/2021
  * Employee Management (under Business module)

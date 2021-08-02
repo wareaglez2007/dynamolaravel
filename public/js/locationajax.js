@@ -93,6 +93,14 @@ function savelocations() {
 
         }, //end of success
         error: function (error) {
+            if (typeof error.responseJSON.message != 'undefined') {
+                var uid = getRandomInt(5000);
+                var do_redirect = false;
+                if (error.status === 419) {
+                    do_redirect = true;
+                }
+                HandleErrorsToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
+            }
             $.each(error.responseJSON.errors, function (index, val) {
                 var delay = 2300;
                 color = "red";
@@ -131,6 +139,7 @@ function savelocations() {
  */
 
 function EditLocation(id) {
+
     //Business name
     var bus_name = $("#bus_name_" + id).val();
     //address 1
@@ -151,7 +160,7 @@ function EditLocation(id) {
     var maps_url = $("#maps_" + id).val();
     //Days & Hours
     var daysHours = $("#edit_hours_table_" + id + " select").serialize();
-    
+
     //Send data
     $.ajaxSetup({
         headers: {
@@ -182,12 +191,12 @@ function EditLocation(id) {
 
         },
         beforeSend: function () {
-            $("#location_editor_"+id).text("Saving ");
-            $("#location_editor_"+id).attr("class", "btn btn-success");
-            $("#loader_"+id).clone().appendTo("#location_editor_"+id).show();
+            $("#location_editor_" + id).text("Saving ");
+            $("#location_editor_" + id).attr("class", "btn btn-success");
+            $("#loader_" + id).clone().appendTo("#location_editor_" + id).show();
 
-           // $("#location_editor_"+id).text("Saving "+$(loader).show());
-            
+            // $("#location_editor_"+id).text("Saving "+$(loader).show());
+
         },
         success: function (data) {
             var delay = 2300;
@@ -206,15 +215,15 @@ function EditLocation(id) {
                 id + '">' + data.response.success +
                 '</div> </div> </div>';
             $("#bottom_toast").append(toast);
-            
+
 
 
             setTimeout(function () {
                 $('#locationeditmodal_' + id).modal('hide');
-                $("#location_editor_"+id).text("Update");
-                $("#location_editor_"+id).attr("class", "btn btn-primary");
+                $("#location_editor_" + id).text("Update");
+                $("#location_editor_" + id).attr("class", "btn btn-primary");
 
-                $("#loader_"+id).hide();
+                $("#loader_" + id).hide();
                 $('#location_delete_toast_' + id).toast("show");
             }, 1000);
 
@@ -226,8 +235,8 @@ function EditLocation(id) {
 
 
             }, delay + 500);
-            
-        
+
+
 
             setTimeout(function () {
 
@@ -239,6 +248,14 @@ function EditLocation(id) {
 
         }, //end of success
         error: function (error) {
+            if (typeof error.responseJSON.message != 'undefined') {
+                var uid = getRandomInt(5000);
+                var do_redirect = false;
+                if (error.status === 419) {
+                    do_redirect = true;
+                }
+                HandleErrorsToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
+            }
             $.each(error.responseJSON.errors, function (index, val) {
                 var delay = 2300;
                 color = "red";
@@ -257,12 +274,12 @@ function EditLocation(id) {
                 $("#bottom_toast").append(toast);
                 $('#location_toast_' + index).toast("show");
                 setTimeout(function () {
-                    $("#location_editor_"+id).attr("class", "btn btn-primary");
-                    $("#location_editor_"+id).text("Update");
+                    $("#location_editor_" + id).attr("class", "btn btn-primary");
+                    $("#location_editor_" + id).text("Update");
                 }, 900);
-                $("#location_editor_"+id).attr("class", "btn btn-danger");
+                $("#location_editor_" + id).attr("class", "btn btn-danger");
 
-                $("#location_editor_"+id).text("Unable to Update");
+                $("#location_editor_" + id).text("Unable to Update");
                 setTimeout(function () {
                     $('#location_toast_' + index)
                         .remove();
@@ -332,6 +349,14 @@ function DeleteLocation(id) {
 
         }, //end of success
         error: function (error) {
+            if (typeof error.responseJSON.message != 'undefined') {
+                var uid = getRandomInt(5000);
+                var do_redirect = false;
+                if (error.status === 419) {
+                    do_redirect = true;
+                }
+                HandleErrorsToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
+            }
             $.each(error.responseJSON.errors, function (index, val) {
                 var delay = 2300;
                 color = "red";
@@ -474,6 +499,14 @@ function addHourstoEdit(loc_id, count) {
 
         }, //end of success
         error: function (error) {
+            if (typeof error.responseJSON.message != 'undefined') {
+                var uid = getRandomInt(5000);
+                var do_redirect = false;
+                if (error.status === 419) {
+                    do_redirect = true;
+                }
+                HandleErrorsToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
+            }
             $.each(error.responseJSON.errors, function (index, val) {
 
 
@@ -532,6 +565,14 @@ function deleteHoursRow(id) {
 
         }, //end of success
         error: function (error) {
+            if (typeof error.responseJSON.message != 'undefined') {
+                var uid = getRandomInt(5000);
+                var do_redirect = false;
+                if (error.status === 419) {
+                    do_redirect = true;
+                }
+                HandleErrorsToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
+            }
             $.each(error.responseJSON.errors, function (index, val) {
                 var delay = 2300;
                 color = "red";
@@ -595,6 +636,14 @@ function addContactstoEdit(loc_id, contact_count) {
 
         }, //end of success
         error: function (error) {
+            if (typeof error.responseJSON.message != 'undefined') {
+                var uid = getRandomInt(5000);
+                var do_redirect = false;
+                if (error.status === 419) {
+                    do_redirect = true;
+                }
+                HandleErrorsToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
+            }
             $.each(error.responseJSON.errors, function (index, val) {
 
 
@@ -603,4 +652,69 @@ function addContactstoEdit(loc_id, contact_count) {
 
         } //end of error
     }); //end of ajax
+}
+
+/**
+ * Get a random number max is the number your choose the range for
+ * @param {*} max 
+ * @returns 
+ */
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+/**
+ * Reusable Toast
+ * @param {*} delay_time 
+ * @param {*} div_color 
+ * @param {*} uid 
+ * @param {*} message 
+ * @param {*} status_code 
+ * @param {*} CSR_ER (defalut false)
+ * @returns 
+ */
+function HandleErrorsToast(delay_time, div_color, uid, message, status_code, CSR_ER = false) {
+
+
+    var delay = delay_time;
+    color = div_color;
+    var toast =
+        '<div id="location_toast_' + uid +
+        '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
+        delay + '" >' +
+        '<div class="toast-header" style="background-color: ' +
+        color +
+        ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
+        '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
+        '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
+        '<div class="toast-body" id="toast_id_body' +
+        uid + '">' + message +
+        '</div> </div> </div>';
+    //Informational responses (100–199)
+    // Successful responses (200–299)
+    // Redirects (300–399)
+    // Client errors (400–499)
+    // Server errors (500–599)
+    //If the CSRF is mismatched use this script
+
+    if (status_code > 399 && status_code < 600) {
+        //logout url
+        $("#bottom_toast").append(toast);
+        $('#location_toast_' + uid).toast("show");
+        setTimeout(function () {
+            $('#location_toast_' + uid)
+                .remove();
+
+        }, delay + 600);
+
+        if (CSR_ER) {
+            setTimeout(function () {
+                window.location.href = '/logout';
+                window.location.href = '/login';
+            }, delay + 700);
+            
+        }
+
+    }
+
+    return toast;
 }

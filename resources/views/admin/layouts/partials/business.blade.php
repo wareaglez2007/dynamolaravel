@@ -18,6 +18,7 @@
                 </div>
                 <div class="modal-body">
                     <form method="POST" id="business_info">
+                        @csrf
                         <!---Business information section--->
                         <div class="row">
                             <div class="col-md-12">

@@ -1,5 +1,6 @@
 <div class="modal-body" id="modal_body_for_days_{{ $location->id }}">
     <form method="POST">
+        @csrf
         <!---Business information section--->
         <div class="row">
             <div class="col-md-12">

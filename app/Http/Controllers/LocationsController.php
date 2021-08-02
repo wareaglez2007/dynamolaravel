@@ -21,7 +21,7 @@ class LocationsController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -168,20 +168,10 @@ class LocationsController extends Controller
     public function update(Request $request, locations $locations)
     {
         $response_messages = [];
-        //Data Validation
-
-        $validatedData = $request->validate([
-            'location_name' => ['required'],
-            'addr1' => ['required'],
-            'postal' => 'required|regex:/^[0-9]{3,7}$/',
-            'city' => ['required'],
-            'state' => ['required'],
-
-        ]);
-
         //Check to see if id exists in db
         $check_id = $locations->find($request->id)->count();
         $location_id = $locations->find($request->id);
+
         // location_name: bus_name,
         // addr1: addr1,
         // addr2: addr2,
@@ -189,6 +179,20 @@ class LocationsController extends Controller
         // postal: postal,
         // state: state
         if ($check_id  > 0) {
+            if ($request->location_name == $location_id->location_name) {
+                $location_name_rule = "";
+            } else {
+                $location_name_rule = 'unique:locations';
+            }
+            //Data Validation
+            $validatedData = $request->validate([
+                'location_name' => ['required', $location_name_rule],
+                'addr1' => ['required'],
+                'postal' => 'required|regex:/^[0-9]{3,7}$/',
+                'city' => ['required'],
+                'state' => ['required'],
+
+            ]);
             $full_street = $request->addr1 . " " . $request->addr2;
 
             $locations->find($request->id)->update([
@@ -369,6 +373,7 @@ class LocationsController extends Controller
         $response_messages = [];
         $location_id = $locations->find($request->id);
         $locations_data = $locations->with('location_hours')->orderBy('id', 'ASC')->find($request->id);
+        $response_messages['success'] = "Contacts section has been added. Please fill in required information.";
         if ($request->ajax()) {
             return response()->json([
                 "response" => $response_messages,

@@ -17,7 +17,7 @@ function savelocations() {
     var state = $("#state").val();
     //postal
     var postal = $("#postal").val();
-
+    //Days & Hours
     var dayshoursArray = {};
     $.each(idtracker, function (key, i) {
         var days = $('#day_' + i).val();
@@ -28,18 +28,13 @@ function savelocations() {
         dayshoursArray['hours_from_' + i] = hoursfrom;
         dayshoursArray['hours_to_' + i] = hoursto;
     });
-
-
-
     //use the global var numRows to get the count of business hours.
-
-
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $(
                 'meta[name="csrf-token"]')
                 .attr(
-                    'content')
+                    'content') //Gets the CSRF code from the meta content in the header
         }
 
     }); //End of ajax setup
@@ -60,73 +55,39 @@ function savelocations() {
             rowcount: idtracker
         },
         success: function (data) {
+            //Handle Success Messages on toast
+            if (typeof data != 'undefined') {
+                var uid = data.locationid;
+                var do_redirect = false;
 
-            var delay = 2300;
-            color = "green";
-            var toast =
-
-                '<div id="location_toast_' + data.locationid +
-                '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
-                delay + '" >' +
-                '<div class="toast-header" style="background-color: ' +
-                color +
-                ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
-                '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
-                '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
-                '<div class="toast-body" id="toast_id_body' +
-                data.locationid + '">' + data.response.success +
-                '</div> </div> </div>';
-            $("#bottom_toast").append(toast);
-            $('#location_toast_' + data.locationid).toast("show");
-            $('#attached_image_modal_' + data.locationid).modal('hide');
-
-            setTimeout(function () {
-                $('#location_toast_' + data.locationid)
-                    .remove();
-
-            }, delay + 600);
+                HandleErrorsToast(2300, "green", uid, data.response.success, 200, do_redirect);
+            }
+            //Change the view once message received
             setTimeout(function () {
                 $('#locations_div').html(data.view);
             }, 400);
-            idtracker = [];
+            idtracker = []; //DO NOT REMOVE THIS -> IT resets the array 
             $("form").trigger("reset");
 
         }, //end of success
         error: function (error) {
-            if (typeof error.responseJSON.message != 'undefined') {
+            //Handle Error Messages on toast
+            if (typeof error.responseJSON != 'undefined') {
                 var uid = getRandomInt(5000);
                 var do_redirect = false;
+                //419 status code is for mismatched CSRF code if code is 419 we need to logout or refresh page
                 if (error.status === 419) {
                     do_redirect = true;
                 }
+                //these are for server side or exception errors
                 HandleErrorsToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
+                //These are internal error messages
+                $.each(error.responseJSON.errors, function (index, val) {
+                    var uid = index;
+                    var do_redirect = false;
+                    HandleErrorsToast(2300, "red", uid, val, error.status, do_redirect);
+                });
             }
-            $.each(error.responseJSON.errors, function (index, val) {
-                var delay = 2300;
-                color = "red";
-                var toast =
-                    '<div id="location_toast_' + index +
-                    '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
-                    delay + '" >' +
-                    '<div class="toast-header" style="background-color: ' +
-                    color +
-                    ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
-                    '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
-                    '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
-                    '<div class="toast-body" id="toast_id_body' +
-                    index + '">' + val +
-                    '</div> </div> </div>';
-                $("#bottom_toast").append(toast);
-                $('#location_toast_' + index).toast("show");
-                setTimeout(function () {
-                    $('#location_toast_' + index)
-                        .remove();
-
-                }, delay + 600);
-
-            });
-
-
         } //end of error
     }); //end of ajax
 } //end of savelocations
@@ -194,101 +155,48 @@ function EditLocation(id) {
             $("#location_editor_" + id).text("Saving ");
             $("#location_editor_" + id).attr("class", "btn btn-success");
             $("#loader_" + id).clone().appendTo("#location_editor_" + id).show();
-
-            // $("#location_editor_"+id).text("Saving "+$(loader).show());
-
         },
         success: function (data) {
-            var delay = 2300;
-            color = "green";
-            var toast =
+            //Handle Success Messages on toast
+            if (typeof data != 'undefined') {
+                var uid = id;
+                var do_redirect = false;
+                HandleErrorsToast(2300, "green", uid, data.response.success, 200, do_redirect);
+                setTimeout(function () {
+                    $('#locationeditmodal_' + id).modal('hide');
+                    $("#location_editor_" + id).text("Update");
+                    $("#location_editor_" + id).attr("class", "btn btn-primary");
 
-                '<div id="location_delete_toast_' + id +
-                '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
-                delay + '" >' +
-                '<div class="toast-header" style="background-color: ' +
-                color +
-                ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
-                '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
-                '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
-                '<div class="toast-body" id="toast_id_body' +
-                id + '">' + data.response.success +
-                '</div> </div> </div>';
-            $("#bottom_toast").append(toast);
+                    $("#loader_" + id).hide();
+                }, 1000);
+                setTimeout(function () {
 
+                    $('#locations_div').html(data.view);
 
-
-            setTimeout(function () {
-                $('#locationeditmodal_' + id).modal('hide');
-                $("#location_editor_" + id).text("Update");
-                $("#location_editor_" + id).attr("class", "btn btn-primary");
-
-                $("#loader_" + id).hide();
-                $('#location_delete_toast_' + id).toast("show");
-            }, 1000);
-
-
-            setTimeout(function () {
-                $('#location_delete_toast_' + id)
-                    .remove();
-
-
-
-            }, delay + 500);
-
-
-
-            setTimeout(function () {
-
-                $('#locations_div').html(data.view);
-
-            }, 1300);
-
-            //$('#modal_body_for_days_' + data.location_id.id).replaceWith(data.view);
-
+                }, 1300);
+            }
         }, //end of success
         error: function (error) {
-            if (typeof error.responseJSON.message != 'undefined') {
+            if (typeof error.responseJSON != 'undefined') {
                 var uid = getRandomInt(5000);
                 var do_redirect = false;
                 if (error.status === 419) {
                     do_redirect = true;
                 }
                 HandleErrorsToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
+                $.each(error.responseJSON.errors, function (index, val) {
+                    HandleErrorsToast(2300, "red", index, val, error.status, do_redirect);
+                    setTimeout(function () {
+                        $("#location_editor_" + id).attr("class", "btn btn-primary");
+                        $("#location_editor_" + id).text("Update");
+                    }, 900);
+                    $("#location_editor_" + id).attr("class", "btn btn-danger");
+
+                    $("#location_editor_" + id).text("Unable to Update");
+
+                });
+
             }
-            $.each(error.responseJSON.errors, function (index, val) {
-                var delay = 2300;
-                color = "red";
-                var toast =
-                    '<div id="location_toast_' + index +
-                    '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
-                    delay + '" >' +
-                    '<div class="toast-header" style="background-color: ' +
-                    color +
-                    ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
-                    '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
-                    '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
-                    '<div class="toast-body" id="toast_id_body' +
-                    index + '">' + val +
-                    '</div> </div> </div>';
-                $("#bottom_toast").append(toast);
-                $('#location_toast_' + index).toast("show");
-                setTimeout(function () {
-                    $("#location_editor_" + id).attr("class", "btn btn-primary");
-                    $("#location_editor_" + id).text("Update");
-                }, 900);
-                $("#location_editor_" + id).attr("class", "btn btn-danger");
-
-                $("#location_editor_" + id).text("Unable to Update");
-                setTimeout(function () {
-                    $('#location_toast_' + index)
-                        .remove();
-
-                }, delay + 600);
-
-            });
-
-
         }, //end of error
 
     }); //end of ajax
@@ -319,33 +227,12 @@ function DeleteLocation(id) {
             id: id
         },
         success: function (data) {
-            var delay = 2300;
-            color = "green";
-            var toast =
-
-                '<div id="location_delete_toast_' + id +
-                '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
-                delay + '" >' +
-                '<div class="toast-header" style="background-color: ' +
-                color +
-                ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
-                '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
-                '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
-                '<div class="toast-body" id="toast_id_body' +
-                id + '">' + data.response.success +
-                '</div> </div> </div>';
-            $("#bottom_toast").append(toast);
-            $('#location_delete_toast_' + id).toast("show");
-            $('#attached_image_modal_' + data.locationid).modal('hide');
-
-            setTimeout(function () {
-                $('#location_delete_toast_' + id)
-                    .remove();
-
-            }, delay + 600);
-            setTimeout(function () {
-                $('#locations_div').html(data.view);
-            }, 400);
+            if (typeof data != 'undefined') {
+                HandleErrorsToast(2300, "green", id, data.response.success, 200);
+                setTimeout(function () {
+                    $('#locations_div').html(data.view);
+                }, 400);
+            }
 
         }, //end of success
         error: function (error) {
@@ -356,32 +243,12 @@ function DeleteLocation(id) {
                     do_redirect = true;
                 }
                 HandleErrorsToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
+
+                $.each(error.responseJSON.errors, function (index, val) {
+
+                    HandleErrorsToast(2300, "red", index, val, error.status, do_redirect);
+                });
             }
-            $.each(error.responseJSON.errors, function (index, val) {
-                var delay = 2300;
-                color = "red";
-                var toast =
-                    '<div id="location_toast_' + index +
-                    '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
-                    delay + '" >' +
-                    '<div class="toast-header" style="background-color: ' +
-                    color +
-                    ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
-                    '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
-                    '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
-                    '<div class="toast-body" id="toast_id_body' +
-                    index + '">' + val +
-                    '</div> </div> </div>';
-                $("#bottom_toast").append(toast);
-                $('#location_toast_' + index).toast("show");
-                setTimeout(function () {
-                    $('#location_toast_' + index)
-                        .remove();
-
-                }, delay + 600);
-
-            });
-
 
         } //end of error
     }); //end of ajax
@@ -478,25 +345,10 @@ function addHourstoEdit(loc_id, count) {
         },
         success: function (data) {
 
-            var delay = 2300;
-            color = "green";
-            var toast =
-
-                '<div id="location_hour_to_edit_toast_' + loc_id +
-                '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
-                delay + '" >' +
-                '<div class="toast-header" style="background-color: ' +
-                color +
-                ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
-                '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
-                '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
-                '<div class="toast-body" id="toast_id_body' +
-                loc_id + '">' + data.response.success +
-                '</div> </div> </div>';
-            $("#bottom_toast").append(toast);
-            $('#location_hour_to_edit_toast_' + loc_id).toast("show");
-            $('#modal_body_for_days_' + data.location_id.id).replaceWith(data.view).slideUp('slow');
-
+            if (typeof data != 'undefined') {
+                HandleErrorsToast(2300, "green", loc_id, data.response.success, 200);
+                $('#modal_body_for_days_' + data.location_id.id).replaceWith(data.view).slideUp('slow');
+            }
         }, //end of success
         error: function (error) {
             if (typeof error.responseJSON.message != 'undefined') {
@@ -506,16 +358,16 @@ function addHourstoEdit(loc_id, count) {
                     do_redirect = true;
                 }
                 HandleErrorsToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
+
+                $.each(error.responseJSON.errors, function (index, val) {
+
+                    HandleErrorsToast(2300, "red", index, val, error.status, do_redirect);
+
+                });
             }
-            $.each(error.responseJSON.errors, function (index, val) {
-
-
-            });
-
 
         } //end of error
     }); //end of ajax
-
 }
 
 /**
@@ -542,27 +394,10 @@ function deleteHoursRow(id) {
             id: id
         },
         success: function (data) {
-            var delay = 2300;
-            color = "green";
-            var toast =
-
-                '<div id="location_hour_delete_toast_' + id +
-                '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
-                delay + '" >' +
-                '<div class="toast-header" style="background-color: ' +
-                color +
-                ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
-                '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
-                '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
-                '<div class="toast-body" id="toast_id_body' +
-                id + '">' + data.response.success +
-                '</div> </div> </div>';
-            $("#bottom_toast").append(toast);
-            $('#location_hour_delete_toast_' + id).toast("show");
-            $('#modal_body_for_days_' + data.location_id.id).replaceWith(data.view).slideUp('slow');
-
-            //console.log(current_location_days);
-
+            if (typeof data != 'undefined') {
+                HandleErrorsToast(2300, "green", id, data.response.success, 200);
+                $('#modal_body_for_days_' + data.location_id.id).replaceWith(data.view);
+            }
         }, //end of success
         error: function (error) {
             if (typeof error.responseJSON.message != 'undefined') {
@@ -572,32 +407,12 @@ function deleteHoursRow(id) {
                     do_redirect = true;
                 }
                 HandleErrorsToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
+
+                $.each(error.responseJSON.errors, function (index, val) {
+                    HandleErrorsToast(2300, "red", index, val, error.status, do_redirect);
+
+                });
             }
-            $.each(error.responseJSON.errors, function (index, val) {
-                var delay = 2300;
-                color = "red";
-                var toast =
-                    '<div id="location_toast_' + index +
-                    '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
-                    delay + '" >' +
-                    '<div class="toast-header" style="background-color: ' +
-                    color +
-                    ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
-                    '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +
-                    '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div>' +
-                    '<div class="toast-body" id="toast_id_body' +
-                    index + '">' + val +
-                    '</div> </div> </div>';
-                $("#bottom_toast").append(toast);
-                $('#location_toast_' + index).toast("show");
-                setTimeout(function () {
-                    $('#location_toast_' + index)
-                        .remove();
-
-                }, delay + 600);
-
-            });
-
 
         } //end of error
     }); //end of ajax
@@ -630,10 +445,10 @@ function addContactstoEdit(loc_id, contact_count) {
 
         },
         success: function (data) {
-
-
-            $('#locations_contacts_div_' + data.location_id.id).replaceWith(data.view);
-
+            if(typeof data != 'undefined'){
+                HandleErrorsToast(2300, "green", loc_id, data.response.success, 200);
+                $('#locations_contacts_div_' + data.location_id.id).replaceWith(data.view);
+            }
         }, //end of success
         error: function (error) {
             if (typeof error.responseJSON.message != 'undefined') {
@@ -643,12 +458,12 @@ function addContactstoEdit(loc_id, contact_count) {
                     do_redirect = true;
                 }
                 HandleErrorsToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
+
+                $.each(error.responseJSON.errors, function (index, val) {
+
+                    HandleErrorsToast(2300, "red", index, val, error.status, do_redirect);
+                });
             }
-            $.each(error.responseJSON.errors, function (index, val) {
-
-
-            });
-
 
         } //end of error
     }); //end of ajax
@@ -696,7 +511,7 @@ function HandleErrorsToast(delay_time, div_color, uid, message, status_code, CSR
     // Server errors (500–599)
     //If the CSRF is mismatched use this script
 
-    if (status_code > 399 && status_code < 600) {
+    if (status_code > 99 && status_code < 600) {
         //logout url
         $("#bottom_toast").append(toast);
         $('#location_toast_' + uid).toast("show");
@@ -711,7 +526,7 @@ function HandleErrorsToast(delay_time, div_color, uid, message, status_code, CSR
                 window.location.href = '/logout';
                 window.location.href = '/login';
             }, delay + 700);
-            
+
         }
 
     }

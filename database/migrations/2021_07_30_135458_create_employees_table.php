@@ -18,10 +18,8 @@ class CreateEmployeesTable extends Migration
             $table->string('fname')->nullable();
             $table->string('mname')->nullable();
             $table->string('lname')->nullable();
+            $table->string('dob')->nullable();
             $table->string('gender')->nullable();
-            $table->string('phone1')->nullable();
-            $table->string('phone2')->nullable();
-            $table->string('email', 50)->unique();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -18,6 +18,9 @@ class CreateEmployeeLocationsTable extends Migration
             $table->unsignedBigInteger('employees_id');
             $table->foreign('employees_id')->references('id')->on('employees')
                 ->onDelete('cascade');
+            $table->unsignedBigInteger('locations_id');
+            $table->foreign('locations_id')->references('id')->on('locations')
+                ->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -11,43 +11,24 @@
 </div>
 
 <!--Use modals outside the card div-->
+<!--This is the add new employee modal-->
+@include('admin.layouts.partials.Mods.Employees.addnew.addnewemployeemodal')
+<!--End of add new employee modal-->
 
-
-
-<!-- Modal -->
-<div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Employee Basic Information</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="container-fluid">
-                    <!--Make Sections Here-->
-                    <!--Basic Information form setion-->
-                    @include('admin.layouts.partials.Mods.Employees.employeebasics')
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script>
-    $('#exampleModal').on('show.bs.modal', event => {
-        var button = $(event.relatedTarget);
-        var modal = $(this);
-        // Use above variables to manipulate the DOM
+    $(document).ready(function() {
+        $('#modelId').on('show.bs.modal', event => {
+            var button = $(event.relatedTarget);
+            var modal = $(this);
+            // Use above variables to manipulate the DOM    
+            $("#add_employee_step_1").show();
+        });
 
     });
 </script>
 
-
+<div class="position-fixed bottom-0 right-0 p-3" style="z-index: 9999999; right: 0; bottom: 0;" id="bottom_toast">
+</div>
 <!--Ajax Script section employeesajax.js-->
-<script src="{{ asset('js/locationajax.js') }}" defer></script>
+<script src="{{ asset('js/employeesajax.js') }}" defer></script>

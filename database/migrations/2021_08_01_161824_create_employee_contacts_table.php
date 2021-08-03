@@ -18,6 +18,9 @@ class CreateEmployeeContactsTable extends Migration
             $table->unsignedBigInteger('employees_id');
             $table->foreign('employees_id')->references('id')->on('employees')
                 ->onDelete('cascade');
+            $table->string('phone1')->nullable();
+            $table->string('phone2')->nullable();
+            $table->string('email', 50)->unique();
             $table->softDeletes();
             $table->timestamps();
         });

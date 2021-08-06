@@ -21,10 +21,11 @@
         $('#modelId').on('show.bs.modal', event => {
             var button = $(event.relatedTarget);
             var modal = $(this);
-            // Use above variables to manipulate the DOM    
-            $("#add_employee_step_1").show();
-        });
 
+        });
+        $('#modelId').on('hide.bs.modal', function(e) {
+
+        });
     });
 </script>
 

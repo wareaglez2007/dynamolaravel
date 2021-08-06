@@ -1,9 +1,13 @@
 //Employee management scripts
+/**
+ * 
+ * @param {*} step 
+ * @param {*} progress 
+ */
+function AddEmployeeNextSteps(step, progress) {
 
-function AddEmployeeNextSteps(step) {
-    var gender = $("#gender").val();
-    //When the next button is clicked:
-    //1. call the controller through ajax
+    var form_data = $("#add_employee_form").serialize();
+
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $(
@@ -17,40 +21,13 @@ function AddEmployeeNextSteps(step) {
         url: '/admin/employees/add',
         method: "post",
         //cache: false,
-        data: {
-            steps: step,
-            gender: gender
-        },
+        data: form_data,
         success: function (data) {
             if (typeof data != 'undefined') {
-                console.log(data.current_step);
-                console.log(data.forward_step);
-                console.log(data.backward_step);
-                //   $("#gender").val(data.request.gender)
+                //JQUERY CONTROLS BELOW
+                HandleNextMove(step, progress);
                 HandleAjaxResponsesToast(2300, "green", step, data.response.success, 200);
-                //add_employee_step_1
-                //Steps
-                if (step != data.forward_step) {
-                    $("#add_employee_mt").text(data.modal_title);
-                    $("#new_employee_progress_bar").attr("style", "width:" + data.progress + "%");
-                    //aria-valuenow="25"
-                    $("#new_employee_progress_bar").attr("aria-valuenow", data.progress);
-                    $("#go_back").show();
-                    $("#go_back").attr('onclick', 'AddEmployeePrevSteps(' + data.backward_step + ')');
-                    if (data.current_step == 4) {
-                        $("#go_forward").attr('class', "btn btn-success");
-                        $("#go_forward").attr('onclick', 'AddEmployeeNextSteps(' + data.forward_step + ')');
-                        $("#go_forward").text('Finish');
 
-                    }
-                    $("#go_forward").attr('onclick', 'AddEmployeeNextSteps(' + data.forward_step + ')');
-
-                    $('#add_employee_step_' + data.backward_step).remove();
-
-
-                    $('#add_new_employee_modal_body').append(data.view);
-                    $("#add_employee_step_" + data.current_step).show("slide", { direction: "right" }, 400);
-                }
 
             }
         }, //end of success
@@ -75,10 +52,14 @@ function AddEmployeeNextSteps(step) {
     //3. repeat next step
 
 }
+/**
+ * 
+ * @param {*} step 
+ * @param {*} progress 
+ */
+function AddEmployeePrevSteps(step, progress) {
+    var form_data = $("#add_employee_form").serialize();
 
-function AddEmployeePrevSteps(step) {
-    //When the next button is clicked:
-    //1. call the controller through ajax
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $(
@@ -92,38 +73,15 @@ function AddEmployeePrevSteps(step) {
         url: '/admin/employees/add',
         method: "post",
         //cache: false,
-        data: {
-            steps: step
-        },
+        data: form_data,
         success: function (data) {
-            if (typeof data != 'undefined') {
-                // HandleAjaxResponsesToast(2300, "green", step, data.response.success, 200);
-                //add_employee_step_1
-                //Steps
-                if (step != data.forward_step) {
-                    $("#add_employee_mt").text(data.modal_title);
-                    $("#new_employee_progress_bar").attr("style", "width:" + data.progress + "%");
-                    //aria-valuenow="25"
-                    $("#new_employee_progress_bar").attr("aria-valuenow", data.progress);
-                    if (data.current_step == 1) {
-                        $("#go_back").hide();
-                    }
+            //JQUERY CONTROL THIS
+            HandlePrevMove(step, progress);
+            // HandleAjaxResponsesToast(2300, "green", step, data.response.success, 200);
+            //add_employee_step_1
+            //Steps
 
-                    if (data.current_step != 4) {
-                        $("#go_forward").attr('class', "btn btn-primary");
 
-                        $("#go_forward").html('Next Step <i class="bi bi-arrow-right-square"style="vertical-align: text-bottom !important;"></i>');
-
-                    }
-
-                    $("#go_back").attr('onclick', 'AddEmployeePrevSteps(' + data.backward_step + ')');
-                    $("#go_forward").attr('onclick', 'AddEmployeeNextSteps(' + data.forward_step + ')');
-
-                    $('#add_employee_step_' + data.forward_step).remove();
-                    $('#add_new_employee_modal_body').append(data.view);
-                    $("#add_employee_step_" + data.current_step).show("slide", { direction: "left" }, 400);
-                }
-            }
         }, //end of success
         error: function (error) {
             if (typeof error.responseJSON.message != 'undefined') {
@@ -207,4 +165,111 @@ function HandleAjaxResponsesToast(delay_time, div_color, uid, message, status_co
     }
 
     return toast;
+}
+/**
+ * 
+ * @param {*} step 
+ * @param {*} progress 
+ */
+function HandleNextMove(step, progress) {
+    if (step < 5) {
+        var next_step = step + 1;
+        var prev_step = step - 1;
+        var modal_title = "";
+
+        if (next_step > 1) {
+            $("#go_back").show();
+        }
+        //Pregress bar and section title
+        switch (step) {
+            case 1:
+                modal_title = "Employee Basic Information";
+                break;
+            case 2:
+                modal_title = "Employee Address Information";
+                break;
+            case 3:
+                modal_title = "Employee Contacts Information";
+                break;
+            case 4:
+                modal_title = "Employee Work History";
+                break;
+            default:
+                modal_title = "Employee Basic Information";
+                break;
+        }
+        $('#add_employee_step_' + prev_step).hide("slide", { direction: "left" }, 200);
+
+        setTimeout(function () {
+            $("#add_employee_mt").text(modal_title);
+            $("#new_employee_progress_bar").attr("style", "width:" + progress + "%");
+            $("#new_employee_progress_bar").attr("aria-valuenow", progress);
+
+
+            $("#go_back").attr('onclick', 'AddEmployeePrevSteps(' + prev_step + ',' + (progress - 25) + ')');
+            $("#go_forward").attr('onclick', 'AddEmployeeNextSteps(' + next_step + ', ' + (progress + 25) + ')');
+            $('#add_employee_step_' + step).show("slide", { direction: "right" }, 300);
+        }, 200);
+
+        setTimeout(function () {
+            if (step == 4) {
+               // $("#new_employee_progress_bar").attr("class", "progress-bar bg-success");
+                $("#go_forward").attr('class', 'btn btn-success');
+                $("#go_forward").html('Finish <i class="bi bi-arrow-right-square"style="vertical-align: text-bottom !important;"></i>');
+            }
+        }, 600);
+
+    }
+}
+/**
+ * 
+ * @param {*} step 
+ * @param {*} progress 
+ */
+function HandlePrevMove(step, progress) {
+    if (step > 0) {
+        var next_step = step + 1;
+        var prev_step = step - 1;
+        var modal_title = "";
+
+        if (step < 2) {
+            $("#go_back").hide();
+        }
+        //Pregress bar and section title
+        switch (step) {
+            case 1:
+                modal_title = "Employee Basic Information";
+                break;
+            case 2:
+                modal_title = "Employee Address Information";
+                break;
+            case 3:
+                modal_title = "Employee Contacts Information";
+                break;
+            case 4:
+                modal_title = "Employee Work History";
+                break;
+
+            default:
+                modal_title = "Employee Basic Information";
+                break;
+        }
+        $("#go_forward").attr('class', 'btn btn-primary');
+        $("#go_forward").html('Next Step <i class="bi bi-arrow-right-square"style="vertical-align: text-bottom !important;"></i>');
+        $('#add_employee_step_' + next_step).hide("slide", { direction: "right" }, 200);
+
+        setTimeout(function () {
+            $("#add_employee_mt").text(modal_title);
+            $("#new_employee_progress_bar").attr("style", "width:" + progress + "%");
+            $("#new_employee_progress_bar").attr("aria-valuenow", progress);
+
+            $("#new_employee_progress_bar").attr("class", "progress-bar bg-primary");
+
+
+            $("#go_back").attr('onclick', 'AddEmployeePrevSteps(' + prev_step + ',' + (progress - 25) + ')');
+            $("#go_forward").attr('onclick', 'AddEmployeeNextSteps(' + next_step + ', ' + (progress + 25) + ')');
+            $('#add_employee_step_' + step).show("slide", { direction: "left" }, 300);
+        }, 200);
+
+    }
 }

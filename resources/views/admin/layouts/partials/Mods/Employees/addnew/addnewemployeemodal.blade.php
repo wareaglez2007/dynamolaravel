@@ -11,7 +11,7 @@
             </div>
             <!--Modal body starts-->
             <div class="modal-body">
-                <div class="container-fluid">
+                <div class="container-fluid" style="min-height: 293px !important;">
 
                     <div class="progress" style="height: 10px; margin-bottom:20px;">
                         <div class="progress-bar bg-primary" role="progressbar" style="width: 25%;" aria-valuenow="25"
@@ -21,9 +21,16 @@
                     <form method="POST" name="add_employee_form" id="add_employee_form">
                         @csrf
                         <div id="add_new_employee_modal_body">
-                            {{-- Basic Information form setion --}}
+                            {{-- Step 1:  Basic Information form setion --}}
                             @include('admin.layouts.partials.Mods.Employees.addnew.employeebasics')
+                            {{-- Step 2:  Address Information form setion --}}
+                            @include('admin.layouts.partials.Mods.Employees.addnew.employeeaddress')
+                            {{-- Step 3:  Contact Information form setion --}}
+                            @include('admin.layouts.partials.Mods.Employees.addnew.employeecontact')
+                            {{-- Step 4:  Contact Information form setion --}}
+                            @include('admin.layouts.partials.Mods.Employees.addnew.employeeresume')
                         </div>
+                        <input type="hidden" name="steps" id="step_tracker" value="2"/>
                     </form>
 
                 </div>
@@ -32,11 +39,12 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal"
                     id="cancel_add">Cancel</button>
-                <button type="button" class="btn btn-warning" onclick="AddEmployeePrevSteps(1)"
+                    {{-- curr,prev,next --}}
+                <button type="button" class="btn btn-warning" onclick="AddEmployeePrevSteps(1,25)"
                     style="display: none;" id="go_back">
                     <i class="bi bi-arrow-left-square"
                         style="vertical-align: text-bottom !important;"></i>&nbsp;Back</button>
-                <button type="button" class="btn btn-primary" onclick="AddEmployeeNextSteps(2)"
+                <button type="button" class="btn btn-primary" onclick="AddEmployeeNextSteps(2,50)"
                     id="go_forward">Next Step <i class="bi bi-arrow-right-square"
                     style="vertical-align: text-bottom !important;"></i>&nbsp;</button>
             </div>

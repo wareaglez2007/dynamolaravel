@@ -30,7 +30,7 @@
                             {{-- Step 4:  Contact Information form setion --}}
                             @include('admin.layouts.partials.Mods.Employees.addnew.employeeresume')
                         </div>
-                        <input type="hidden" name="steps" id="step_tracker" value="2"/>
+                        <input type="hidden" name="steps" id="step_tracker" value="1"/>
                     </form>
 
                 </div>

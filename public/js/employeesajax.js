@@ -8,6 +8,7 @@ function AddEmployeeNextSteps(step, progress) {
 
     var form_data = $("#add_employee_form").serialize();
 
+
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $(
@@ -20,13 +21,20 @@ function AddEmployeeNextSteps(step, progress) {
     $.ajax({
         url: '/admin/employees/add',
         method: "post",
-        //cache: false,
+        cache: false,
         data: form_data,
         success: function (data) {
             if (typeof data != 'undefined') {
+                $('#step_tracker').val(step);
                 //JQUERY CONTROLS BELOW
                 HandleNextMove(step, progress);
                 HandleAjaxResponsesToast(2300, "green", step, data.response.success, 200);
+                if (typeof data.reset != 'undefined') {
+                    if (data.reset) {
+                        $("#add_employee_form").reset();
+                    }
+                }
+
 
 
             }
@@ -59,7 +67,9 @@ function AddEmployeeNextSteps(step, progress) {
  */
 function AddEmployeePrevSteps(step, progress) {
     var form_data = $("#add_employee_form").serialize();
-
+    $('#step_tracker').val(step);
+    //JQUERY CONTROL THIS
+    HandlePrevMove(step, progress);
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $(
@@ -75,8 +85,7 @@ function AddEmployeePrevSteps(step, progress) {
         //cache: false,
         data: form_data,
         success: function (data) {
-            //JQUERY CONTROL THIS
-            HandlePrevMove(step, progress);
+
             // HandleAjaxResponsesToast(2300, "green", step, data.response.success, 200);
             //add_employee_step_1
             //Steps
@@ -192,7 +201,7 @@ function HandleNextMove(step, progress) {
                 modal_title = "Employee Contacts Information";
                 break;
             case 4:
-                modal_title = "Employee Work History";
+                modal_title = "Employee Work History (Optional)";
                 break;
             default:
                 modal_title = "Employee Basic Information";
@@ -213,7 +222,7 @@ function HandleNextMove(step, progress) {
 
         setTimeout(function () {
             if (step == 4) {
-               // $("#new_employee_progress_bar").attr("class", "progress-bar bg-success");
+                // $("#new_employee_progress_bar").attr("class", "progress-bar bg-success");
                 $("#go_forward").attr('class', 'btn btn-success');
                 $("#go_forward").html('Finish <i class="bi bi-arrow-right-square"style="vertical-align: text-bottom !important;"></i>');
             }
@@ -247,7 +256,7 @@ function HandlePrevMove(step, progress) {
                 modal_title = "Employee Contacts Information";
                 break;
             case 4:
-                modal_title = "Employee Work History";
+                modal_title = "Employee Work History (Optional)";
                 break;
 
             default:

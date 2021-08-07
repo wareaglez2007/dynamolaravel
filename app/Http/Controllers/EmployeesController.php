@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\locations;
 use App\locationContacts;
 use App\us_states;
+use Illuminate\Support\Facades\Session;
 
 class EmployeesController extends Controller
 {
@@ -65,123 +66,89 @@ class EmployeesController extends Controller
      */
     public function store(Request $request)
     {
-        //$object = (object) $array;
+
         $response_messages = [];
-        //var_dump($request->steps);
+        $reset = false;
         switch ($request->steps) {
             case 1:
-                $view = 'admin.layouts.partials.Mods.Employees.addnew.employeebasics';
-                $response_messages['success'] = "";
-                $modal_title = "Employee basic information";
-                $current_step = 1;
-                $forward_step = 2;
-                $backward_step = 0;
-                $progress = 25;
+                $validatedData = $request->validate([
+                    'fname' => 'required',
+                    'lname' => 'required',
+                    'dob_month' => 'required',
+                    'dob_day' => 'required',
+                    'dob_year' => 'required',
+                    'gender' => 'required'
+                ]);
+                $response_messages['success'] = "Basic Employee information added.";
                 break;
             case 2:
-                $view = 'admin.layouts.partials.Mods.Employees.addnew.employeeaddress';
-                $response_messages['success'] = "Basic Employee information added.";
-                $modal_title = "Employee address information";
-                $current_step = 2;
-                $forward_step = 3;
-                $backward_step = 1;
-                $progress = 50;
-
-
-                // $validatedData = $request->validate([
-                //     'fname' => 'required',
-                //     'lname' => 'required',
-                //     'dob_month' => 'required',
-                //     'dob_day' => 'required',
-                //     'dob_year' => 'required',
-                //     'gender' => 'required'
-                // ]);
-
+                $validatedData = $request->validate([
+                    'add1' => 'required',
+                    'city' => 'required',
+                    'state' => 'required',
+                    'postal' => 'required|regex:/^[0-9]{3,7}$/'
+                ]);
+                $response_messages['success'] = "Employee address information added.";
                 break;
             case 3:
-                $view = 'admin.layouts.partials.Mods.Employees.addnew.employeecontact';
-                $response_messages['success'] = "Employee address information added.";
-                $modal_title = "Employee contact information";
-                $current_step = 3;
-                $forward_step = 4;
-                $backward_step = 2;
-                $progress = 75;
+                $validatedData = $request->validate([
+                    'email' => 'required|email:rfc,dns',
+                    'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
+                ]);
+                $response_messages['success'] = "Employee contact information added.";
                 break;
             case 4:
-                $view = 'admin.layouts.partials.Mods.Employees.addnew.employeeresume';
                 $response_messages['success'] = "Employement information added.";
-                $modal_title = "Employment information";
-                $current_step = 4;
-                $forward_step = 0;
-                $backward_step = 3;
-                $progress = 100;
+                break;
+            case 5:
+                // //Save
+                // $dob = $request->dob_month . "/" . $request->dob_day . "/" . $request->dob_year;
+                // $name = $request->fname;
+                // $mname = $request->mname;
+                // $lname = $request->lname;
+                // $gender = $request->gender;
+        
+                // $employee_basics = new employees();
+                // $employee_address = new employee_addresses();
+                // $employee_contacts = new employee_contacts();
+                // $employee_resumes = new employee_resumes();
+                // $employee_locations = new employee_locations();
+
+                // $employee_basics->fname = $name;
+                // $employee_basics->mname = $mname;
+                // $employee_basics->lname = $lname;
+                // $employee_basics->dob = $dob;
+                // $employee_basics->gender = $gender;
+                // $employee_basics->save();
+    
+                // $employee_address->employees_id = $employee_basics->id;
+                // $employee_address->save();
+                // $employee_contacts->employees_id = $employee_basics->id;
+                // $employee_contacts->email = $this->generateRandomString(10)."@gmail.com";
+                // $employee_contacts->save();
+                // $employee_resumes->employees_id = $employee_basics->id;
+                // $employee_resumes->added_by = "user1";
+                // $employee_resumes->save();
+                // $response_messages['success'] = "Employee information has been saved.";
+                // $reset = true;
                 break;
             default:
-                $view = 'admin.layouts.partials.Mods.Employees.addnew.employeebasics';
                 $response_messages['success'] = "Basic Employee information added.";
-                $modal_title = "Employee basic information";
-                $current_step = 1;
-                $forward_step = 2;
-                $backward_step = 0;
-                $progress = 25;
                 break;
         }
 
         //Put all form values in session
         $request->session()->put('basics', $request->all());
-        $dob = $request->dob_month . "/" . $request->dob_day . "/" . $request->dob_year;
-        $name = $request->fname;
-        $mname = $request->mname;
-        $lname = $request->lname;
-        $gender = $request->gender;
 
-        $employee_basics = new employees();
-        $employee_address = new employee_addresses();
-        $employee_contacts = new employee_contacts();
-        $employee_resumes = new employee_resumes();
-        $employee_locations = new employee_locations();
-        // if($counter == 1){
-        //     $employee_basics->fname = $name;
-        //     $employee_basics->mname = $mname;
-        //     $employee_basics->lname = $lname;
-        //     $employee_basics->dob = $dob;
-        //     $employee_basics->gender = $gender;
-        //     $employee_basics->save();
-
-        //     $employee_address->employees_id = $employee_basics->id;
-        //     $employee_address->save();
-        //     $employee_contacts->employees_id = $employee_basics->id;
-        //     $employee_contacts->email = $this->generateRandomString(10)."@gmail.com";
-        //     $employee_contacts->save();
-        //     $employee_resumes->employees_id = $employee_basics->id;
-        //     $employee_resumes->added_by = "user1";
-        //     $employee_resumes->save();
-        //     Session(['empid' => $employee_basics->id]);
-        // }else{
-        //     //Update otherwaise
-        //    // $employee_basics->where()->update([
-
-        //     //]);
-        // }
+        
 
 
 
         if ($request->ajax()) {
             return response()->json([
                 "response" => $response_messages,
-                'mod_name' => 'Employees Information Management Module',
-                'current_step' => $current_step,
-                'forward_step' => $forward_step,
-                'backward_step' => $backward_step,
-                'progress' => $progress,
-                'request' => $request->all(),
-                'modal_title' => $modal_title,
-                'input_data' => $request->session()->get('basics'),
-                'view' => view($view)->with([
-                    'modal_title' => $modal_title,
-                    'states' => $this->getStates(),
-                    'input_data' => $request->session()->get('basics'),
-                ])->render()
+                "reset" => $reset,
+                'mod_name' => 'Employees Information Management Module'
             ]);
         }
     }

@@ -7,7 +7,7 @@
         Add New Employee
     </button>
     <!--list the employees below with pagination-->
-
+    @include('admin.layouts.partials.Mods.Employees.edit.showcurrentemployees')
 </div>
 
 <!--Use modals outside the card div-->

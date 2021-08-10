@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\locations;
 use App\locationContacts;
 use App\us_states;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Support\Facades\Session;
 
 class EmployeesController extends Controller
@@ -55,7 +56,32 @@ class EmployeesController extends Controller
      */
     public function create()
     {
-        //
+        // //Save
+
+
+        // $employee_basics = new employees();
+        // $employee_address = new employee_addresses();
+        // $employee_contacts = new employee_contacts();
+        // $employee_resumes = new employee_resumes();
+        // $employee_locations = new employee_locations();
+
+        // $employee_basics->fname = $name;
+        // $employee_basics->mname = $mname;
+        // $employee_basics->lname = $lname;
+        // $employee_basics->dob = $dob;
+        // $employee_basics->gender = $gender;
+        // $employee_basics->save();
+
+        // $employee_address->employees_id = $employee_basics->id;
+        // $employee_address->save();
+        // $employee_contacts->employees_id = $employee_basics->id;
+        // $employee_contacts->email = $this->generateRandomString(10)."@gmail.com";
+        // $employee_contacts->save();
+        // $employee_resumes->employees_id = $employee_basics->id;
+        // $employee_resumes->added_by = "user1";
+        // $employee_resumes->save();
+        // $response_messages['success'] = "Employee information has been saved.";
+        // $reset = true;
     }
 
     /**
@@ -69,17 +95,46 @@ class EmployeesController extends Controller
 
         $response_messages = [];
         $reset = false;
+
+        $employee_basics = new employees();
+        $employee_address = new employee_addresses();
+        $employee_contacts = new employee_contacts();
+        $employee_resumes = new employee_resumes();
+        $employee_locations = new employee_locations();
+
+       $employee_count = $employee_contacts->where('email', $request->email)->count();
+
+
+
         switch ($request->steps) {
             case 1:
                 $validatedData = $request->validate([
                     'fname' => 'required',
                     'lname' => 'required',
+                    'email' => 'required|email:rfc,dns',
                     'dob_month' => 'required',
                     'dob_day' => 'required',
                     'dob_year' => 'required',
                     'gender' => 'required'
                 ]);
-                $response_messages['success'] = "Basic Employee information added.";
+
+                if ($validatedData && $employee_count == 0) {
+                    //Save and use email as the primary id
+
+                    $employee_basics->fname = $request->fname;
+                    $employee_basics->mname = $request->mname;
+                    $employee_basics->lname = $request->lname;
+                    $employee_basics->dob = $request->dob_month."/".$request->dob_day."/".$request->dob_year;
+                    $employee_basics->gender = $request->gender;
+                    $employee_basics->save();
+                    $employee_contacts->email = $request->email;
+                    $employee_basics->employee_contacts()->save($employee_contacts);
+                    $response_messages['success'] = "Basic Employee information added.";
+                }else{
+                    $response_messages['errors'] = "Basic employee information has already been added.";
+                }
+
+                
                 break;
             case 2:
                 $validatedData = $request->validate([
@@ -92,45 +147,14 @@ class EmployeesController extends Controller
                 break;
             case 3:
                 $validatedData = $request->validate([
-                    'email' => 'required|email:rfc,dns',
+                    'sec_email' => 'email:rfc,dns',
                     'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
+                    'sec_phone' => 'regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
                 ]);
                 $response_messages['success'] = "Employee contact information added.";
                 break;
             case 4:
                 $response_messages['success'] = "Employement information added.";
-                break;
-            case 5:
-                // //Save
-                // $dob = $request->dob_month . "/" . $request->dob_day . "/" . $request->dob_year;
-                // $name = $request->fname;
-                // $mname = $request->mname;
-                // $lname = $request->lname;
-                // $gender = $request->gender;
-        
-                // $employee_basics = new employees();
-                // $employee_address = new employee_addresses();
-                // $employee_contacts = new employee_contacts();
-                // $employee_resumes = new employee_resumes();
-                // $employee_locations = new employee_locations();
-
-                // $employee_basics->fname = $name;
-                // $employee_basics->mname = $mname;
-                // $employee_basics->lname = $lname;
-                // $employee_basics->dob = $dob;
-                // $employee_basics->gender = $gender;
-                // $employee_basics->save();
-    
-                // $employee_address->employees_id = $employee_basics->id;
-                // $employee_address->save();
-                // $employee_contacts->employees_id = $employee_basics->id;
-                // $employee_contacts->email = $this->generateRandomString(10)."@gmail.com";
-                // $employee_contacts->save();
-                // $employee_resumes->employees_id = $employee_basics->id;
-                // $employee_resumes->added_by = "user1";
-                // $employee_resumes->save();
-                // $response_messages['success'] = "Employee information has been saved.";
-                // $reset = true;
                 break;
             default:
                 $response_messages['success'] = "Basic Employee information added.";
@@ -140,7 +164,7 @@ class EmployeesController extends Controller
         //Put all form values in session
         $request->session()->put('basics', $request->all());
 
-        
+
 
 
 

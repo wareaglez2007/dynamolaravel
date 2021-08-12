@@ -25,7 +25,7 @@ class EmployeesController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->setStates(us_states::getStates());
+        $this->setStates(us_states::getStates()); //Initailized states
         $this->set_addition_code(0); //initialized at zero
     }
 
@@ -38,24 +38,30 @@ class EmployeesController extends Controller
         $this->states = $states;
     }
     /**
-     * 
+     * returns addition code
      */
     private function get_addition_code()
     {
         return $this->_additon_code;
     }
     /**
-     * 
+     * set addition code
      */
     private function set_addition_code($code)
     {
         $this->_additon_code = $code;
     }
 
+    /**
+     * return email rules
+     */
     private function getEmailRules()
     {
         return $this->_emailRule;
     }
+    /**
+     * Set email rules
+     */
     private function setEmailRules($rule)
     {
         $this->_emailRule = $rule;
@@ -70,7 +76,6 @@ class EmployeesController extends Controller
     public function index()
     {
         $data = $this->show();
-        //$states = us_states::getStates();
         return view('admin.modules.general', [
             'mod_name' => 'Employees Information Management Module',
             'states' => $this->getStates(),
@@ -125,24 +130,28 @@ class EmployeesController extends Controller
      */
     public function store(Request $request)
     {
-        $response_messages = [];
-        $reset = false;
-        $view = "admin.modules.general";
-        $employee_count = employee_contacts::where('email', $request->email)->count();
-        //if the count is gretaer than zero that means it has been added!
-        if ($employee_count > 0) {
-            $empid =  employee_contacts::where('email', $request->email)->get();
-            $this->set_addition_code(1);
-            foreach ($empid as $emloyee_uid) {
-            }
-            $employee_address_count = employee_addresses::where('employees_id', $emloyee_uid->employees_id)->count();
-        } else {
-            $employee_count = 0;
-        }
-        if ($request->steps > 4) {
-            $request->steps = 4;
-        }
+        $this->create($request);
+        $response_messages['success'] = "Employement information added.";
+        $reset = true;
+        $view = 'admin.layouts.partials.Mods.Employees.edit.showcurrentemployees';
 
+        if ($request->ajax()) {
+            return response()->json([
+                "response" => $response_messages,
+                "reset" => $reset,
+                "step" => $this->get_addition_code(),
+                'mod_name' => 'Employees Information Management Module',
+                'view' => view($view)->with([
+                    "employees" => $this->show(),
+                ])->render()
+            ]);
+        }
+    }
+
+
+    public function validateForms(Request $request)
+    {
+        
         switch ($request->steps) {
             case 1:
                 if ($this->get_addition_code() == 0) {
@@ -178,54 +187,23 @@ class EmployeesController extends Controller
                 break;
             case 4:
 
-               
+                $response_messages['success'] = "Employee work history looks good..";
                 //Final step
 
                 break;
-                //default:
+            case 5:
+
+                $response_messages['success']['code'] = 200;
+
+                break;
+            default:
                 //   $response_messages['success'] = "Basic Employee information added.";
-                //  break;
+                break;
         }
-
-        //Put all form values in session
-
-        if ($employee_count == 0) {
-            $this->create($request);
-            $response_messages['success'] = "Employement information added.";
-            $reset = true;
-            $view = 'admin.layouts.partials.Mods.Employees.edit.showcurrentemployees';
-        //} else {
-           // $response_messages['warning'] = "Employee has been added.please add new info.";
-          //  $reset = true;
-            // if($emloyee_uid->email != $request->email){
-            //     $response_messages['warning'] = "You have changed the email address!!!";
-            // }
-            // //update
-            // employees::where('id', $emloyee_uid->employees_id)->update([
-            //     'fname' => $request->fname,
-            //     'mname' => $request->mname,
-            //     'lname' => $request->lname,
-            //     'dob' => $request->dob_month . "/" . $request->dob_day . "/" . $request->dob_year,
-            //     'gender' => $request->gender,
-            // ]);
-            // employee_contacts::where('employees_id', $emloyee_uid->employees_id)->update([
-            //     'email' => $request->email
-            // ]);
-            // $response_messages['success'] = "Basic employee information has been updated.";
-        }
-
-
-
 
         if ($request->ajax()) {
             return response()->json([
-                "response" => $response_messages,
-                "reset" => $reset,
-                "step" => $this->get_addition_code(),
-                'mod_name' => 'Employees Information Management Module',
-                'view' => view($view)->with([
-                    "employees" => $this->show(),
-                ])->render()
+                "response" => $response_messages
             ]);
         }
     }
@@ -285,5 +263,26 @@ class EmployeesController extends Controller
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
         return $randomString;
+    }
+
+    public function resetmodal(Request $request)
+    {
+        var_dump($request->all());
+        $request->steps = 1;
+        $response_messages['success']['code'] = 200;
+        ///Users/rostomsahakian/Documents/Dynamolaravel/resources/views/admin/layouts/partials/Mods/Employees/addnew/addnewemployeemodal.blade.php
+        $view = 'admin.layouts.partials.Mods.Employees.addnew.addnewemployeemodal';
+        if ($request->ajax()) {
+            return response()->json([
+                "response" => $response_messages,
+                'view' => view($view)->with([
+                    "employees" => $this->show(),
+                    'mod_name' => 'Employees Information Management Module',
+                    'states' => $this->getStates(),
+                    'modal_title' => 'Employee Basic Information',
+                    
+                ])->render()
+            ]);
+        }
     }
 }

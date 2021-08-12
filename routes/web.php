@@ -162,9 +162,9 @@ Route::post('/admin/locations/edit/addstorehoursrows', 'LocationsController@adds
  */
 
 Route::get('/admin/employees', 'EmployeesController@index')->name('admin.employee');
+Route::post('/admin/employees/validate', 'EmployeesController@validateForms');
 Route::post('/admin/employees/add', 'EmployeesController@store');
-
-
+Route::post('/admin/employees/resetmodal', 'EmployeesController@resetmodal');
 
 
 /**

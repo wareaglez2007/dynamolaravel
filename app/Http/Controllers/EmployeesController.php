@@ -17,10 +17,16 @@ use Illuminate\Support\Facades\Session;
 class EmployeesController extends Controller
 {
     private $states;
+    private $_additon_code;
+    private $_emailRule;
+
+
+
     public function __construct()
     {
         $this->middleware('auth');
         $this->setStates(us_states::getStates());
+        $this->set_addition_code(0); //initialized at zero
     }
 
     public function getStates()
@@ -31,6 +37,30 @@ class EmployeesController extends Controller
     {
         $this->states = $states;
     }
+    /**
+     * 
+     */
+    private function get_addition_code()
+    {
+        return $this->_additon_code;
+    }
+    /**
+     * 
+     */
+    private function set_addition_code($code)
+    {
+        $this->_additon_code = $code;
+    }
+
+    private function getEmailRules()
+    {
+        return $this->_emailRule;
+    }
+    private function setEmailRules($rule)
+    {
+        $this->_emailRule = $rule;
+    }
+
 
     /**
      * Display a listing of the resource.
@@ -39,12 +69,13 @@ class EmployeesController extends Controller
      */
     public function index()
     {
-
+        $data = $this->show();
         //$states = us_states::getStates();
         return view('admin.modules.general', [
             'mod_name' => 'Employees Information Management Module',
             'states' => $this->getStates(),
-            'modal_title' => 'Employee Basic Information'
+            'modal_title' => 'Employee Basic Information',
+            'employees' => $data
 
         ]);
     }
@@ -54,34 +85,36 @@ class EmployeesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        // //Save
+        $employee_basics = new employees();
+        $employee_address = new employee_addresses();
+        $employee_contacts = new employee_contacts();
+        $employee_resumes = new employee_resumes();
+        $employee_locations = new employee_locations();
 
+        //Save and use email as the primary id
+        $employee_basics->fname = $request->fname;
+        $employee_basics->mname = $request->mname;
+        $employee_basics->lname = $request->lname;
+        $employee_basics->dob = $request->dob_month . "/" . $request->dob_day . "/" . $request->dob_year;
+        $employee_basics->gender = $request->gender;
+        $employee_basics->save();
+        $employee_contacts->email = $request->email; //add email
+        $employee_basics->employee_contacts()->save($employee_contacts);
 
-        // $employee_basics = new employees();
-        // $employee_address = new employee_addresses();
-        // $employee_contacts = new employee_contacts();
-        // $employee_resumes = new employee_resumes();
-        // $employee_locations = new employee_locations();
+        $employee_address->street1 = $request->add1;
+        $employee_address->street2 = $request->add2;
+        $employee_address->city = $request->city;
+        $employee_address->county = $request->state;
+        $employee_address->zipcode = $request->postal;
+        $employee_basics->employee_address()->save($employee_address);
 
-        // $employee_basics->fname = $name;
-        // $employee_basics->mname = $mname;
-        // $employee_basics->lname = $lname;
-        // $employee_basics->dob = $dob;
-        // $employee_basics->gender = $gender;
-        // $employee_basics->save();
-
-        // $employee_address->employees_id = $employee_basics->id;
-        // $employee_address->save();
-        // $employee_contacts->employees_id = $employee_basics->id;
-        // $employee_contacts->email = $this->generateRandomString(10)."@gmail.com";
-        // $employee_contacts->save();
-        // $employee_resumes->employees_id = $employee_basics->id;
-        // $employee_resumes->added_by = "user1";
-        // $employee_resumes->save();
-        // $response_messages['success'] = "Employee information has been saved.";
-        // $reset = true;
+        //Update the contacts
+        $employee_contacts->where('employees_id', $employee_basics->id)->update([
+            'phone1' => $request->phone,
+            'phone2' => $request->sec_phone
+        ]);
     }
 
     /**
@@ -92,49 +125,39 @@ class EmployeesController extends Controller
      */
     public function store(Request $request)
     {
-
         $response_messages = [];
         $reset = false;
-
-        $employee_basics = new employees();
-        $employee_address = new employee_addresses();
-        $employee_contacts = new employee_contacts();
-        $employee_resumes = new employee_resumes();
-        $employee_locations = new employee_locations();
-
-       $employee_count = $employee_contacts->where('email', $request->email)->count();
-
-
+        $view = "admin.modules.general";
+        $employee_count = employee_contacts::where('email', $request->email)->count();
+        //if the count is gretaer than zero that means it has been added!
+        if ($employee_count > 0) {
+            $empid =  employee_contacts::where('email', $request->email)->get();
+            $this->set_addition_code(1);
+            foreach ($empid as $emloyee_uid) {
+            }
+            $employee_address_count = employee_addresses::where('employees_id', $emloyee_uid->employees_id)->count();
+        } else {
+            $employee_count = 0;
+        }
+        if ($request->steps > 4) {
+            $request->steps = 4;
+        }
 
         switch ($request->steps) {
             case 1:
+                if ($this->get_addition_code() == 0) {
+                    $this->setEmailRules('|unique:employee_contacts,email');
+                }
                 $validatedData = $request->validate([
                     'fname' => 'required',
                     'lname' => 'required',
-                    'email' => 'required|email:rfc,dns',
+                    'email' => 'required|email:rfc,dns' . $this->getEmailRules(),
                     'dob_month' => 'required',
                     'dob_day' => 'required',
                     'dob_year' => 'required',
                     'gender' => 'required'
                 ]);
-
-                if ($validatedData && $employee_count == 0) {
-                    //Save and use email as the primary id
-
-                    $employee_basics->fname = $request->fname;
-                    $employee_basics->mname = $request->mname;
-                    $employee_basics->lname = $request->lname;
-                    $employee_basics->dob = $request->dob_month."/".$request->dob_day."/".$request->dob_year;
-                    $employee_basics->gender = $request->gender;
-                    $employee_basics->save();
-                    $employee_contacts->email = $request->email;
-                    $employee_basics->employee_contacts()->save($employee_contacts);
-                    $response_messages['success'] = "Basic Employee information added.";
-                }else{
-                    $response_messages['errors'] = "Basic employee information has already been added.";
-                }
-
-                
+                $response_messages['success'] = "Basic Employee information looks good.";
                 break;
             case 2:
                 $validatedData = $request->validate([
@@ -143,7 +166,7 @@ class EmployeesController extends Controller
                     'state' => 'required',
                     'postal' => 'required|regex:/^[0-9]{3,7}$/'
                 ]);
-                $response_messages['success'] = "Employee address information added.";
+                $response_messages['success'] = "Employee address information looks good.";
                 break;
             case 3:
                 $validatedData = $request->validate([
@@ -151,19 +174,45 @@ class EmployeesController extends Controller
                     'phone' => 'required|regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
                     'sec_phone' => 'regex:/^([0-9\s\-\+\(\)]*)$/|min:10',
                 ]);
-                $response_messages['success'] = "Employee contact information added.";
+                $response_messages['success'] = "Employee contact information looks good..";
                 break;
             case 4:
-                $response_messages['success'] = "Employement information added.";
+
+               
+                //Final step
+
                 break;
-            default:
-                $response_messages['success'] = "Basic Employee information added.";
-                break;
+                //default:
+                //   $response_messages['success'] = "Basic Employee information added.";
+                //  break;
         }
 
         //Put all form values in session
-        $request->session()->put('basics', $request->all());
 
+        if ($employee_count == 0) {
+            $this->create($request);
+            $response_messages['success'] = "Employement information added.";
+            $reset = true;
+            $view = 'admin.layouts.partials.Mods.Employees.edit.showcurrentemployees';
+        //} else {
+           // $response_messages['warning'] = "Employee has been added.please add new info.";
+          //  $reset = true;
+            // if($emloyee_uid->email != $request->email){
+            //     $response_messages['warning'] = "You have changed the email address!!!";
+            // }
+            // //update
+            // employees::where('id', $emloyee_uid->employees_id)->update([
+            //     'fname' => $request->fname,
+            //     'mname' => $request->mname,
+            //     'lname' => $request->lname,
+            //     'dob' => $request->dob_month . "/" . $request->dob_day . "/" . $request->dob_year,
+            //     'gender' => $request->gender,
+            // ]);
+            // employee_contacts::where('employees_id', $emloyee_uid->employees_id)->update([
+            //     'email' => $request->email
+            // ]);
+            // $response_messages['success'] = "Basic employee information has been updated.";
+        }
 
 
 
@@ -172,7 +221,11 @@ class EmployeesController extends Controller
             return response()->json([
                 "response" => $response_messages,
                 "reset" => $reset,
-                'mod_name' => 'Employees Information Management Module'
+                "step" => $this->get_addition_code(),
+                'mod_name' => 'Employees Information Management Module',
+                'view' => view($view)->with([
+                    "employees" => $this->show(),
+                ])->render()
             ]);
         }
     }
@@ -183,9 +236,10 @@ class EmployeesController extends Controller
      * @param  \App\employees  $employees
      * @return \Illuminate\Http\Response
      */
-    public function show(employees $employees)
+    public function show()
     {
-        //
+        $data = employees::with('employee_address')->with('employee_contacts')->get();
+        return $data;
     }
 
     /**

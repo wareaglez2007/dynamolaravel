@@ -7,7 +7,7 @@
 function AddEmployeeNextSteps(step, progress) {
 
     var form_data = $("#add_employee_form").serialize();
-
+    HandleNextMove(step, progress);
 
     $.ajaxSetup({
         headers: {
@@ -24,22 +24,31 @@ function AddEmployeeNextSteps(step, progress) {
         cache: false,
         data: form_data,
         success: function (data) {
+            console.log(data);
             if (typeof data != 'undefined') {
                 $('#step_tracker').val(step);
                 //JQUERY CONTROLS BELOW
-                HandleNextMove(step, progress);
-                HandleAjaxResponsesToast(2300, "green", step, data.response.success, 200);
+                if (typeof data.response.success != 'undefined') {
+                   
+                    HandleAjaxResponsesToast(2300, "green", step, data.response.success, 200);
+                    //$("#show_employees").html(data.view);
+                }
                 if (typeof data.reset != 'undefined') {
                     if (data.reset) {
-                        $("#add_employee_form").reset();
+                        $("#add_employee_form")[0].reset();
+                       
                     }
                 }
-
+                if (typeof data.response.warning != 'undefined') {
+                    console.log(data.response.warning);
+                    HandleAjaxResponsesToast(3000, "#ffc107", step, data.response.warning, 200, false, 'bg-warning');
+                }
 
 
             }
         }, //end of success
         error: function (error) {
+            console.log(error);
             if (typeof error.responseJSON.message != 'undefined') {
                 var uid = getRandomInt(5000);
                 var do_redirect = false;
@@ -70,45 +79,45 @@ function AddEmployeePrevSteps(step, progress) {
     $('#step_tracker').val(step);
     //JQUERY CONTROL THIS
     HandlePrevMove(step, progress);
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $(
-                'meta[name="csrf-token"]')
-                .attr(
-                    'content')
-        }
+    // $.ajaxSetup({
+    //     headers: {
+    //         'X-CSRF-TOKEN': $(
+    //             'meta[name="csrf-token"]')
+    //             .attr(
+    //                 'content')
+    //     }
 
-    }); //End of ajax setup
-    $.ajax({
-        url: '/admin/employees/add',
-        method: "post",
-        //cache: false,
-        data: form_data,
-        success: function (data) {
+    // }); //End of ajax setup
+    // $.ajax({
+    //     url: '/admin/employees/add',
+    //     method: "post",
+    //     //cache: false,
+    //     data: form_data,
+    //     success: function (data) {
 
-            // HandleAjaxResponsesToast(2300, "green", step, data.response.success, 200);
-            //add_employee_step_1
-            //Steps
+    //         // HandleAjaxResponsesToast(2300, "green", step, data.response.success, 200);
+    //         //add_employee_step_1
+    //         //Steps
 
 
-        }, //end of success
-        error: function (error) {
-            if (typeof error.responseJSON.message != 'undefined') {
-                var uid = getRandomInt(5000);
-                var do_redirect = false;
-                if (error.status === 419) {
-                    do_redirect = true;
-                }
-                HandleAjaxResponsesToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
+    //     }, //end of success
+    //     error: function (error) {
+    //         if (typeof error.responseJSON.message != 'undefined') {
+    //             var uid = getRandomInt(5000);
+    //             var do_redirect = false;
+    //             if (error.status === 419) {
+    //                 do_redirect = true;
+    //             }
+    //             HandleAjaxResponsesToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
 
-                $.each(error.responseJSON.errors, function (index, val) {
-                    HandleAjaxResponsesToast(2300, "red", index, val, error.status, do_redirect);
+    //             $.each(error.responseJSON.errors, function (index, val) {
+    //                 HandleAjaxResponsesToast(2300, "red", index, val, error.status, do_redirect);
 
-                });
-            }
+    //             });
+    //         }
 
-        } //end of error
-    }); //end of ajax
+    //     } //end of error
+    // }); //end of ajax
 }
 
 /**
@@ -129,16 +138,17 @@ function getRandomInt(max) {
  * @param {*} CSR_ER (defalut false)
  * @returns 
  */
-function HandleAjaxResponsesToast(delay_time, div_color, uid, message, status_code, CSR_ER = false) {
+function HandleAjaxResponsesToast(delay_time, div_color, uid, message, status_code, CSR_ER = false, tclass = null) {
 
 
     var delay = delay_time;
     color = div_color;
+    var toast_class = tclass;
     var toast =
         '<div id="location_toast_' + uid +
         '" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="' +
         delay + '" >' +
-        '<div class="toast-header" style="background-color: ' +
+        '<div class="toast-header  ' + toast_class + '" style="background-color: ' +
         color +
         ' !important; color:#ffffff !important; "> <i class="bi bi-exclamation-square"></i>&nbsp;' +
         '<strong class="mr-auto">Message:</strong> <small>Just now</small>' +

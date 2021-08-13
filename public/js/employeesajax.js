@@ -109,10 +109,10 @@ function HandleAjaxFormSubmission(step, form_data) {
                         $("#go_forward").attr('class', 'btn btn-success disabled');
                     }, 20);
                     setTimeout(() => {
-                        $('#form_sub_message').html('Done! <i class="bi bi-card-checklist text-success"></i>'); 
+                        $('#form_sub_message').html('Done! <i class="bi bi-card-checklist text-success"></i>');
                     }, 750);
                     setTimeout(() => {
-                        
+
                     }, 800);
                     HandleAjaxResponsesToast(2300, "green", step, data.response.success, 200);
 
@@ -276,7 +276,7 @@ function HandleNextMove(step, progress) {
                 modal_title = "Employee Contacts Information";
                 break;
             case 4:
-                modal_title = "Employee Work History (Optional)";
+                modal_title = "Employee Assigned Work Locations (Can be multiple)";
                 break;
             case 5:
                 modal_title = "Submit Employee Data";
@@ -334,7 +334,7 @@ function HandlePrevMove(step, progress) {
                 modal_title = "Employee Contacts Information";
                 break;
             case 4:
-                modal_title = "Employee Work History (Optional)";
+                modal_title = "Employee Assigned Work Locations (Can be multiple)";
                 break;
             case 5:
                 modal_title = "Submit Employee Data";
@@ -361,4 +361,76 @@ function HandlePrevMove(step, progress) {
         }, 200);
 
     }
+}
+
+/**
+ * SELECT 2
+ * ONLY use on specific elements that you want
+ */
+$(function () {
+    //This is used for select2 dropdown
+
+    $('#employee_locations').select2({
+        theme: "classic",
+        width: 'resolve',
+        placeholder: "Select locations for this employee"
+    });
+});
+/**
+ * Destroy the employee record
+ * @param {*} employee_id 
+ */
+function DeleteEmployee(employee_id) {
+    var uid = getRandomInt(5000);
+    //Submit form
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $(
+                'meta[name="csrf-token"]')
+                .attr(
+                    'content')
+        }
+
+    }); //End of ajax setup
+    $.ajax({
+        url: '/admin/employees/destroy',
+        method: "post",
+        cache: false,
+        data: {
+            id: employee_id
+        },
+        success: function (data) {
+            if (typeof data != 'undefined') {
+                if (typeof data.response.success != 'undefined') {
+                    setTimeout(() => {
+                        $("#show_employees").html(data.view); //Updates the background fields.
+
+                    }, 20);
+                    HandleAjaxResponsesToast(2300, "green", uid, data.response.success, 200);
+
+                }
+                if (typeof data.response.warning != 'undefined') {
+                    HandleAjaxResponsesToast(3000, "#ffc107", uid, data.response.warning, 200, false, 'bg-warning');
+                }
+
+
+            }
+        }, //end of success
+        error: function (error) {
+            if (typeof error.responseJSON.message != 'undefined') {
+
+                var do_redirect = false;
+                if (error.status === 419) {
+                    do_redirect = true;
+                }
+                HandleAjaxResponsesToast(2300, "red", uid, error.responseJSON.message, error.status, do_redirect);
+
+                $.each(error.responseJSON.errors, function (index, val) {
+                    HandleAjaxResponsesToast(2300, "red", index, val, error.status, do_redirect);
+
+                });
+            }
+
+        } //end of error
+    }); //end of ajax
 }

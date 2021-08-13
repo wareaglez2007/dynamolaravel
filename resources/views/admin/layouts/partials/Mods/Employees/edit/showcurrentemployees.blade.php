@@ -6,25 +6,39 @@
                 <tr>
                     <th>Id</th>
                     <th>Name</th>
-                    <th>Middle</th>
-                    <th>Last</th>
-                    <th>Dob</th>
+                    <th>DOB</th>
                     <th>Email</th>
                     <th>Phone</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($employees as $employee)
                     <tr>
                         <td scope="row">{{ $employee->id }}</td>
-                        <td>{{ $employee->fname }}</td>
-                        <td>{{ $employee->mname }}</td>
-                        <td>{{ $employee->lname }}</td>
+                        <td>{{ $employee->fname }} {{ $employee->mname }} {{ $employee->lname }}</td>
                         <td>{{ $employee->dob }}</td>
                         @foreach ($employee->employee_contacts as $employee_contacts)
                             <td>{{ $employee_contacts->email }}</td>
                             <td>{{ $employee_contacts->phone1 }}</td>
+
                         @endforeach
+                        <td>
+                            <div class="dropdown show">
+                                <a class="btn btn-sm dropdown-toggle" href="#" role="button"
+                                    id="dropdownMenuLink{{ $employee->id }}" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    <i class="bi bi-list"></i>
+
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink{{ $employee->id }}">
+                                    <a class="dropdown-item" href="#" onclick="DeleteEmployee({{ $employee->id }});"><i class="bi bi-trash"></i> Delete</a>
+                                    <a class="dropdown-item" href="#"><i class="bi bi-pencil"></i> Edit</a>
+                                </div>
+                            </div>
+
+
+                        </td>
                     </tr>
                 @endforeach
 

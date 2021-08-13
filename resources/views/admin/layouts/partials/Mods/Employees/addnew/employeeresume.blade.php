@@ -2,7 +2,7 @@
     Option one will be to upload the resume.
     Option two is to add information (they can add more as they want) --}}
 {{-- Resume --}}
-<div id="add_employee_step_4" style="display: none;">
+<div id="add_employee_step_7" style="display: none;">
     <div class="row">
         <h5 class="display-9">Resume information:</h5>
     </div>

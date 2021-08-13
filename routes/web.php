@@ -165,7 +165,7 @@ Route::get('/admin/employees', 'EmployeesController@index')->name('admin.employe
 Route::post('/admin/employees/validate', 'EmployeesController@validateForms');
 Route::post('/admin/employees/add', 'EmployeesController@store');
 Route::post('/admin/employees/resetmodal', 'EmployeesController@resetmodal');
-
+Route::post('/admin/employees/destroy', 'EmployeesController@destroy')->name('employee.destroy');
 
 /**
  * Forms Creat/Edit/Delete Manager

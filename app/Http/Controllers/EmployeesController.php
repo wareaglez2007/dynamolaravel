@@ -13,20 +13,24 @@ use App\locationContacts;
 use App\us_states;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Support\Facades\Session;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 class EmployeesController extends Controller
 {
     private $states;
     private $_additon_code;
     private $_emailRule;
-
-
+    private $locations_for_work;
+    private $employee_locations;
+    private $employee_id;
 
     public function __construct()
     {
         $this->middleware('auth');
         $this->setStates(us_states::getStates()); //Initailized states
         $this->set_addition_code(0); //initialized at zero
+        $this->locations_for_work = locations::get(); //Initializes the ocations for drop down
+
     }
 
     public function getStates()
@@ -66,7 +70,21 @@ class EmployeesController extends Controller
     {
         $this->_emailRule = $rule;
     }
+    /**
+     * get employee id
+     */
+    private function getEmployeeId()
+    {
+        return $this->employee_id;
+    }
+    /**
+     * set employee id
+     */
 
+    private function setEmployeeId($empid)
+    {
+        $this->employee_id = $empid;
+    }
 
     /**
      * Display a listing of the resource.
@@ -80,7 +98,8 @@ class EmployeesController extends Controller
             'mod_name' => 'Employees Information Management Module',
             'states' => $this->getStates(),
             'modal_title' => 'Employee Basic Information',
-            'employees' => $data
+            'employees' => $data,
+            'locations' => $this->locations_for_work
 
         ]);
     }
@@ -96,7 +115,7 @@ class EmployeesController extends Controller
         $employee_address = new employee_addresses();
         $employee_contacts = new employee_contacts();
         $employee_resumes = new employee_resumes();
-        $employee_locations = new employee_locations();
+
 
         //Save and use email as the primary id
         $employee_basics->fname = $request->fname;
@@ -115,11 +134,20 @@ class EmployeesController extends Controller
         $employee_address->zipcode = $request->postal;
         $employee_basics->employee_address()->save($employee_address);
 
+        //set employee id for global use
+        $this->setEmployeeId($employee_basics->id);
         //Update the contacts
         $employee_contacts->where('employees_id', $employee_basics->id)->update([
             'phone1' => $request->phone,
             'phone2' => $request->sec_phone
         ]);
+        //Add mulitple locations
+        foreach ($request->locations as $location) {
+            $this->employee_locations  = new employee_locations();
+            $this->employee_locations->locations_id = $location;
+            $this->employee_locations->employees_id = $this->getEmployeeId();
+            $this->employee_locations->save();
+        }
     }
 
     /**
@@ -131,6 +159,8 @@ class EmployeesController extends Controller
     public function store(Request $request)
     {
         $this->create($request);
+
+
         $response_messages['success'] = "Employement information added.";
         $reset = true;
         $view = 'admin.layouts.partials.Mods.Employees.edit.showcurrentemployees';
@@ -151,7 +181,7 @@ class EmployeesController extends Controller
 
     public function validateForms(Request $request)
     {
-        
+
         switch ($request->steps) {
             case 1:
                 if ($this->get_addition_code() == 0) {
@@ -249,9 +279,29 @@ class EmployeesController extends Controller
      * @param  \App\employees  $employees
      * @return \Illuminate\Http\Response
      */
-    public function destroy(employees $employees)
+    public function destroy(employees $employees, Request $request)
     {
-        //
+        $employee = $employees->find($request->id);
+        $employees->find($request->id)->forceDelete();
+        $view = 'admin.layouts.partials.Mods.Employees.edit.showcurrentemployees';
+        $response_messages['success'] = $employee->fname . " " . $employee->mname . " " . $employee->lname . " has been deleted.";
+
+
+        $data = $this->show();
+
+        if ($request->ajax()) {
+            return response()->json([
+                "response" => $response_messages,
+                'mod_name' => 'Employees Information Management Module',
+
+                'locations' => $this->locations_for_work,
+                'view' => view($view)->with([
+                    'states' => $this->getStates(),
+                    'modal_title' => 'Employee Basic Information',
+                    'employees' => $data,
+                ])->render()
+            ]);
+        }
     }
 
     public function generateRandomString($length = 10)
@@ -280,7 +330,7 @@ class EmployeesController extends Controller
                     'mod_name' => 'Employees Information Management Module',
                     'states' => $this->getStates(),
                     'modal_title' => 'Employee Basic Information',
-                    
+
                 ])->render()
             ]);
         }

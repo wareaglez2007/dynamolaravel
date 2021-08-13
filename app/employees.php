@@ -25,7 +25,7 @@ class employees extends Model
 
     public function employee_locations()
     {
-        return $this->belongsToMany('App\locations', 'App\employees', 'locations_id', 'id');
+        return $this->hasMany('App\employee_locations');
     }
 
 }

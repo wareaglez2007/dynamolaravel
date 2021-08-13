@@ -27,5 +27,10 @@ class locations extends Model
     {
         return $this->hasMany('App\locationContacts');
     }
+
+    public function employees_per_location()
+    {
+        return $this->belongsToMany('App\employees', 'App\employee_locations', 'employees_id', 'locations_id');
+    }
 }
 

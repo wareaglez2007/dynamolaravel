@@ -27,8 +27,8 @@
                             @include('admin.layouts.partials.Mods.Employees.addnew.employeeaddress')
                             {{-- Step 3:  Contact Information form setion --}}
                             @include('admin.layouts.partials.Mods.Employees.addnew.employeecontact')
-                            {{-- Step 4:  Contact Information form setion --}}
-                            @include('admin.layouts.partials.Mods.Employees.addnew.employeeresume')
+                            {{-- Step 4:  Locations Information form setion --}}
+                            @include('admin.layouts.partials.Mods.Employees.addnew.employeeworklocations')
                             {{-- Step 5: Form Submission --}}
                             @include('admin.layouts.partials.Mods.Employees.addnew.addemplyeefinalpage')
                         </div>

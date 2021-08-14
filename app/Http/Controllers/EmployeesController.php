@@ -256,9 +256,19 @@ class EmployeesController extends Controller
      * @param  \App\employees  $employees
      * @return \Illuminate\Http\Response
      */
-    public function edit(employees $employees)
+    public function edit(employees $employees, $id)
     {
         //
+        $employee = $employees->with('employee_contacts')->with('employee_address')->with('employee_locations')->find($id);
+        $view = 'admin.layouts.partials.Mods.Employees.edit.editemployee';
+        return view($view, [
+            'mod_name' => 'Employees Information Management Module',
+            'states' => $this->getStates(),
+            'modal_title' => 'Employee Basic Information',
+            'employee' => $employee,
+            'locations' => $this->locations_for_work
+
+        ]);
     }
 
     /**

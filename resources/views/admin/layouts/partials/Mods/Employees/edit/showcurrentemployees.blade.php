@@ -33,7 +33,7 @@
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink{{ $employee->id }}">
                                     <a class="dropdown-item" href="#" onclick="DeleteEmployee({{ $employee->id }});"><i class="bi bi-trash"></i> Delete</a>
-                                    <a class="dropdown-item" href="#"><i class="bi bi-pencil"></i> Edit</a>
+                                    <a class="dropdown-item" href="{{ route('admin.employee.edit', ['id' => $employee->id]) }}"><i class="bi bi-pencil"></i> Edit</a>
                                 </div>
                             </div>
 
